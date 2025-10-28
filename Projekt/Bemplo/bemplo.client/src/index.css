@@ -1,9 +1,6 @@
-﻿/* NOVÝ OBSAH PRO index.css */
-
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
 
 :root {
-    /* Vaše proměnné barev ze souboru login.css */
     --primary-red: #007BFF;
     --secondary-red: #00A3FF;
     --dark-background: #F0F4F8;
@@ -14,7 +11,6 @@
     --input-border: rgba(0, 20, 40, 0.2);
 }
 
-/* Globální reset z login.css */
 * {
     box-sizing: border-box;
     margin: 0;
@@ -34,10 +30,6 @@ body {
     position: relative;
 }
 
-/* * TOTO JE KLÍČOVÁ OPRAVA:
- * Centrování aplikujeme na #root, ne na body.
- * #root je element v index.html, do kterého React vkládá vaši aplikaci.
-*/
 #root {
     display: flex;
     justify-content: center;

@@ -1,5 +1,4 @@
-﻿/* --- POZADÍ A ANIMACE (beze změny) --- */
-.background-animation {
+﻿.background-animation {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -54,8 +53,6 @@
     }
 }
 
-/* --- WRAPPER A KONTEJNER (Širší pro registraci) --- */
-
 .register-wrapper {
     position: relative;
     z-index: 10;
@@ -63,7 +60,6 @@
     display: flex;
     justify-content: center;
     width: 90%;
-    /* Zvětšená maximální šířka pro registrační formulář */
     max-width: 1100px;
     margin-top: 4rem;
     margin-bottom: 4rem;
@@ -129,7 +125,6 @@ h2 {
     text-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
 }
 
-/* --- NOVINKA: PŘEPÍNAČ ÚČTU --- */
 .toggle-switch {
     position: relative;
     display: flex;
@@ -171,17 +166,13 @@ h2 {
         transition: transform 0.3s ease-out;
         z-index: 1;
     }
-    /* Posun slideru při kliknutí na druhý input */
     .toggle-switch input[type="radio"]:nth-of-type(2):checked ~ .slider {
         transform: translateX(100%);
     }
-    /* Změna barvy textu aktivního labelu */
     .toggle-switch input[type="radio"]:checked + label {
         color: white;
     }
 
-
-/* --- NOVINKA: MŘÍŽKA FORMULÁŘE --- */
 .form-grid {
     display: grid;
     /* Responzivní kouzlo: 
@@ -203,16 +194,12 @@ h2 {
     grid-column: 1 / -1;
 }
 
-
-/* --- VSTUPNÍ POLE (mírné úpravy pro grid) --- */
 .input-group {
     position: relative;
     width: 100%;
     text-align: left;
-    /* Margin řeší grid 'gap', takže není potřeba */
 }
 
-    /* Společné styly pro všechny typy vstupů */
     .input-group input,
     .input-group select,
     .input-group textarea {
@@ -240,7 +227,6 @@ h2 {
         transition: all 0.3s ease;
     }
 
-        /* Animace labelu při focusu nebo vyplnění */
         .input-group input:focus + label,
         .input-group input:not(:placeholder-shown) + label,
         .input-group textarea:focus + label,
@@ -325,8 +311,6 @@ h2 {
         left: 0;
     }
 
-
-/* --- NOVINKA: CHECKBOX --- */
 .checkbox-group {
     display: flex;
     align-items: center;
@@ -346,7 +330,7 @@ h2 {
         margin-right: 0.8rem;
         transition: all 0.2s ease;
         position: relative;
-        top: -1px; /* Lepší zarovnání s textem */
+        top: -1px;
     }
 
         .checkbox-group input[type="checkbox"]:checked {
@@ -381,7 +365,6 @@ h2 {
             color: var(--light-text);
         }
 
-/* --- TLAČÍTKO (beze změny) --- */
 button[type="submit"] {
     width: 100%;
     padding: 1.3rem;
@@ -403,7 +386,6 @@ button[type="submit"] {
         box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
     }
 
-/* --- ODKAZY (beze změny) --- */
 .links {
     text-align: center;
     margin-top: 2rem;
@@ -419,9 +401,6 @@ button[type="submit"] {
         .links a:hover {
             color: var(--primary-red);
         }
-
-/* --- RESPONZIVNÍ ÚPRAVY (zjednodušeno) --- */
-/* Grid se přizpůsobí sám, řešíme jen padding a fonty na mobilech */
 
 @media (max-width: 768px) {
     .register-container {

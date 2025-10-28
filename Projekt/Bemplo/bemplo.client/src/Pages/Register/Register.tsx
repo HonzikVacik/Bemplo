@@ -1,6 +1,5 @@
-// Register.tsx
 import React, { useState } from 'react';
-import './Register.css'; // Importujeme n� nov�, �ist� CSS soubor
+import './Register.css';
 
 // Typ pro data formul��e (dobr� praxe v TypeScriptu)
 interface FormData {
