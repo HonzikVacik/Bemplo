@@ -1,0 +1,483 @@
+﻿/* --- POZADÍ A ANIMACE (beze změny) --- */
+.background-animation {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: linear-gradient(135deg, #F0F4F8 0%, #E6EEF5 50%, #F0F4F8 100%);
+    z-index: -1;
+    overflow: hidden;
+}
+
+    .background-animation::before,
+    .background-animation::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(0, 123, 255, 0.08);
+        filter: blur(80px);
+        animation: floatLarge 20s infinite ease-in-out alternate;
+    }
+
+    .background-animation::before {
+        width: 600px;
+        height: 600px;
+        top: -10%;
+        left: -15%;
+        animation-delay: 0s;
+    }
+
+    .background-animation::after {
+        width: 700px;
+        height: 700px;
+        bottom: -15%;
+        right: -20%;
+        background: rgba(0, 163, 255, 0.07);
+        animation-delay: 10s;
+    }
+
+@keyframes floatLarge {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.1;
+    }
+
+    50% {
+        transform: translate(20px, -30px) scale(1.05);
+        opacity: 0.15;
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.1;
+    }
+}
+
+/* --- WRAPPER A KONTEJNER (Širší pro registraci) --- */
+
+.register-wrapper {
+    position: relative;
+    z-index: 10;
+    perspective: 1000px;
+    display: flex;
+    justify-content: center;
+    width: 90%;
+    /* Zvětšená maximální šířka pro registrační formulář */
+    max-width: 1100px;
+    margin-top: 4rem;
+    margin-bottom: 4rem;
+}
+
+.register-container {
+    background: var(--glass-background);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 3rem 3.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    animation: popIn 0.6s ease-out forwards;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.register-container::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    right: -50px;
+    bottom: -50px;
+    background: linear-gradient(45deg, rgba(0, 123, 255, 0.05) 0%, rgba(0, 163, 255, 0.05) 100%);
+    z-index: -1;
+    filter: blur(40px);
+    opacity: 0.8;
+    transform: translateZ(-1px);
+}
+
+.register-form {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 2.5rem;
+    font-weight: 700;
+    font-size: 2.6rem;
+    background: -webkit-linear-gradient(45deg, var(--primary-red), var(--secondary-red));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    text-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
+}
+
+/* --- NOVINKA: PŘEPÍNAČ ÚČTU --- */
+.toggle-switch {
+    position: relative;
+    display: flex;
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto 2.5rem auto;
+    background: rgba(0, 20, 40, 0.08);
+    border-radius: 50px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+    .toggle-switch input[type="radio"] {
+        display: none;
+    }
+
+    .toggle-switch label {
+        width: 50%;
+        padding: 0.75rem 1rem;
+        text-align: center;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--input-placeholder);
+        cursor: pointer;
+        transition: color 0.3s ease;
+        z-index: 2;
+        user-select: none;
+    }
+
+    .toggle-switch .slider {
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
+        border-radius: 50px;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        transition: transform 0.3s ease-out;
+        z-index: 1;
+    }
+    /* Posun slideru při kliknutí na druhý input */
+    .toggle-switch input[type="radio"]:nth-of-type(2):checked ~ .slider {
+        transform: translateX(100%);
+    }
+    /* Změna barvy textu aktivního labelu */
+    .toggle-switch input[type="radio"]:checked + label {
+        color: white;
+    }
+
+
+/* --- NOVINKA: MŘÍŽKA FORMULÁŘE --- */
+.form-grid {
+    display: grid;
+    /* Responzivní kouzlo: 
+      - Vytvoří sloupce, které mají min. 300px.
+      - 'auto-fit' zajistí, že se automaticky přizpůsobí počtu sloupců.
+      - Na mobilu (šířka < 600px) bude jen jeden sloupec.
+      - Na tabletu/notebooku (šířka > 600px) budou 2 sloupce.
+      - Na velké obrazovce (šířka > 900px) budou 3 sloupce.
+    */
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem 2.5rem; /* Mezery mezi řádky a sloupci */
+    width: 100%;
+    margin-bottom: 2rem;
+}
+
+/* Speciální pravidlo pro textarea, aby zabrala celou šířku */
+.input-group.span-full {
+    /* Začne na 1. sloupci a skončí na posledním (-1) */
+    grid-column: 1 / -1;
+}
+
+
+/* --- VSTUPNÍ POLE (mírné úpravy pro grid) --- */
+.input-group {
+    position: relative;
+    width: 100%;
+    text-align: left;
+    /* Margin řeší grid 'gap', takže není potřeba */
+}
+
+    /* Společné styly pro všechny typy vstupů */
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+        width: 100%;
+        padding: 1.2rem 1.4rem 0.8rem 1.4rem;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid var(--input-border);
+        color: var(--light-text);
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        outline: none;
+        transition: all 0.3s ease;
+        padding-top: 1.5rem;
+    }
+
+    .input-group label {
+        position: absolute;
+        left: 1.4rem;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--input-placeholder);
+        font-size: 1rem;
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+
+        /* Animace labelu při focusu nebo vyplnění */
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label,
+        .input-group textarea:focus + label,
+        .input-group textarea:not(:placeholder-shown) + label,
+        .input-group label.floated /* Třída pro select a date */ {
+            top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--primary-red);
+            transform: translateY(0);
+        }
+
+    /* Úpravy pro SELECT */
+    .input-group select {
+        appearance: none;
+        -webkit-appearance: none;
+        cursor: pointer;
+        padding-right: 2.5rem; /* Místo pro šipku */
+    }
+    /* Vlastní šipka pro SELECT */
+    .input-group::after {
+        content: '▼';
+        position: absolute;
+        top: 50%;
+        right: 1.4rem;
+        transform: translateY(-50%) scale(0.6);
+        color: var(--input-placeholder);
+        pointer-events: none;
+        transition: color 0.3s ease;
+    }
+    /* Skryjeme šipku, pokud to není select */
+    .input-group:not(:has(select))::after {
+        display: none;
+    }
+
+    .input-group select:focus + label + .focus-border + * {
+        color: var(--primary-red); /* Zbarvení šipky */
+    }
+
+    /* Úpravy pro TEXTAREA */
+    .input-group textarea {
+        resize: vertical; /* Povolí jen vertikální změnu velikosti */
+        min-height: 100px;
+        line-height: 1.6;
+    }
+
+    /* Úpravy pro DATE */
+    .input-group input[type="date"] {
+        padding-right: 1rem; /* Zabrání překrytí textu ikonkou */
+    }
+        /* Změna barvy ikonky kalendáře */
+        .input-group input[type="date"]::-webkit-calendar-picker-indicator {
+            filter: invert(30%) sepia(10%) saturate(1000%) hue-rotate(180deg) brightness(90%) contrast(90%);
+            cursor: pointer;
+        }
+
+        .input-group input[type="date"]:focus::-webkit-calendar-picker-indicator {
+            filter: invert(40%) sepia(100%) saturate(5000%) hue-rotate(200deg) brightness(100%) contrast(100%);
+        }
+
+
+    /* Společný focus border */
+    .input-group input:focus,
+    .input-group select:focus,
+    .input-group textarea:focus {
+        border-color: var(--primary-red);
+    }
+
+    .input-group .focus-border {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
+        transition: width 0.3s ease-out, left 0.3s ease-out;
+    }
+
+    .input-group input:focus ~ .focus-border,
+    .input-group select:focus ~ .focus-border,
+    .input-group textarea:focus ~ .focus-border {
+        width: 100%;
+        left: 0;
+    }
+
+
+/* --- NOVINKA: CHECKBOX --- */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    margin-top: 1rem;
+    margin-bottom: 2rem;
+}
+
+    .checkbox-group input[type="checkbox"] {
+        appearance: none;
+        -webkit-appearance: none;
+        width: 22px;
+        height: 22px;
+        background: transparent;
+        border: 2px solid var(--input-border);
+        border-radius: 5px;
+        cursor: pointer;
+        margin-right: 0.8rem;
+        transition: all 0.2s ease;
+        position: relative;
+        top: -1px; /* Lepší zarovnání s textem */
+    }
+
+        .checkbox-group input[type="checkbox"]:checked {
+            background: var(--primary-red);
+            border-color: var(--primary-red);
+        }
+        /* Fajfka */
+        .checkbox-group input[type="checkbox"]::after {
+            content: '✔';
+            color: white;
+            position: absolute;
+            font-size: 14px;
+            font-weight: bold;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0);
+            transition: transform 0.2s ease;
+        }
+
+        .checkbox-group input[type="checkbox"]:checked::after {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+    .checkbox-group label {
+        font-size: 0.9rem;
+        color: var(--input-placeholder);
+        cursor: pointer;
+        user-select: none;
+    }
+
+        .checkbox-group label:hover {
+            color: var(--light-text);
+        }
+
+/* --- TLAČÍTKO (beze změny) --- */
+button[type="submit"] {
+    width: 100%;
+    padding: 1.3rem;
+    background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-size: 1.2rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    margin-top: 1rem;
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+    letter-spacing: 0.05em;
+}
+
+    button[type="submit"]:hover {
+        transform: translateY(-5px) scale(1.02);
+        box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
+    }
+
+/* --- ODKAZY (beze změny) --- */
+.links {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.95rem;
+}
+
+    .links a {
+        color: var(--light-text);
+        text-decoration: none;
+        transition: color 0.3s ease;
+    }
+
+        .links a:hover {
+            color: var(--primary-red);
+        }
+
+/* --- RESPONZIVNÍ ÚPRAVY (zjednodušeno) --- */
+/* Grid se přizpůsobí sám, řešíme jen padding a fonty na mobilech */
+
+@media (max-width: 768px) {
+    .register-container {
+        padding: 2.5rem 2.8rem;
+    }
+
+    .form-grid {
+        /* Na tabletu vynutíme max 2 sloupce, pokud by se vešly 3 */
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+}
+
+@media (max-width: 480px) {
+    body {
+        padding: 2rem 0; /* Menší okraj na mobilu */
+    }
+
+    .register-wrapper {
+        width: 90%;
+    }
+
+    .register-container {
+        padding: 2.5rem 1.5rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .toggle-switch label {
+        font-size: 0.85rem;
+        padding: 0.7rem 0.5rem;
+    }
+
+    .form-grid {
+        /* Na mobilu se grid 'auto-fit' postará o 1 sloupec */
+        gap: 1.5rem 0; /* Menší mezery na mobilu */
+    }
+
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+        font-size: 1rem;
+    }
+
+    .input-group label {
+        font-size: 1rem;
+    }
+
+    .checkbox-group label {
+        font-size: 0.85rem;
+    }
+
+    button[type="submit"] {
+        padding: 1.1rem;
+        font-size: 1rem;
+    }
+}
