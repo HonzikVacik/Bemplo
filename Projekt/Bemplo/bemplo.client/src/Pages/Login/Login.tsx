@@ -1,22 +1,39 @@
 import React, { useState } from 'react';
-import ReactDOM from 'react-dom'; // <-- 1. IMPORTUJTE ReactDOM
+import ReactDOM from 'react-dom';
 import './Login.css';
 
-const Login: React.FC = () => {
-    // Stav pro zobrazení oznámení (null = skryto)
-    const [notification, setNotification] = useState<string | null>(null);
+interface NotificationState {
+    title: string;
+    message: string;
+}
 
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault(); // Zabráníme reálnému odeslání formuláře
-        setNotification('Přihlášení bylo úspěšné!');
+const Login: React.FC = () => {
+    const [notification, setNotification] = useState<NotificationState | null>(null);
+
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => { // Specifikujeme typ na HTMLFormElement
+        e.preventDefault();
+
+        const formData = new FormData(e.currentTarget);
+        const username = formData.get('username') as string;
+
+        if (username === 'janvacek21') {
+            setNotification({
+                title: 'Oznámení',
+                message: 'Přihlášení bylo úspěšné!'
+            });
+        } else {
+            setNotification({
+                title: 'Chyba',
+                message: 'Uživatelké jméno nebo heslo není správné!'
+            });
+        }
     };
 
-    // 2. Pro přehlednost si JSX modálu vytvoříme zvlášť
     const modalContent = notification ? (
         <div className="modal-overlay" onClick={() => setNotification(null)}>
             <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-                <h2>Oznámení</h2>
-                <p>{notification}</p>
+                <h2>{notification.title}</h2>
+                <p>{notification.message}</p>
                 <button
                     className="modal-close-btn"
                     onClick={() => setNotification(null)}
@@ -25,14 +42,12 @@ const Login: React.FC = () => {
                 </button>
             </div>
         </div>
-    ) : null; // Pokud není notifikace, nevykreslíme nic
+    ) : null;
 
     return (
         <>
             <div className="background-animation"></div>
 
-            {/* --- 3. POUŽIJEME PORTÁL --- */}
-            {/* Vykreslíme 'modalContent' do elementu 'modal-root' v index.html */}
             {ReactDOM.createPortal(
                 modalContent,
                 document.getElementById('modal-root')!
@@ -40,6 +55,7 @@ const Login: React.FC = () => {
 
             <div className="login-wrapper">
                 <div className="login-container">
+                    {/* Předáme 'handleSubmit' do formuláře */}
                     <form className="login-form" onSubmit={handleSubmit}>
                         <h2>Přihlášení</h2>
                         <div className="input-group">
