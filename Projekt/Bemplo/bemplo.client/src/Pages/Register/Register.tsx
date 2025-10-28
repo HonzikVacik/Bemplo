@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
+import { Link, useNavigate } from 'react-router-dom'; // 1. Import useNavigate
 import './Register.css';
+import '../Login/Login.css';
 
-// Typ pro data formul��e (dobr� praxe v TypeScriptu)
+// Typ pro data formuláře
 interface FormData {
     fname: string;
     lname: string;
@@ -18,11 +21,17 @@ interface FormData {
     terms: boolean;
 }
 
-const Register: React.FC = () => {
-    // Stav pro typ ��tu (osobn�/firemn�)
-    const [accountType, setAccountType] = useState('personal');
+// Definice stavu pro oznámení
+interface NotificationState {
+    title: string;
+    message: string;
+}
 
-    // Jeden velk� stavov� objekt pro v�echna pole formul��e
+const Register: React.FC = () => {
+    // 2. Inicializace useNavigate
+    const navigate = useNavigate();
+
+    const [accountType, setAccountType] = useState('personal');
     const [formData, setFormData] = useState<FormData>({
         fname: '',
         lname: '',
@@ -38,8 +47,8 @@ const Register: React.FC = () => {
         description: '',
         terms: false,
     });
+    const [notification, setNotification] = useState<NotificationState | null>(null);
 
-    // Univerz�ln� handler pro zm�ny ve v�ech pol�ch
     const handleChange = (
         e: React.ChangeEvent<
             HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -47,7 +56,6 @@ const Register: React.FC = () => {
     ) => {
         const { name, value, type } = e.target;
 
-        // Speci�ln� o�et�en� pro checkbox
         if (type === 'checkbox') {
             const { checked } = e.target as HTMLInputElement;
             setFormData((prev) => ({
@@ -64,21 +72,70 @@ const Register: React.FC = () => {
 
     const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Zde byste odeslali data na server
+
+        if (formData.email !== 'ai.beerandquiz@gmail.com') {
+            setNotification({
+                title: 'Oznámení',
+                // Mírně jsem upravil text, aby odpovídal registraci
+                message: 'Registrace byla úspěšná! Přesměrovávám na přihlášení...'
+            });
+
+            // 3. Přidání automatického přesměrování po 2 sekundách
+            setTimeout(() => {
+                // Váš odkaz pro přihlášení v Register.tsx směřuje na "/", 
+                // takže předpokládám, že to je správná cesta pro login.
+                navigate('/');
+            }, 2000); // 2000 ms = 2 sekundy
+
+        } else {
+            setNotification({
+                title: 'Chyba',
+                // Mírně jsem upravil text, aby odpovídal registraci
+                message: 'Tento e-mail již nelze použít nebo je chybný.'
+            });
+        }
+
         console.log('Typ účtu:', accountType);
         console.log('Data formuláře:', formData);
-        // TODO: P�idat validaci (nap�. shoduj� se hesla?)
     };
+
+    // 4. Úprava "OK" tlačítka v modálu (pro případ chyby)
+    // Přesměrování proběhne automaticky jen při úspěchu,
+    // ale u chybové hlášky uživatel stále musí kliknout na "OK".
+    const modalContent = notification ? (
+        <div className="modal-overlay" onClick={() => setNotification(null)}>
+            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                <h2>{notification.title}</h2>
+                <p>{notification.message}</p>
+
+                {/* Zobrazíme tlačítko jen pokud to NENÍ úspěšná notifikace 
+                    (protože ta přesměruje sama) */}
+                {notification.title === 'Chyba' && (
+                    <button
+                        className="modal-close-btn"
+                        onClick={() => setNotification(null)}
+                    >
+                        OK
+                    </button>
+                )}
+            </div>
+        </div>
+    ) : null;
 
     return (
         <>
             <div className="background-animation"></div>
+
+            {ReactDOM.createPortal(
+                modalContent,
+                document.getElementById('modal-root')!
+            )}
+
             <div className="register-wrapper">
                 <div className="register-container">
                     <form className="register-form" onSubmit={handleSubmit}>
                         <h2>Vytvořit účet</h2>
 
-                        {/* --- P�ep�na� ��tu --- */}
                         <div className="toggle-switch">
                             <input
                                 type="radio"
@@ -101,9 +158,11 @@ const Register: React.FC = () => {
                             <span className="slider"></span>
                         </div>
 
-                        {/* --- M��ka formul��e --- */}
+                        {/* ... zbytek formuláře (beze změny) ... */}
+
+                        {/* --- Mřížka formuláře --- */}
                         <div className="form-grid">
-                            {/* Jm�no */}
+                            {/* Jméno */}
                             <div className="input-group">
                                 <input
                                     type="text"
@@ -118,7 +177,7 @@ const Register: React.FC = () => {
                                 <span className="focus-border"></span>
                             </div>
 
-                            {/* P��jmen� */}
+                            {/* Příjmení */}
                             <div className="input-group">
                                 <input
                                     type="text"
@@ -148,7 +207,7 @@ const Register: React.FC = () => {
                                 <span className="focus-border"></span>
                             </div>
 
-                            {/* Pohlav� */}
+                            {/* Pohlaví */}
                             <div className="input-group">
                                 <select
                                     id="gender"
@@ -166,7 +225,7 @@ const Register: React.FC = () => {
                                 <span className="focus-border"></span>
                             </div>
 
-                            {/* Datum narozen� */}
+                            {/* Datum narození */}
                             <div className="input-group">
                                 <input
                                     type="date"
@@ -181,7 +240,7 @@ const Register: React.FC = () => {
                                 <span className="focus-border"></span>
                             </div>
 
-                            {/* St�t */}
+                            {/* Stát */}
                             <div className="input-group">
                                 <input
                                     type="text"
@@ -211,7 +270,7 @@ const Register: React.FC = () => {
                                 <span className="focus-border"></span>
                             </div>
 
-                            {/* M�sto */}
+                            {/* Město */}
                             <div className="input-group">
                                 <input
                                     type="text"
@@ -282,6 +341,7 @@ const Register: React.FC = () => {
                                     onChange={handleChange}
                                 ></textarea>
                                 <label htmlFor="description" className="floated">Popis</label>
+
                                 <span className="focus-border"></span>
                             </div>
                         </div>
@@ -304,7 +364,7 @@ const Register: React.FC = () => {
                         <button type="submit">Registrovat</button>
 
                         <div className="links">
-                            <a href="#">Máte již účet? Přihlaste se</a>
+                            <Link to="/" className="link-login">Máte již účet? Přihlaste se</Link>
                         </div>
                     </form>
                 </div>

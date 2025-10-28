@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
+import { Link } from 'react-router-dom';
 import './Login.css';
 
 interface NotificationState {
@@ -16,7 +17,7 @@ const Login: React.FC = () => {
         const formData = new FormData(e.currentTarget);
         const username = formData.get('username') as string;
 
-        if (username === 'janvacek21') {
+        if (username === 'aai.beerandquiz@gmail.com') {
             setNotification({
                 title: 'Oznámení',
                 message: 'Přihlášení bylo úspěšné!'
@@ -70,8 +71,8 @@ const Login: React.FC = () => {
                         </div>
                         <button type="submit">Přihlásit se</button>
                         <div className="links">
-                            <a href="#" className="link-forgot">Zapomenuté heslo?</a>
-                            <a href="#" className="link-register">Vytvořit účet</a>
+                            <Link to="/" className="link-forgot">Zapomenuté heslo?</Link>
+                            <Link to="/register" className="link-register">Vytvořit účet</Link>
                         </div>
                     </form>
                 </div>
