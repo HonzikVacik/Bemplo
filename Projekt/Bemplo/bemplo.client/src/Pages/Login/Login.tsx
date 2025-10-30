@@ -11,25 +11,59 @@ interface NotificationState {
 const Login: React.FC = () => {
     const [notification, setNotification] = useState<NotificationState | null>(null);
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => { // Specifikujeme typ na HTMLFormElement
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
         const formData = new FormData(e.currentTarget);
-        const username = formData.get('username') as string;
+        // Backend očekává 'email', ale formulář má 'username'. Použijeme hodnotu z 'username'.
+        const email = formData.get('username') as string;
+        const password = formData.get('password') as string;
 
-        if (username === 'aai.beerandquiz@gmail.com') {
-            setNotification({
-                title: 'Oznámení',
-                message: 'Přihlášení bylo úspěšné!'
+        try {
+            // 1. Sestavíme URL s query parametry, jak to očekává backend
+            const params = new URLSearchParams({ email, password });
+            const url = `/api/Auth/token?${params.toString()}`;
+
+            // 2. Odešleme požadavek. Neposíláme JSON body ani Content-Type header.
+            const response = await fetch(url, {
+                method: 'POST',
             });
-        } else {
+
+            // 3. Získáme odpověď jako ČISTÝ TEXT (ne JSON)
+            const responseText = await response.text();
+
+            // 4. Zkontrolujeme status odpovědi
+            if (response.ok) {
+                // Úspěch: responseText obsahuje JWT token
+                // Uložíme token např. do localStorage
+                localStorage.setItem('jwtToken', responseText);
+
+                setNotification({
+                    title: 'Přihlášení úspěšné',
+                    // Nezobrazujeme token uživateli
+                    message: 'Byli jste úspěšně přihlášeni.'
+                });
+
+                // Zde byste typicky přesměrovali uživatele
+                // např. history.push('/dashboard') nebo pomocí useNavigate()
+            } else {
+                // Chyba: responseText obsahuje chybovou hlášku ze serveru
+                setNotification({
+                    title: 'Chyba',
+                    message: responseText // Zobrazíme text, který poslal server
+                });
+            }
+
+        } catch (error) {
+            console.error('Chyba při přihlašování:', error);
             setNotification({
-                title: 'Chyba',
-                message: 'Uživatelké jméno nebo heslo není správné!'
+                title: 'Chyba sítě',
+                message: 'Nelze se připojit k serveru. Zkuste to prosím později.'
             });
         }
     };
 
+    // ... zbytek komponenty zůstává stejný ...
     const modalContent = notification ? (
         <div className="modal-overlay" onClick={() => setNotification(null)}>
             <div className="modal-box" onClick={(e) => e.stopPropagation()}>
@@ -56,12 +90,12 @@ const Login: React.FC = () => {
 
             <div className="login-wrapper">
                 <div className="login-container">
-                    {/* Předáme 'handleSubmit' do formuláře */}
                     <form className="login-form" onSubmit={handleSubmit}>
                         <h2>Přihlášení</h2>
                         <div className="input-group">
-                            <input type="text" id="username" name="username" required />
-                            <label htmlFor="username">Uživatelské jméno</label>
+                            {/* Dává smysl změnit type na "email" a name na "email" */}
+                            <input type="email" id="username" name="username" required />
+                            <label htmlFor="username">Email</label>
                             <span className="focus-border"></span>
                         </div>
                         <div className="input-group">
