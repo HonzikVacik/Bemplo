@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Register.css';
+import '../Login/Login.css';
 
-// Typ pro data formul��e (dobr� praxe v TypeScriptu)
 interface FormData {
     fname: string;
     lname: string;
@@ -18,11 +20,15 @@ interface FormData {
     terms: boolean;
 }
 
-const Register: React.FC = () => {
-    // Stav pro typ ��tu (osobn�/firemn�)
-    const [accountType, setAccountType] = useState('personal');
+interface NotificationState {
+    title: string;
+    message: string;
+}
 
-    // Jeden velk� stavov� objekt pro v�echna pole formul��e
+const Register: React.FC = () => {
+    const navigate = useNavigate();
+
+    const [accountType, setAccountType] = useState('personal');
     const [formData, setFormData] = useState<FormData>({
         fname: '',
         lname: '',
@@ -38,8 +44,8 @@ const Register: React.FC = () => {
         description: '',
         terms: false,
     });
+    const [notification, setNotification] = useState<NotificationState | null>(null);
 
-    // Univerz�ln� handler pro zm�ny ve v�ech pol�ch
     const handleChange = (
         e: React.ChangeEvent<
             HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
@@ -47,7 +53,6 @@ const Register: React.FC = () => {
     ) => {
         const { name, value, type } = e.target;
 
-        // Speci�ln� o�et�en� pro checkbox
         if (type === 'checkbox') {
             const { checked } = e.target as HTMLInputElement;
             setFormData((prev) => ({
@@ -62,24 +67,148 @@ const Register: React.FC = () => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const hasLowercase = /(?=.*[a-z])/;
+    const hasUppercase = /(?=.*[A-Z])/;
+    const hasDigit = /(?=.*\d)/;
+    const hasSpecialChar = /(?=.*[!@#$%^&*()_+\-={};':"\\|,.<>?/])/;
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-        // Zde byste odeslali data na server
-        console.log('Typ účtu:', accountType);
-        console.log('Data formuláře:', formData);
-        // TODO: P�idat validaci (nap�. shoduj� se hesla?)
+
+        const selectedDate = new Date(formData.dob);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+
+        if (selectedDate >= today) {
+            setNotification({
+                title: 'Chyba',
+                message: 'Datum narození musí být v minulosti (starší než dnes).'
+            });
+            return;
+        }
+
+        // Validace hesla
+        const { password, passwordConfirm } = formData;
+
+        if (password !== passwordConfirm) {
+            setNotification({
+                title: 'Chyba',
+                message: 'Hesla se neshodují.'
+            });
+            return;
+        }
+
+        if (password.length < 8) {
+            setNotification({
+                title: 'Chyba',
+                message: 'Heslo musí mít alespoň 8 znaků.'
+            });
+            return;
+        }
+
+        if (!hasLowercase.test(password)) {
+            setNotification({ title: 'Chyba', message: 'Heslo musí obsahovat alespoň jedno malé písmeno.' });
+            return;
+        }
+        if (!hasUppercase.test(password)) {
+            setNotification({ title: 'Chyba', message: 'Heslo musí obsahovat alespoň jedno velké písmeno.' });
+            return;
+        }
+        if (!hasDigit.test(password)) {
+            setNotification({ title: 'Chyba', message: 'Heslo musí obsahovat alespoň jednu číslici.' });
+            return;
+        }
+        if (!hasSpecialChar.test(password)) {
+            setNotification({ title: 'Chyba', message: 'Heslo musí obsahovat alespoň jeden speciální znak.' });
+            return;
+        }
+
+        const apiParams = {
+            accountType: accountType === 'personal' ? '0' : '1',
+            name: formData.fname,
+            surname: formData.lname,
+            sexType: formData.gender === 'male' ? '0' : formData.gender === 'female' ? '1' : '2',
+            date: formData.dob,
+            email: formData.email,
+            password: formData.password,
+            country: formData.country,
+            region: formData.region,
+            city: formData.city,
+            address: formData.address,
+            description: formData.description,
+            agreeWithPrivacyPolicy: formData.terms.toString()
+        };
+
+        try {
+            const params = new URLSearchParams(apiParams);
+            const url = `/api/Account?${params.toString()}`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+            });
+
+            const responseText = await response.text();
+
+            if (response.ok) {
+                setNotification({
+                    title: 'Oznámení',
+                    message: `${responseText}. Přesměrovávám na přihlášení...`
+                });
+
+                setTimeout(() => {
+                    navigate('/'); // Přesměrování na login
+                }, 2000);
+
+            } else {
+                setNotification({
+                    title: 'Chyba',
+                    message: responseText
+                });
+            }
+
+        } catch (error) {
+            console.error('Chyba při registraci:', error);
+            setNotification({
+                title: 'Chyba sítě',
+                message: 'Nelze se připojit k serveru. Zkuste to prosím později.'
+            });
+        }
     };
+
+    const modalContent = notification ? (
+        <div className="modal-overlay" onClick={() => setNotification(null)}>
+            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                <h2>{notification.title}</h2>
+                <p>{notification.message}</p>
+
+                {notification.title === 'Chyba' && (
+                    <button
+                        className="modal-close-btn"
+                        onClick={() => setNotification(null)}
+                    >
+                        OK
+                    </button>
+                )}
+            </div>
+        </div>
+    ) : null;
 
     return (
         <>
             <div className="background-animation"></div>
+
+            {ReactDOM.createPortal(
+                modalContent,
+                document.getElementById('modal-root')!
+            )}
+
             <div className="register-wrapper">
                 <div className="register-container">
                     <form className="register-form" onSubmit={handleSubmit}>
                         <h2>Vytvořit účet</h2>
 
-                        {/* --- P�ep�na� ��tu --- */}
                         <div className="toggle-switch">
+                            {/* Přepínač účtů */}
                             <input
                                 type="radio"
                                 id="type-personal"
@@ -101,9 +230,8 @@ const Register: React.FC = () => {
                             <span className="slider"></span>
                         </div>
 
-                        {/* --- M��ka formul��e --- */}
                         <div className="form-grid">
-                            {/* Jm�no */}
+                            {/* Jméno */}
                             <div className="input-group">
                                 <input
                                     type="text"
@@ -118,7 +246,7 @@ const Register: React.FC = () => {
                                 <span className="focus-border"></span>
                             </div>
 
-                            {/* P��jmen� */}
+                            {/* Příjmení */}
                             <div className="input-group">
                                 <input
                                     type="text"
@@ -148,7 +276,7 @@ const Register: React.FC = () => {
                                 <span className="focus-border"></span>
                             </div>
 
-                            {/* Pohlav� */}
+                            {/* Pohlaví */}
                             <div className="input-group">
                                 <select
                                     id="gender"
@@ -159,14 +287,14 @@ const Register: React.FC = () => {
                                 >
                                     <option value="" disabled hidden></option>
                                     <option value="male">Muž</option>
-                                    <option value="female"> Žena</option>
+                                    <option value="female">Žena</option>
                                     <option value="other">Jiné</option>
                                 </select>
                                 <label htmlFor="gender" className="floated">Pohlaví</label>
                                 <span className="focus-border"></span>
                             </div>
 
-                            {/* Datum narozen� */}
+                            {/* Datum narození */}
                             <div className="input-group">
                                 <input
                                     type="date"
@@ -181,7 +309,7 @@ const Register: React.FC = () => {
                                 <span className="focus-border"></span>
                             </div>
 
-                            {/* St�t */}
+                            {/* Stát */}
                             <div className="input-group">
                                 <input
                                     type="text"
@@ -211,7 +339,7 @@ const Register: React.FC = () => {
                                 <span className="focus-border"></span>
                             </div>
 
-                            {/* M�sto */}
+                            {/* Město */}
                             <div className="input-group">
                                 <input
                                     type="text"
@@ -278,15 +406,17 @@ const Register: React.FC = () => {
                                     name="description"
                                     placeholder=" "
                                     rows={5}
+                                    required
                                     value={formData.description}
                                     onChange={handleChange}
                                 ></textarea>
                                 <label htmlFor="description" className="floated">Popis</label>
+
                                 <span className="focus-border"></span>
                             </div>
                         </div>
 
-                        {/* --- Souhlas --- */}
+                        {/* Souhlas */}
                         <div className="checkbox-group">
                             <input
                                 type="checkbox"
@@ -304,7 +434,7 @@ const Register: React.FC = () => {
                         <button type="submit">Registrovat</button>
 
                         <div className="links">
-                            <a href="#">Máte již účet? Přihlaste se</a>
+                            <Link to="/" className="link-login">Máte již účet? Přihlaste se</Link>
                         </div>
                     </form>
                 </div>

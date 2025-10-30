@@ -392,13 +392,13 @@ button[type="submit"] {
     font-size: 0.95rem;
 }
 
-    .links a {
+    .links link-login {
         color: var(--light-text);
         text-decoration: none;
         transition: color 0.3s ease;
     }
 
-        .links a:hover {
+        .links link-login:hover {
             color: var(--primary-red);
         }
 
