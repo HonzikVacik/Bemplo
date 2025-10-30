@@ -1,10 +1,9 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Link, useNavigate } from 'react-router-dom'; // 1. Import useNavigate
+import { Link, useNavigate } from 'react-router-dom';
 import './Register.css';
 import '../Login/Login.css';
 
-// Typ pro data formuláře
 interface FormData {
     fname: string;
     lname: string;
@@ -21,14 +20,12 @@ interface FormData {
     terms: boolean;
 }
 
-// Definice stavu pro oznámení
 interface NotificationState {
     title: string;
     message: string;
 }
 
 const Register: React.FC = () => {
-    // 2. Inicializace useNavigate
     const navigate = useNavigate();
 
     const [accountType, setAccountType] = useState('personal');
@@ -70,46 +67,120 @@ const Register: React.FC = () => {
         }
     };
 
-    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    const hasLowercase = /(?=.*[a-z])/;
+    const hasUppercase = /(?=.*[A-Z])/;
+    const hasDigit = /(?=.*\d)/;
+    const hasSpecialChar = /(?=.*[!@#$%^&*()_+\-={};':"\\|,.<>?/])/;
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
 
-        if (formData.email !== 'ai.beerandquiz@gmail.com') {
-            setNotification({
-                title: 'Oznámení',
-                // Mírně jsem upravil text, aby odpovídal registraci
-                message: 'Registrace byla úspěšná! Přesměrovávám na přihlášení...'
-            });
+        const selectedDate = new Date(formData.dob);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
 
-            // 3. Přidání automatického přesměrování po 2 sekundách
-            setTimeout(() => {
-                // Váš odkaz pro přihlášení v Register.tsx směřuje na "/", 
-                // takže předpokládám, že to je správná cesta pro login.
-                navigate('/');
-            }, 2000); // 2000 ms = 2 sekundy
-
-        } else {
+        if (selectedDate >= today) {
             setNotification({
                 title: 'Chyba',
-                // Mírně jsem upravil text, aby odpovídal registraci
-                message: 'Tento e-mail již nelze použít nebo je chybný.'
+                message: 'Datum narození musí být v minulosti (starší než dnes).'
             });
+            return;
         }
 
-        console.log('Typ účtu:', accountType);
-        console.log('Data formuláře:', formData);
+        // Validace hesla
+        const { password, passwordConfirm } = formData;
+
+        if (password !== passwordConfirm) {
+            setNotification({
+                title: 'Chyba',
+                message: 'Hesla se neshodují.'
+            });
+            return;
+        }
+
+        if (password.length < 8) {
+            setNotification({
+                title: 'Chyba',
+                message: 'Heslo musí mít alespoň 8 znaků.'
+            });
+            return;
+        }
+
+        if (!hasLowercase.test(password)) {
+            setNotification({ title: 'Chyba', message: 'Heslo musí obsahovat alespoň jedno malé písmeno.' });
+            return;
+        }
+        if (!hasUppercase.test(password)) {
+            setNotification({ title: 'Chyba', message: 'Heslo musí obsahovat alespoň jedno velké písmeno.' });
+            return;
+        }
+        if (!hasDigit.test(password)) {
+            setNotification({ title: 'Chyba', message: 'Heslo musí obsahovat alespoň jednu číslici.' });
+            return;
+        }
+        if (!hasSpecialChar.test(password)) {
+            setNotification({ title: 'Chyba', message: 'Heslo musí obsahovat alespoň jeden speciální znak.' });
+            return;
+        }
+
+        const apiParams = {
+            accountType: accountType === 'personal' ? '0' : '1',
+            name: formData.fname,
+            surname: formData.lname,
+            sexType: formData.gender === 'male' ? '0' : formData.gender === 'female' ? '1' : '2',
+            date: formData.dob,
+            email: formData.email,
+            password: formData.password,
+            country: formData.country,
+            region: formData.region,
+            city: formData.city,
+            address: formData.address,
+            description: formData.description,
+            agreeWithPrivacyPolicy: formData.terms.toString()
+        };
+
+        try {
+            const params = new URLSearchParams(apiParams);
+            const url = `/api/Account?${params.toString()}`;
+
+            const response = await fetch(url, {
+                method: 'POST',
+            });
+
+            const responseText = await response.text();
+
+            if (response.ok) {
+                setNotification({
+                    title: 'Oznámení',
+                    message: `${responseText}. Přesměrovávám na přihlášení...`
+                });
+
+                setTimeout(() => {
+                    navigate('/'); // Přesměrování na login
+                }, 2000);
+
+            } else {
+                setNotification({
+                    title: 'Chyba',
+                    message: responseText
+                });
+            }
+
+        } catch (error) {
+            console.error('Chyba při registraci:', error);
+            setNotification({
+                title: 'Chyba sítě',
+                message: 'Nelze se připojit k serveru. Zkuste to prosím později.'
+            });
+        }
     };
 
-    // 4. Úprava "OK" tlačítka v modálu (pro případ chyby)
-    // Přesměrování proběhne automaticky jen při úspěchu,
-    // ale u chybové hlášky uživatel stále musí kliknout na "OK".
     const modalContent = notification ? (
         <div className="modal-overlay" onClick={() => setNotification(null)}>
             <div className="modal-box" onClick={(e) => e.stopPropagation()}>
                 <h2>{notification.title}</h2>
                 <p>{notification.message}</p>
 
-                {/* Zobrazíme tlačítko jen pokud to NENÍ úspěšná notifikace 
-                    (protože ta přesměruje sama) */}
                 {notification.title === 'Chyba' && (
                     <button
                         className="modal-close-btn"
@@ -137,6 +208,7 @@ const Register: React.FC = () => {
                         <h2>Vytvořit účet</h2>
 
                         <div className="toggle-switch">
+                            {/* Přepínač účtů */}
                             <input
                                 type="radio"
                                 id="type-personal"
@@ -158,9 +230,6 @@ const Register: React.FC = () => {
                             <span className="slider"></span>
                         </div>
 
-                        {/* ... zbytek formuláře (beze změny) ... */}
-
-                        {/* --- Mřížka formuláře --- */}
                         <div className="form-grid">
                             {/* Jméno */}
                             <div className="input-group">
@@ -218,7 +287,7 @@ const Register: React.FC = () => {
                                 >
                                     <option value="" disabled hidden></option>
                                     <option value="male">Muž</option>
-                                    <option value="female"> Žena</option>
+                                    <option value="female">Žena</option>
                                     <option value="other">Jiné</option>
                                 </select>
                                 <label htmlFor="gender" className="floated">Pohlaví</label>
@@ -337,6 +406,7 @@ const Register: React.FC = () => {
                                     name="description"
                                     placeholder=" "
                                     rows={5}
+                                    required
                                     value={formData.description}
                                     onChange={handleChange}
                                 ></textarea>
@@ -346,7 +416,7 @@ const Register: React.FC = () => {
                             </div>
                         </div>
 
-                        {/* --- Souhlas --- */}
+                        {/* Souhlas */}
                         <div className="checkbox-group">
                             <input
                                 type="checkbox"
