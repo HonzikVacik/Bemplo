@@ -1,4 +1,5 @@
-﻿.background-animation {
+﻿/* --- 1. ANIMOVANÉ POZADÍ --- */
+.background-animation {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -53,6 +54,7 @@
     }
 }
 
+/* --- 2. WRAPPER A HLAVNÍ KONTEJNER --- */
 .register-wrapper {
     position: relative;
     z-index: 10;
@@ -125,6 +127,7 @@ h2 {
     text-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
 }
 
+/* Úpravy pro SWITCH */
 .toggle-switch {
     position: relative;
     display: flex;
@@ -175,22 +178,13 @@ h2 {
 
 .form-grid {
     display: grid;
-    /* Responzivní kouzlo: 
-      - Vytvoří sloupce, které mají min. 300px.
-      - 'auto-fit' zajistí, že se automaticky přizpůsobí počtu sloupců.
-      - Na mobilu (šířka < 600px) bude jen jeden sloupec.
-      - Na tabletu/notebooku (šířka > 600px) budou 2 sloupce.
-      - Na velké obrazovce (šířka > 900px) budou 3 sloupce.
-    */
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem 2.5rem; /* Mezery mezi řádky a sloupci */
+    gap: 2rem 2.5rem;
     width: 100%;
     margin-bottom: 2rem;
 }
 
-/* Speciální pravidlo pro textarea, aby zabrala celou šířku */
 .input-group.span-full {
-    /* Začne na 1. sloupci a skončí na posledním (-1) */
     grid-column: 1 / -1;
 }
 
@@ -216,6 +210,7 @@ h2 {
         padding-top: 1.5rem;
     }
 
+    /* Úpravy pro LABEL */
     .input-group label {
         position: absolute;
         left: 1.4rem;
@@ -243,9 +238,9 @@ h2 {
         appearance: none;
         -webkit-appearance: none;
         cursor: pointer;
-        padding-right: 2.5rem; /* Místo pro šipku */
+        padding-right: 2.5rem;
     }
-    /* Vlastní šipka pro SELECT */
+
     .input-group::after {
         content: '▼';
         position: absolute;
@@ -256,27 +251,27 @@ h2 {
         pointer-events: none;
         transition: color 0.3s ease;
     }
-    /* Skryjeme šipku, pokud to není select */
+
     .input-group:not(:has(select))::after {
         display: none;
     }
 
     .input-group select:focus + label + .focus-border + * {
-        color: var(--primary-red); /* Zbarvení šipky */
+        color: var(--primary-red);
     }
 
     /* Úpravy pro TEXTAREA */
     .input-group textarea {
-        resize: vertical; /* Povolí jen vertikální změnu velikosti */
+        resize: vertical;
         min-height: 100px;
         line-height: 1.6;
     }
 
     /* Úpravy pro DATE */
     .input-group input[type="date"] {
-        padding-right: 1rem; /* Zabrání překrytí textu ikonkou */
+        padding-right: 1rem;
     }
-        /* Změna barvy ikonky kalendáře */
+
         .input-group input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(30%) sepia(10%) saturate(1000%) hue-rotate(180deg) brightness(90%) contrast(90%);
             cursor: pointer;
@@ -286,8 +281,6 @@ h2 {
             filter: invert(40%) sepia(100%) saturate(5000%) hue-rotate(200deg) brightness(100%) contrast(100%);
         }
 
-
-    /* Společný focus border */
     .input-group input:focus,
     .input-group select:focus,
     .input-group textarea:focus {
@@ -311,6 +304,7 @@ h2 {
         left: 0;
     }
 
+/* Úpravy pro CHECKBOX */
 .checkbox-group {
     display: flex;
     align-items: center;
@@ -337,7 +331,7 @@ h2 {
             background: var(--primary-red);
             border-color: var(--primary-red);
         }
-        /* Fajfka */
+
         .checkbox-group input[type="checkbox"]::after {
             content: '✔';
             color: white;
@@ -386,6 +380,7 @@ button[type="submit"] {
         box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
     }
 
+/* Úpravy pro ODKAZY */
 .links {
     text-align: center;
     margin-top: 2rem;
@@ -402,20 +397,20 @@ button[type="submit"] {
             color: var(--primary-red);
         }
 
+/* --- 3. RESPONZIVITA --- */
 @media (max-width: 768px) {
     .register-container {
         padding: 2.5rem 2.8rem;
     }
 
     .form-grid {
-        /* Na tabletu vynutíme max 2 sloupce, pokud by se vešly 3 */
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
 }
 
 @media (max-width: 480px) {
     body {
-        padding: 2rem 0; /* Menší okraj na mobilu */
+        padding: 2rem 0;
     }
 
     .register-wrapper {
@@ -437,8 +432,7 @@ button[type="submit"] {
     }
 
     .form-grid {
-        /* Na mobilu se grid 'auto-fit' postará o 1 sloupec */
-        gap: 1.5rem 0; /* Menší mezery na mobilu */
+        gap: 1.5rem 0;
     }
 
     .input-group input,

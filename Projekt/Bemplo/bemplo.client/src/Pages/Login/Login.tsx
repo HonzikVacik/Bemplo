@@ -15,7 +15,6 @@ const Login: React.FC = () => {
         e.preventDefault();
 
         const formData = new FormData(e.currentTarget);
-        // Backend očekává 'email', ale formulář má 'username'. Použijeme hodnotu z 'username'.
         const email = formData.get('username') as string;
         const password = formData.get('password') as string;
 
@@ -24,12 +23,12 @@ const Login: React.FC = () => {
             const params = new URLSearchParams({ email, password });
             const url = `/api/Auth/token?${params.toString()}`;
 
-            // 2. Odešleme požadavek. Neposíláme JSON body ani Content-Type header.
+            // 2. Odešleme požadavek
             const response = await fetch(url, {
                 method: 'POST',
             });
 
-            // 3. Získáme odpověď jako ČISTÝ TEXT (ne JSON)
+            // 3. Získáme odpověď jako ČISTÝ TEXT
             const responseText = await response.text();
 
             // 4. Zkontrolujeme status odpovědi
@@ -40,17 +39,14 @@ const Login: React.FC = () => {
 
                 setNotification({
                     title: 'Přihlášení úspěšné',
-                    // Nezobrazujeme token uživateli
                     message: 'Byli jste úspěšně přihlášeni.'
                 });
 
-                // Zde byste typicky přesměrovali uživatele
-                // např. history.push('/dashboard') nebo pomocí useNavigate()
             } else {
                 // Chyba: responseText obsahuje chybovou hlášku ze serveru
                 setNotification({
                     title: 'Chyba',
-                    message: responseText // Zobrazíme text, který poslal server
+                    message: responseText
                 });
             }
 
@@ -63,7 +59,6 @@ const Login: React.FC = () => {
         }
     };
 
-    // ... zbytek komponenty zůstává stejný ...
     const modalContent = notification ? (
         <div className="modal-overlay" onClick={() => setNotification(null)}>
             <div className="modal-box" onClick={(e) => e.stopPropagation()}>
@@ -93,7 +88,6 @@ const Login: React.FC = () => {
                     <form className="login-form" onSubmit={handleSubmit}>
                         <h2>Přihlášení</h2>
                         <div className="input-group">
-                            {/* Dává smysl změnit type na "email" a name na "email" */}
                             <input type="email" id="username" name="username" required />
                             <label htmlFor="username">Email</label>
                             <span className="focus-border"></span>

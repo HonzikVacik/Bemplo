@@ -1,3 +1,4 @@
+/* --- 1. ANIMOVANÉ POZADÍ --- */
 .background-animation {
     position: fixed;
     width: 100%;
@@ -53,6 +54,7 @@
     }
 }
 
+/* --- 2. WRAPPER A HLAVNÍ KONTEJNER --- */
 .login-wrapper {
     position: relative;
     z-index: 10;
@@ -104,6 +106,7 @@
     transform: translateZ(-1px);
 }
 
+/* --- 3. FORMULÁØ --- */
 .login-form {
     position: relative;
     z-index: 1;
@@ -154,7 +157,6 @@ h2 {
         transition: all 0.3s ease;
     }
 
-    /* Pøi focusu bude label modrý (z promìnné) */
     .input-group input:focus + label,
     .input-group input:not(:placeholder-shown) + label {
         top: 0.5rem;
@@ -163,12 +165,10 @@ h2 {
         transform: translateY(0);
     }
 
-    /* Pøi focusu se spodní linka zbarví modøe (pøed animací) */
     .input-group input:focus {
         border-color: var(--primary-red);
     }
 
-    /* Animaèní linka bude mít modrý gradient (z promìnných) */
     .input-group .focus-border {
         position: absolute;
         bottom: 0;
@@ -184,11 +184,9 @@ h2 {
         left: 0;
     }
 
-/* --- TLAÈÍTKO --- */
 button[type="submit"] {
     width: 100%;
     padding: 1.3rem;
-    /* Modrý gradient (z promìnných) */
     background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
     color: white;
     border: none;
@@ -198,18 +196,16 @@ button[type="submit"] {
     cursor: pointer;
     transition: all 0.3s ease;
     margin-top: 1.5rem;
-    /* Modrý stín tlaèítka */
     box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
     letter-spacing: 0.05em;
 }
 
-    /* Modrý stín tlaèítka pøi hoveru */
     button[type="submit"]:hover {
         transform: translateY(-5px) scale(1.02);
         box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
     }
 
-/* --- ODKAZY --- */
+/* --- Odkazy --- */
 .links {
     text-align: center;
     margin-top: 2rem;
@@ -222,7 +218,7 @@ button[type="submit"] {
 }
 
     .links a {
-        color: var(--light-text); /* Tmavý text */
+        color: var(--light-text);
         text-decoration: none;
         padding: 0.5rem 0;
         transition: color 0.3s ease, transform 0.2s ease;
@@ -233,12 +229,12 @@ button[type="submit"] {
         width: 100%;
     }
 
-        /* Pøi hoveru bude modrý (z promìnné) */
         .links a:hover {
             color: var(--primary-red);
             transform: translateY(-2px);
         }
 
+/* --- 4. RESPONZIVITA --- */
 @media (max-width: 768px) {
     .login-wrapper {
         width: 80%;
@@ -295,7 +291,7 @@ button[type="submit"] {
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Musí být nad vším ostatním */
+    z-index: 1000;
     animation: fadeIn 0.3s ease-out;
 }
 
