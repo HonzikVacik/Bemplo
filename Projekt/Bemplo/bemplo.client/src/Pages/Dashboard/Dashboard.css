@@ -1,0 +1,739 @@
+/* --- 1. ANIMOVANÉ POZADÍ --- */
+.background-animation {
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background: linear-gradient(135deg, #F0F4F8 0%, #E6EEF5 50%, #F0F4F8 100%);
+    z-index: -1;
+    overflow: hidden;
+}
+
+    .background-animation::before,
+    .background-animation::after {
+        content: '';
+        position: absolute;
+        border-radius: 50%;
+        background: rgba(0, 123, 255, 0.08);
+        filter: blur(80px);
+        animation: floatLarge 20s infinite ease-in-out alternate;
+    }
+
+    .background-animation::before {
+        width: 600px;
+        height: 600px;
+        top: -10%;
+        left: -15%;
+        animation-delay: 0s;
+    }
+
+    .background-animation::after {
+        width: 700px;
+        height: 700px;
+        bottom: -15%;
+        right: -20%;
+        background: rgba(0, 163, 255, 0.07);
+        animation-delay: 10s;
+    }
+
+@keyframes floatLarge {
+    0% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.1;
+    }
+
+    50% {
+        transform: translate(20px, -30px) scale(1.05);
+        opacity: 0.15;
+    }
+
+    100% {
+        transform: translate(0, 0) scale(1);
+        opacity: 0.1;
+    }
+}
+
+/* --- 2. WRAPPER A HLAVNÍ KONTEJNER --- */
+.profile-wrapper {
+    position: relative;
+    z-index: 10;
+    perspective: 1000px;
+    display: flex;
+    justify-content: center;
+    width: 90%;
+    max-width: 1100px;
+}
+
+.profile-container {
+    background: var(--glass-background);
+    border: 1px solid var(--glass-border);
+    border-radius: 20px;
+    padding: 3rem 3.5rem;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    width: 100%;
+    backdrop-filter: blur(15px);
+    -webkit-backdrop-filter: blur(15px);
+    position: relative;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    animation: popIn 0.6s ease-out forwards;
+}
+
+@keyframes popIn {
+    from {
+        opacity: 0;
+        transform: translateY(50px) scale(0.9);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+.profile-container::before {
+    content: '';
+    position: absolute;
+    top: -50px;
+    left: -50px;
+    right: -50px;
+    bottom: -50px;
+    background: linear-gradient(45deg, rgba(0, 123, 255, 0.05) 0%, rgba(0, 163, 255, 0.05) 100%);
+    z-index: -1;
+    filter: blur(40px);
+    opacity: 0.8;
+    transform: translateZ(-1px);
+}
+
+.profile-form {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* --- 3. ZÁHLAVÍ A TLAÈÍTKA --- */
+.profile-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+    gap: 1rem;
+}
+
+    .profile-header h2 {
+        text-align: left;
+        margin-bottom: 0;
+        font-weight: 700;
+        font-size: 2.2rem;
+        background: -webkit-linear-gradient(45deg, var(--primary-red), var(--secondary-red));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
+    }
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+}
+
+/* --- Styl pro ikony (Chat, Search, atd.) --- */
+.btn-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 1.4rem;
+    padding: 0.6rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    color: var(--input-placeholder);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+    .btn-icon:hover {
+        background: rgba(0, 123, 255, 0.1);
+        color: var(--primary-red);
+        transform: translateY(-2px);
+    }
+
+    .btn-icon.logout:hover {
+        color: #dc3545;
+        background: rgba(220, 53, 69, 0.1);
+    }
+
+.separator {
+    width: 1px;
+    height: 24px;
+    background-color: var(--input-border);
+    margin: 0 0.2rem;
+}
+
+/* --- 4. SEKCE (Panely) --- */
+.profile-section {
+    width: 100%;
+    margin-bottom: 2rem;
+    background: rgba(255, 255, 255, 0.4);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 15px;
+    padding: 2rem;
+}
+
+    .profile-section:last-of-type {
+        margin-bottom: 1rem;
+    }
+
+    .profile-section h3 {
+        text-transform: uppercase;
+        font-weight: 600;
+        font-size: 1.1rem;
+        color: var(--primary-red);
+        letter-spacing: 0.05em;
+        margin-bottom: 0.7rem;
+    }
+
+    .profile-section p {
+        margin-bottom: 1rem;
+        color: var(--input-placeholder);
+    }
+
+/* --- 5. INPUTY A FORMULÁØE --- */
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem 2.5rem;
+    width: 100%;
+}
+
+.input-group.span-full {
+    grid-column: 1 / -1;
+}
+
+.input-group {
+    position: relative;
+    width: 100%;
+    text-align: left;
+}
+
+    .input-group input,
+    .input-group select,
+    .input-group textarea {
+        width: 100%;
+        padding: 1.2rem 1.4rem 0.8rem 1.4rem;
+        background: transparent;
+        border: none;
+        border-bottom: 2px solid var(--input-border);
+        color: var(--light-text);
+        font-size: 1rem;
+        font-family: 'Poppins', sans-serif;
+        outline: none;
+        transition: all 0.3s ease;
+        padding-top: 1.6rem;
+    }
+
+    .input-group label {
+        position: absolute;
+        left: 1.4rem;
+        transform: translateY(-50%);
+        color: var(--input-placeholder);
+        font-size: 1rem;
+        pointer-events: none;
+        transition: all 0.3s ease;
+    }
+
+        .input-group input:focus + label,
+        .input-group input:not(:placeholder-shown) + label,
+        .input-group textarea:focus + label,
+        .input-group textarea:not(:placeholder-shown) + label,
+        .input-group label.floated {
+            top: 0.5rem;
+            font-size: 0.8rem;
+            color: var(--primary-red);
+            transform: translateY(0);
+        }
+
+    .input-group textarea {
+        resize: vertical;
+        min-height: 100px;
+        line-height: 1.6;
+    }
+
+        .input-group input:focus,
+        .input-group select:focus,
+        .input-group textarea:focus {
+            border-color: var(--primary-red);
+        }
+
+    .input-group .focus-border {
+        position: absolute;
+        bottom: 0;
+        left: 50%;
+        width: 0;
+        height: 2px;
+        background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
+        transition: width 0.3s ease-out, left 0.3s ease-out;
+    }
+
+    .input-group input:focus ~ .focus-border,
+    .input-group select:focus ~ .focus-border,
+    .input-group textarea:focus ~ .focus-border {
+        width: 100%;
+        left: 0;
+    }
+
+/* --- 6. KOMPONENTY (Pøepínaèe, Tabulky, Tlaèítka) --- */
+
+.toggle-switch {
+    position: relative;
+    display: flex;
+    width: 100%;
+    max-width: 300px;
+    background: rgba(0, 20, 40, 0.08);
+    border-radius: 50px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+    .toggle-switch input[type="radio"] {
+        display: none;
+    }
+
+    .toggle-switch label {
+        width: 50%;
+        padding: 0.75rem 1rem;
+        text-align: center;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--input-placeholder);
+        cursor: pointer;
+        transition: color 0.3s ease;
+        z-index: 2;
+        user-select: none;
+    }
+
+    .toggle-switch .slider {
+        position: absolute;
+        width: 50%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
+        border-radius: 50px;
+        box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+        transition: transform 0.3s ease-out;
+        z-index: 1;
+    }
+
+    .toggle-switch input[type="radio"]:nth-of-type(2):checked ~ .slider {
+        transform: translateX(100%);
+    }
+
+    .toggle-switch input[type="radio"]:checked + label {
+        color: white;
+    }
+
+.experience-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .experience-table td {
+        padding: 0.75rem;
+        border-bottom: 1px solid var(--input-border);
+        font-size: 0.95rem;
+        color: var(--light-text);
+    }
+
+    .experience-table tr:last-child td {
+        border-bottom: none;
+    }
+
+    .experience-table td:nth-child(2) {
+        text-align: right;
+        font-weight: 600;
+        color: var(--input-placeholder);
+    }
+
+    .experience-table td:nth-child(3) {
+        text-align: right;
+        font-weight: 600;
+        color: var(--primary-red);
+        min-width: 50px;
+    }
+
+
+    .experience-table .slider-cell {
+        vertical-align: middle;
+        padding: 0.5rem;
+        width: 40%;
+    }
+
+.slider-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.slider-value {
+    font-weight: 600;
+    color: var(--primary-red);
+    min-width: 30px;
+    text-align: right;
+}
+
+.custom-range {
+    -webkit-appearance: none;
+    width: 100%;
+    height: 6px;
+    background: rgba(0, 20, 40, 0.1);
+    border-radius: 5px;
+    outline: none;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+    /* Webkit (Chrome, Safari, Edge) */
+    .custom-range::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        background: linear-gradient(to bottom right, var(--primary-red), var(--secondary-red));
+        box-shadow: 0 2px 5px rgba(0, 123, 255, 0.4);
+        cursor: pointer;
+        transition: transform 0.2s ease;
+        margin-top: 0;
+    }
+
+        .custom-range::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+    /* Webkit (Firefox) */
+    .custom-range::-moz-range-thumb {
+        width: 18px;
+        height: 18px;
+        border: none;
+        border-radius: 50%;
+        background: linear-gradient(to bottom right, var(--primary-red), var(--secondary-red));
+        box-shadow: 0 2px 5px rgba(0, 123, 255, 0.4);
+        cursor: pointer;
+        transition: transform 0.2s ease;
+    }
+
+        .custom-range::-moz-range-thumb:hover {
+            transform: scale(1.2);
+        }
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+    .section-header h3 {
+        margin-bottom: 0;
+    }
+
+.dynamic-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    grid-column: 1 / -1;
+}
+
+.contact-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+}
+
+    .contact-row .remove-btn {
+        flex-shrink: 0;
+        width: 35px;
+        height: 35px;
+        padding: 5px;
+        color: #dc3545;
+        background: rgba(220, 53, 69, 0.1);
+        border-radius: 50%;
+        transition: all 0.3s ease;
+    }
+
+        .contact-row .remove-btn:hover {
+            background: #dc3545;
+            color: white;
+            transform: scale(1.1);
+        }
+
+    .contact-row .input-group {
+        flex-grow: 1;
+        margin-bottom: 0;
+    }
+
+.add-contact {
+    color: var(--primary-red) !important;
+    background: rgba(0, 123, 255, 0.1) !important;
+}
+
+    .add-contact:hover {
+        background: var(--primary-red) !important;
+        color: white !important;
+    }
+
+.contact-action {
+    align-self: end;
+}
+
+.btn {
+    width: auto;
+    padding: 0.8rem 2rem;
+    border: none;
+    border-radius: 50px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    letter-spacing: 0.05em;
+}
+
+.btn-primary {
+    background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
+    color: white;
+    box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+}
+
+    .btn-primary:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
+    }
+
+.btn-secondary {
+    background: transparent;
+    color: var(--primary-red);
+    border: 2px solid var(--primary-red);
+}
+
+    .btn-secondary:hover {
+        background: var(--primary-red);
+        color: white;
+        transform: translateY(-3px);
+    }
+
+.btn.full-width {
+    width: 100%;
+    margin-top: 0.5rem;
+}
+
+/* --- 7. FOTOGALERIE --- */
+.photo-gallery {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+    .photo-gallery .main-photo {
+        width: 100%;
+        border-radius: 10px;
+        overflow: hidden;
+        line-height: 0;
+    }
+
+        .photo-gallery .main-photo img {
+            width: 100%;
+            aspect-ratio: 16 / 10;
+            object-fit: cover;
+        }
+
+.thumbnail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.75rem;
+}
+
+.thumbnail {
+    border-radius: 8px;
+    overflow: hidden;
+    line-height: 0;
+    border: 3px solid transparent;
+    transition: all 0.3s ease;
+    cursor: grab;
+}
+
+    .thumbnail img {
+        width: 100%;
+        height: 100%;
+        aspect-ratio: 1 / 1;
+        object-fit: cover;
+    }
+
+    .thumbnail:hover {
+        border-color: var(--primary-red);
+    }
+
+    .thumbnail:active {
+        cursor: grabbing;
+    }
+
+/* --- 8. ODKAZY V PATIÈCE --- */
+.links {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 0.95rem;
+}
+
+    .links a {
+        color: var(--light-text);
+        text-decoration: none;
+        transition: color 0.3s ease;
+        margin: 0 0.5rem;
+    }
+
+        .links a:hover {
+            color: var(--primary-red);
+        }
+
+
+/* --- 9. RESPONZIVITA --- */
+@media (max-width: 768px) {
+    .profile-container {
+        padding: 2.5rem 2rem;
+    }
+
+    .profile-header h2 {
+        font-size: 2rem;
+    }
+
+    .form-grid {
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .profile-wrapper {
+        width: 95%;
+    }
+
+    .profile-container {
+        padding: 2rem 1.5rem;
+    }
+
+    /* Zmìna hlavièky na sloupec */
+    .profile-header {
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem;
+    }
+
+    .header-actions {
+        justify-content: center;
+        width: 100%;
+    }
+
+    .separator {
+        display: none;
+    }
+
+    /* Tlaèítko na celou šíøku na mobilu */
+    .header-actions .btn-secondary {
+        width: 100%;
+        margin-top: 0.5rem;
+    }
+
+    /* Buòka tabulky se sliderem */
+    .experience-table .slider-cell {
+        width: auto;
+        display: block;
+        padding: 2rem 0 2rem 0;
+    }
+
+    /* Obal slideru */
+    .slider-wrapper {
+        flex-direction: column-reverse;
+        align-items: flex-start;
+        gap: 5px;
+        width: 100%;
+    }
+
+    /* Samotný slider */
+    .custom-range {
+        width: 100%;
+    }
+
+    /* Èíslo (hodnota) */
+    .slider-value {
+        text-align: center;
+        width: 100%;
+        font-size: 0.9rem;
+        margin-bottom: 2px;
+        color: var(--primary-red);
+    }
+}
+/* Styl pro ikony */
+.btn-icon {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.6rem;
+    border-radius: 50%;
+    transition: all 0.3s ease;
+    color: var(--input-placeholder);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .btn-icon svg {
+        width: 24px;
+        height: 24px;
+        stroke-width: 2;
+        transition: stroke 0.3s ease;
+    }
+
+    .btn-icon:hover {
+        background: rgba(0, 123, 255, 0.1);
+        color: var(--primary-red);
+        transform: translateY(-2px);
+    }
+
+    /* Specifický hover pro odhlášení */
+    .btn-icon.logout:hover {
+        color: #dc3545;
+        background: rgba(220, 53, 69, 0.1);
+    }
+
+@media (max-width: 480px) {
+    body {
+        padding: 2rem 0;
+    }
+
+    .profile-wrapper {
+        width: 90%;
+    }
+
+    .profile-container {
+        padding: 2.5rem 1.5rem;
+    }
+
+    h2 {
+        font-size: 2rem;
+    }
+
+    .profile-header {
+        justify-content: center;
+        text-align: center;
+    }
+
+    .form-grid {
+        gap: 1.5rem 0;
+    }
+}
