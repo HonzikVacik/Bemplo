@@ -7,6 +7,7 @@ import LoginPage from './Pages/Login/Login.tsx'
 import RegisterPage from './Pages/Register/Register.tsx'
 import DashboardPage from './Pages/Dashboard/Dashboard.tsx'
 import PrivacyPolicyPage from './Pages/PrivacyPolicy/PrivacyPolicy.tsx'
+import ChatManagerPage from './Pages/ChatManager/ChatManager.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -17,6 +18,8 @@ createRoot(document.getElementById('root')!).render(
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/privacypolicy" element={<PrivacyPolicyPage />} />
+                <Route path="/chat" element={<ChatManagerPage />} />
+
             </Routes>
         </BrowserRouter>
   </StrictMode>,
