@@ -1,4 +1,4 @@
-/* --- 2. POZADÍ (shodné s dashboard.css) --- */
+/* --- 1. ANIMOVANÉ POZADÍ --- */
 .background-animation {
     position: fixed;
     width: 100%;
@@ -54,12 +54,12 @@
     }
 }
 
-/* --- 3. KONTEJNERY --- */
+/* --- 2. WRAPPER A HLAVNÍ KONTEJNER --- */
 .wrapper {
     position: relative;
     z-index: 10;
     width: 90%;
-    max-width: 600px; /* Užší než dashboard, ideální pro chat list */
+    max-width: 600px;
 }
 
 .glass-container {
@@ -71,26 +71,25 @@
     width: 100%;
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
-    min-height: 90vh; /* Aby byla stránka dostateènì vysoká */
+    min-height: 90vh;
     display: flex;
     flex-direction: column;
 }
 
-/* --- 4. HORNÍ LIŠTA (HEADER) --- */
+/* --- 3. HORNÍ LIŠTA (HEADER) --- */
 .chat-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 2rem;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(0, 0, 0, 0.05); /* Jemná linka pod hlavièkou */
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
     .chat-header h2 {
         margin: 0;
         font-weight: 700;
         font-size: 2.2rem;
-        /* Gradientní text */
         background: -webkit-linear-gradient(45deg, var(--primary-red), var(--secondary-red));
         -webkit-background-clip: text;
         -webkit-text-fill-color: transparent;
@@ -124,7 +123,7 @@
         transform: scale(1.1);
     }
 
-/* --- 5. SEZNAM CHATÙ --- */
+/* --- 4. SEZNAM CHATÙ --- */
 .chat-list {
     display: flex;
     flex-direction: column;
@@ -132,15 +131,14 @@
     flex-grow: 1;
 }
 
-/* Jedna položka chatu */
+/* Položka chatu */
 .chat-item {
-    background: rgba(255, 255, 255, 0.4); /* Svìtlejší "panel" */
+    background: rgba(255, 255, 255, 0.4);
     border: 1px solid rgba(255, 255, 255, 0.6);
     border-radius: 15px;
     padding: 1.2rem 1.5rem;
     cursor: pointer;
     transition: all 0.3s ease;
-    /* Flexbox pro zarovnání obsahu */
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -166,21 +164,21 @@
     font-weight: 700;
     color: var(--light-text);
     font-size: 1.05rem;
-    white-space: nowrap; /* Jméno na jeden øádek */
+    white-space: nowrap;
 }
 
 /* Náhled zprávy (Vpravo) */
 .chat-preview {
     color: var(--input-placeholder);
     font-size: 0.9rem;
-    white-space: nowrap; /* Text na jeden øádek */
-    overflow: hidden; /* Skrýt pøetékající text */
-    text-overflow: ellipsis; /* Pøidat "..." na konci */
-    max-width: 50%; /* Maximálnì polovina šíøky øádku */
-    text-align: right; /* Zarovnat doprava podle nákresu */
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 50%;
+    text-align: right;
 }
 
-/* --- 6. RESPONZIVITA --- */
+/* --- 5. RESPONZIVITA --- */
 @media (max-width: 480px) {
     .wrapper {
         width: 95%;
@@ -194,7 +192,6 @@
         padding: 1rem;
     }
 
-    /* Na mobilu povolíme preview zabrat více místa, pokud je jméno krátké */
     .chat-preview {
         max-width: 60%;
     }
