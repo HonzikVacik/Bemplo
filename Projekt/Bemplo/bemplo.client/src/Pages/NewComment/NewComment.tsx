@@ -58,7 +58,7 @@ function AddComment() {
                             </div>
 
                             <div className="btn-group">
-                                <Link to="dashboard" className="btn btn-secondary">
+                                <Link to="/dashboard" className="btn btn-secondary">
                                     Zpět
                                 </Link>
 

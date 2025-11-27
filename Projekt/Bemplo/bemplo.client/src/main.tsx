@@ -10,6 +10,7 @@ import PrivacyPolicyPage from './Pages/PrivacyPolicy/PrivacyPolicy.tsx'
 import ChatManagerPage from './Pages/ChatManager/ChatManager.tsx'
 import ChatDetailPage from './Pages/ChatDetail/ChatDetail.tsx'
 import NewCommentPage from './Pages/NewComment/NewComment.tsx'
+import CommentsPage from './Pages/Comments/Comments.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -23,6 +24,7 @@ createRoot(document.getElementById('root')!).render(
                 <Route path="/chat" element={<ChatManagerPage />} />
                 <Route path="/chatdetail" element={<ChatDetailPage />} />
                 <Route path="/newcomment" element={<NewCommentPage />} />
+                <Route path="/comments" element={<CommentsPage />} />
 
             </Routes>
         </BrowserRouter>
