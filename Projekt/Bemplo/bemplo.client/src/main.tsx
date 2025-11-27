@@ -11,6 +11,7 @@ import ChatManagerPage from './Pages/ChatManager/ChatManager.tsx'
 import ChatDetailPage from './Pages/ChatDetail/ChatDetail.tsx'
 import NewCommentPage from './Pages/NewComment/NewComment.tsx'
 import CommentsPage from './Pages/Comments/Comments.tsx'
+import SearchPage from './Pages/Search/Search.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -25,6 +26,7 @@ createRoot(document.getElementById('root')!).render(
                 <Route path="/chatdetail" element={<ChatDetailPage />} />
                 <Route path="/newcomment" element={<NewCommentPage />} />
                 <Route path="/comments" element={<CommentsPage />} />
+                <Route path="/search" element={<SearchPage />} />
 
             </Routes>
         </BrowserRouter>
