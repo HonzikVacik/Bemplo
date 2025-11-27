@@ -117,7 +117,7 @@
         outline: none;
         transition: all 0.3s ease;
         padding-top: 1.5rem;
-        resize: vertical; /* Povolí zmìnu výšky */
+        resize: vertical;
         min-height: 150px;
     }
 
@@ -215,7 +215,7 @@
     font-weight: 600;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-decoration: none; /* Pro <a> tag */
+    text-decoration: none;
     display: inline-block;
 }
 
@@ -234,9 +234,7 @@
     background: transparent;
     color: var(--primary-red);
     border: 2px solid var(--primary-red);
-    /* Pùvodní CSS zde mìlo duplicitní padding, nechal jsem ten druhý, který pøepisuje první */
-    margin-top: 1rem;
-    padding: 1.3rem 2rem;
+
 }
 
     .newComment-page .btn-secondary:hover {

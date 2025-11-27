@@ -300,5 +300,6 @@
     .comments-page .wrapper {
         height: auto;
         min-height: 90vh;
+        margin: 1rem 0;
     }
 }

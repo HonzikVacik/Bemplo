@@ -4,6 +4,7 @@
     align-items: center;
     width: 100%;
     min-height: 100vh;
+    margin: 3rem 0;
 }
 
 /* --- 1. ANIMOVANÉ POZADÍ --- */
@@ -687,7 +688,7 @@
     }
 }
 
-/* Styl pro ikony - duplicitní v pùvodním souboru, pøepsáno s prefixem */
+/* Styl pro ikony */
 .dashboard-page .btn-icon {
     background: transparent;
     border: none;
@@ -721,9 +722,9 @@
     }
 
 @media (max-width: 480px) {
-    /* Pùvodnì body, zmìnìno na .dashboard-page pro lokální aplikaci */
     .dashboard-page {
-        padding: 2rem 0;
+        padding: 0 0;
+        margin: 1.5rem 0;
     }
 
         .dashboard-page .profile-wrapper {

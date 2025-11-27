@@ -1,9 +1,10 @@
 ﻿.search-page {
     display: flex;
     justify-content: center;
-    align-items: center;
+    align-items: top;
     width: 100%;
     min-height: 100vh;
+    margin: 3rem 0;
 }
 
 /* --- 1. ANIMOVANÉ POZADÍ --- */
@@ -358,3 +359,10 @@
         background: var(--primary-red);
         color: white;
     }
+
+/* --- 3. RESPONZIVITA --- */
+@media (max-width: 480px) {
+    .search-page {
+        margin: 1.5rem 0;
+    }
+}
