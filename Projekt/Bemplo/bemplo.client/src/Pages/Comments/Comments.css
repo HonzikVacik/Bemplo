@@ -1,5 +1,13 @@
+.comments-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+}
+
 /* --- 1. ANIMOVANÉ POZADÍ --- */
-.background-animation {
+.comments-page .background-animation {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -10,7 +18,7 @@
     overflow: hidden;
 }
 
-    .background-animation::before {
+    .comments-page .background-animation::before {
         content: '';
         position: absolute;
         width: 600px;
@@ -23,7 +31,7 @@
     }
 
 /* --- 2. WRAPPER A HLAVNÍ KONTEJNER --- */
-.wrapper {
+.comments-page .wrapper {
     width: 95%;
     max-width: 1000px;
     height: 90vh;
@@ -31,7 +39,7 @@
     z-index: 10;
 }
 
-.glass-container {
+.comments-page .glass-container {
     background: var(--glass-background);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
@@ -47,7 +55,7 @@
 }
 
 /* --- 3. HORNÍ LIŠTA --- */
-.page-header {
+.comments-page .page-header {
     display: flex;
     align-items: center;
     justify-content: space-between; /* Rozmístìní: Zpìt - Nadpis - Filtry */
@@ -58,7 +66,7 @@
 }
 
     /* Nadpis uprostøed */
-    .page-header h2 {
+    .comments-page .page-header h2 {
         margin: 0;
         font-size: 1.5rem;
         font-weight: 700;
@@ -73,7 +81,7 @@
     }
 
 /* Tlaèítko Zpìt */
-.btn-icon {
+.comments-page .btn-icon {
     background: transparent;
     border: none;
     cursor: pointer;
@@ -87,27 +95,27 @@
     transition: all 0.3s ease;
 }
 
-    .btn-icon svg {
+    .comments-page .btn-icon svg {
         width: 28px;
         height: 28px;
         stroke-width: 2;
     }
 
-    .btn-icon:hover {
+    .comments-page .btn-icon:hover {
         background: rgba(0, 123, 255, 0.1);
         color: var(--primary-red);
         transform: translateY(-2px);
     }
 
 /* Filtry vpravo */
-.filters-group {
+.comments-page .filters-group {
     display: flex;
     gap: 0.8rem;
     align-items: center;
 }
 
-    .filters-group input,
-    .filters-group select {
+    .comments-page .filters-group input,
+    .comments-page .filters-group select {
         padding: 0.6rem 1rem;
         border-radius: 50px;
         border: 1px solid rgba(255, 255, 255, 0.6);
@@ -119,44 +127,44 @@
         transition: all 0.3s ease;
     }
 
-        .filters-group input:focus,
-        .filters-group select:focus {
+        .comments-page .filters-group input:focus,
+        .comments-page .filters-group select:focus {
             border-color: var(--primary-red);
             background: rgba(255, 255, 255, 0.8);
         }
 
 @media (max-width: 600px) {
-    .page-header {
+    .comments-page .page-header {
         flex-direction: column;
         align-items: stretch;
     }
 
-        .page-header h2 {
+        .comments-page .page-header h2 {
             order: -1;
             text-align: center;
             margin: 0;
         }
 
-    .btn-icon {
+    .comments-page .btn-icon {
         position: absolute;
         top: 2rem;
         left: 2rem;
     }
 
-    .column-header .add-comment-btn {
+    .comments-page .column-header .add-comment-btn {
         position: static;
         top: auto;
         left: auto;
         margin: 0;
     }
 
-    .filters-group {
+    .comments-page .filters-group {
         flex-direction: column;
     }
 }
 
 /* --- 4. DVOUSLOUPCOVÝ OBSAH --- */
-.content-grid {
+.comments-page .content-grid {
     display: grid;
     grid-template-columns: 1fr 1fr; /* Dva stejné sloupce */
     gap: 2rem;
@@ -164,7 +172,7 @@
     overflow: hidden; /* Aby scrollovaly sloupce, ne celá stránka */
 }
 
-.column {
+.comments-page .column {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -174,7 +182,7 @@
     padding: 1rem;
 }
 
-.column-header {
+.comments-page .column-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -183,14 +191,14 @@
     border-bottom: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.column h3 {
+.comments-page .column h3 {
     margin-bottom: 0;
     text-align: center;
     color: var(--primary-red);
     flex-grow: 1;
 }
 
-.add-comment-btn {
+.comments-page .add-comment-btn {
     width: 32px;
     height: 32px;
     padding: 6px;
@@ -200,19 +208,19 @@
     transition: all 0.3s ease;
 }
 
-    .add-comment-btn svg {
+    .comments-page .add-comment-btn svg {
         width: 100%;
         height: 100%;
     }
 
-    .add-comment-btn:hover {
+    .comments-page .add-comment-btn:hover {
         background: var(--primary-red);
         color: white;
         transform: scale(1.1);
         box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
     }
 
-.scroll-list {
+.comments-page .scroll-list {
     overflow-y: auto;
     padding-right: 5px;
     display: flex;
@@ -220,17 +228,17 @@
     gap: 1rem;
 }
 
-    .scroll-list::-webkit-scrollbar {
+    .comments-page .scroll-list::-webkit-scrollbar {
         width: 6px;
     }
 
-    .scroll-list::-webkit-scrollbar-thumb {
+    .comments-page .scroll-list::-webkit-scrollbar-thumb {
         background: rgba(0, 123, 255, 0.3);
         border-radius: 10px;
     }
 
 /* --- 5. POLOŽKY SEZNAMU --- */
-.list-item {
+.comments-page .list-item {
     background: var(--card-bg);
     border: 1px solid rgba(255, 255, 255, 0.6);
     border-radius: 12px;
@@ -238,39 +246,39 @@
     transition: all 0.3s ease;
 }
 
-    .list-item:hover {
+    .comments-page .list-item:hover {
         background: var(--card-hover);
         border-color: var(--primary-red);
     }
 
-.meta-date {
+.comments-page .meta-date {
     font-size: 0.8rem;
     color: var(--input-placeholder);
     display: block;
     margin-bottom: 0.3rem;
 }
 
-.item-text {
+.comments-page .item-text {
     font-size: 0.95rem;
     line-height: 1.5;
     color: var(--light-text);
 }
 
-.comment-header {
+.comments-page .comment-header {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
     margin-bottom: 0.5rem;
 }
 
-.user-name {
+.comments-page .user-name {
     font-weight: 700;
     font-size: 1rem;
     color: var(--light-text);
     display: block;
 }
 
-.comment-rating {
+.comments-page .comment-rating {
     font-weight: 700;
     font-size: 1.2rem;
     color: var(--primary-red);
@@ -279,17 +287,17 @@
 
 /* --- 6. RESPONZIVITA --- */
 @media (max-width: 768px) {
-    .content-grid {
+    .comments-page .content-grid {
         grid-template-columns: 1fr;
         overflow-y: auto;
     }
 
-    .column {
+    .comments-page .column {
         height: auto;
         max-height: 400px;
     }
 
-    .wrapper {
+    .comments-page .wrapper {
         height: auto;
         min-height: 90vh;
     }

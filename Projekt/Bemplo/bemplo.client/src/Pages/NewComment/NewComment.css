@@ -1,5 +1,13 @@
+.newComment-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+}
+
 /* --- 1. ANIMOVANÉ POZADÍ --- */
-.background-animation {
+.newComment-page .background-animation {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -10,8 +18,8 @@
     overflow: hidden;
 }
 
-    .background-animation::before,
-    .background-animation::after {
+    .newComment-page .background-animation::before,
+    .newComment-page .background-animation::after {
         content: '';
         position: absolute;
         border-radius: 50%;
@@ -20,7 +28,7 @@
         animation: floatLarge 20s infinite ease-in-out alternate;
     }
 
-    .background-animation::before {
+    .newComment-page .background-animation::before {
         width: 600px;
         height: 600px;
         top: -10%;
@@ -28,7 +36,7 @@
         animation-delay: 0s;
     }
 
-    .background-animation::after {
+    .newComment-page .background-animation::after {
         width: 700px;
         height: 700px;
         bottom: -15%;
@@ -37,6 +45,7 @@
         animation-delay: 10s;
     }
 
+/* Keyframes zùstávají globální (nelze je zanoøit), ale používají se jen uvnitø .newComment-page */
 @keyframes floatLarge {
     0% {
         transform: translate(0, 0) scale(1);
@@ -55,14 +64,14 @@
 }
 
 /* --- 2. WRAPPER A HLAVNÍ KONTEJNER --- */
-.wrapper {
+.newComment-page .wrapper {
     position: relative;
     z-index: 10;
     width: 90%;
     max-width: 700px;
 }
 
-.glass-container {
+.newComment-page .glass-container {
     background: var(--glass-background);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
@@ -78,7 +87,7 @@
     margin-top: 2rem;
 }
 
-h2 {
+.newComment-page h2 {
     text-align: center;
     margin-bottom: 2rem;
     font-weight: 700;
@@ -90,13 +99,13 @@ h2 {
 }
 
 /* --- 3. FORMULÁØ - TEXTOVÉ POLE --- */
-.input-group {
+.newComment-page .input-group {
     position: relative;
     width: 100%;
     margin-bottom: 2.5rem;
 }
 
-    .input-group textarea {
+    .newComment-page .input-group textarea {
         width: 100%;
         padding: 1.2rem 1.4rem 0.8rem 1.4rem;
         background: transparent;
@@ -112,7 +121,7 @@ h2 {
         min-height: 150px;
     }
 
-    .input-group label {
+    .newComment-page .input-group label {
         position: absolute;
         left: 1.4rem;
         top: 1.5rem;
@@ -122,14 +131,14 @@ h2 {
         transition: all 0.3s ease;
     }
 
-    .input-group textarea:focus + label,
-    .input-group textarea:not(:placeholder-shown) + label {
+    .newComment-page .input-group textarea:focus + label,
+    .newComment-page .input-group textarea:not(:placeholder-shown) + label {
         top: 0.2rem;
         font-size: 0.8rem;
         color: var(--primary-red);
     }
 
-    .input-group .focus-border {
+    .newComment-page .input-group .focus-border {
         position: absolute;
         bottom: 0;
         left: 50%;
@@ -139,13 +148,13 @@ h2 {
         transition: width 0.3s ease-out, left 0.3s ease-out;
     }
 
-    .input-group textarea:focus ~ .focus-border {
+    .newComment-page .input-group textarea:focus ~ .focus-border {
         width: 100%;
         left: 0;
     }
 
 /* --- 4. SPODNÍ LIŠTA (Footer) --- */
-.form-footer {
+.newComment-page .form-footer {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -153,8 +162,7 @@ h2 {
     gap: 1.5rem;
 }
 
-
-.slider-group {
+.newComment-page .slider-group {
     display: flex;
     align-items: center;
     gap: 15px;
@@ -162,12 +170,12 @@ h2 {
     max-width: 50%;
 }
 
-.btn-group {
+.newComment-page .btn-group {
     display: flex;
     gap: 1rem;
 }
 
-.custom-range {
+.newComment-page .custom-range {
     -webkit-appearance: none;
     width: 100%;
     height: 6px;
@@ -177,7 +185,7 @@ h2 {
     cursor: pointer;
 }
 
-    .custom-range::-webkit-slider-thumb {
+    .newComment-page .custom-range::-webkit-slider-thumb {
         -webkit-appearance: none;
         width: 20px;
         height: 20px;
@@ -188,18 +196,18 @@ h2 {
         transition: transform 0.2s ease;
     }
 
-        .custom-range::-webkit-slider-thumb:hover {
+        .newComment-page .custom-range::-webkit-slider-thumb:hover {
             transform: scale(1.2);
         }
 
-.rating-value {
+.newComment-page .rating-value {
     font-weight: 700;
     color: var(--primary-red);
     font-size: 1.1rem;
     min-width: 30px;
 }
 
-.btn {
+.newComment-page .btn {
     padding: 0.8rem 2rem;
     border: none;
     border-radius: 50px;
@@ -211,27 +219,27 @@ h2 {
     display: inline-block;
 }
 
-.btn-primary {
+.newComment-page .btn-primary {
     background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
     color: white;
     box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
 }
 
-    .btn-primary:hover {
+    .newComment-page .btn-primary:hover {
         transform: translateY(-2px);
         box-shadow: 0 8px 20px rgba(0, 123, 255, 0.4);
     }
 
-.btn-secondary {
+.newComment-page .btn-secondary {
     background: transparent;
     color: var(--primary-red);
     border: 2px solid var(--primary-red);
-    padding: 0.7rem 1.8rem;
+    /* Pùvodní CSS zde mìlo duplicitní padding, nechal jsem ten druhý, který pøepisuje první */
     margin-top: 1rem;
     padding: 1.3rem 2rem;
 }
 
-    .btn-secondary:hover {
+    .newComment-page .btn-secondary:hover {
         background: var(--primary-red);
         color: white;
         transform: translateY(-2px);
@@ -239,27 +247,27 @@ h2 {
 
 /* --- 5. RESPONZIVITA --- */
 @media (max-width: 600px) {
-    .glass-container {
+    .newComment-page .glass-container {
         padding: 2rem;
     }
 
-    .form-footer {
+    .newComment-page .form-footer {
         flex-direction: column;
         align-items: stretch;
     }
 
-    .slider-group {
+    .newComment-page .slider-group {
         max-width: 100%;
         width: 100%;
         margin-bottom: 1rem;
     }
 
-    .btn-group {
+    .newComment-page .btn-group {
         width: 100%;
         justify-content: space-between;
     }
 
-    .btn {
+    .newComment-page .btn {
         flex: 1;
         text-align: center;
         padding: 0.8rem 0;

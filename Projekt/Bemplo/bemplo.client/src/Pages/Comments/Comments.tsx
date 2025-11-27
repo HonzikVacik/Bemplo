@@ -26,90 +26,93 @@ function Comments() {
 
     return (
         <>
-            <div className="background-animation"></div>
+            <div className="comments-page">
 
-            <div className="wrapper">
-                <div className="glass-container">
+                <div className="background-animation"></div>
 
-                    <header className="page-header">
-                        <Link to="/dashboard" className="btn-icon back-btn" title="Zpět">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                            </svg>
-                        </Link>
+                <div className="wrapper">
+                    <div className="glass-container">
 
-                        <h2>Jméno Příjmení</h2>
+                        <header className="page-header">
+                            <Link to="/dashboard" className="btn-icon back-btn" title="Zpět">
+                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                </svg>
+                            </Link>
 
-                        <div className="filters-group">
-                            <div className="filter-input-wrapper">
-                                <input
-                                    type="text"
-                                    placeholder="Jméno uživatele..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                />
+                            <h2>Jméno Příjmení</h2>
+
+                            <div className="filters-group">
+                                <div className="filter-input-wrapper">
+                                    <input
+                                        type="text"
+                                        placeholder="Jméno uživatele..."
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="filter-select-wrapper">
+                                    <select
+                                        value={sortType}
+                                        onChange={(e) => setSortType(e.target.value)}
+                                    >
+                                        <option value="newest">Nejnovější</option>
+                                        <option value="best">Nejlépe hodnocené</option>
+                                        <option value="worst">Nejhůře hodnocené</option>
+                                    </select>
+                                </div>
                             </div>
+                        </header>
 
-                            <div className="filter-select-wrapper">
-                                <select
-                                    value={sortType}
-                                    onChange={(e) => setSortType(e.target.value)}
-                                >
-                                    <option value="newest">Nejnovější</option>
-                                    <option value="best">Nejlépe hodnocené</option>
-                                    <option value="worst">Nejhůře hodnocené</option>
-                                </select>
-                            </div>
-                        </div>
-                    </header>
+                        <div className="content-grid">
 
-                    <div className="content-grid">
+                            {/* Levý sloupec: Historie */}
+                            <div className="column">
+                                <div className="column-header">
+                                    <h3>Historie zkušenosti</h3>
+                                </div>
 
-                        {/* Levý sloupec: Historie */}
-                        <div className="column">
-                            <div className="column-header">
-                                <h3>Historie zkušenosti</h3>
-                            </div>
-
-                            <div className="scroll-list">
-                                {experiencesData.map((exp) => (
-                                    <div className="list-item experience" key={exp.id}>
-                                        <span className="meta-date">{exp.date}</span>
-                                        <p className="item-text">{exp.text}</p>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-
-                        {/* Pravý sloupec: Komentáře */}
-                        <div className="column">
-                            <div className="column-header">
-                                <h3>Komentáře</h3>
-                                <Link to="/newcomment" className="btn-icon add-comment-btn" title="Přidat komentář">
-                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                                    </svg>
-                                </Link>
-                            </div>
-
-                            <div className="scroll-list">
-                                {commentsData.map((comment) => (
-                                    <div className="list-item comment" key={comment.id}>
-                                        <div className="comment-header">
-                                            <div className="comment-info">
-                                                <span className="meta-date">{comment.date}</span>
-                                                <span className="user-name">{comment.name}</span>
-                                            </div>
-                                            <div className="comment-rating">
-                                                {comment.rating}*
-                                            </div>
+                                <div className="scroll-list">
+                                    {experiencesData.map((exp) => (
+                                        <div className="list-item experience" key={exp.id}>
+                                            <span className="meta-date">{exp.date}</span>
+                                            <p className="item-text">{exp.text}</p>
                                         </div>
-                                        <p className="item-text">{comment.text}</p>
-                                    </div>
-                                ))}
+                                    ))}
+                                </div>
                             </div>
-                        </div>
 
+                            {/* Pravý sloupec: Komentáře */}
+                            <div className="column">
+                                <div className="column-header">
+                                    <h3>Komentáře</h3>
+                                    <Link to="/newcomment" className="btn-icon add-comment-btn" title="Přidat komentář">
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                        </svg>
+                                    </Link>
+                                </div>
+
+                                <div className="scroll-list">
+                                    {commentsData.map((comment) => (
+                                        <div className="list-item comment" key={comment.id}>
+                                            <div className="comment-header">
+                                                <div className="comment-info">
+                                                    <span className="meta-date">{comment.date}</span>
+                                                    <span className="user-name">{comment.name}</span>
+                                                </div>
+                                                <div className="comment-rating">
+                                                    {comment.rating}*
+                                                </div>
+                                            </div>
+                                            <p className="item-text">{comment.text}</p>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+
+                        </div>
                     </div>
                 </div>
             </div>

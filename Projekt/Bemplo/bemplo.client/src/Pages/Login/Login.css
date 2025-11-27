@@ -1,5 +1,13 @@
+.login-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+}
+
 /* --- 1. ANIMOVANÉ POZADÍ --- */
-.background-animation {
+.login-page .background-animation {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -10,8 +18,8 @@
     overflow: hidden;
 }
 
-    .background-animation::before,
-    .background-animation::after {
+    .login-page .background-animation::before,
+    .login-page .background-animation::after {
         content: '';
         position: absolute;
         border-radius: 50%;
@@ -20,7 +28,7 @@
         animation: floatLarge 20s infinite ease-in-out alternate;
     }
 
-    .background-animation::before {
+    .login-page .background-animation::before {
         width: 600px;
         height: 600px;
         top: -10%;
@@ -28,7 +36,7 @@
         animation-delay: 0s;
     }
 
-    .background-animation::after {
+    .login-page .background-animation::after {
         width: 700px;
         height: 700px;
         bottom: -15%;
@@ -37,6 +45,7 @@
         animation-delay: 10s;
     }
 
+/* Keyframes zùstávají globální */
 @keyframes floatLarge {
     0% {
         transform: translate(0, 0) scale(1);
@@ -55,7 +64,7 @@
 }
 
 /* --- 2. WRAPPER A HLAVNÍ KONTEJNER --- */
-.login-wrapper {
+.login-page .login-wrapper {
     position: relative;
     z-index: 10;
     perspective: 1000px;
@@ -65,7 +74,7 @@
     max-width: 480px;
 }
 
-.login-container {
+.login-page .login-container {
     background: var(--glass-background);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
@@ -92,7 +101,7 @@
     }
 }
 
-.login-container::before {
+.login-page .login-container::before {
     content: '';
     position: absolute;
     top: -50px;
@@ -107,7 +116,7 @@
 }
 
 /* --- 3. FORMULÁØ --- */
-.login-form {
+.login-page .login-form {
     position: relative;
     z-index: 1;
     display: flex;
@@ -115,7 +124,7 @@
     width: 100%;
 }
 
-h2 {
+.login-page h2 {
     text-align: center;
     margin-bottom: 2.5rem;
     font-weight: 700;
@@ -126,14 +135,14 @@ h2 {
     text-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
 }
 
-.input-group {
+.login-page .input-group {
     position: relative;
     margin-bottom: 2rem;
     width: 100%;
     text-align: left;
 }
 
-    .input-group input {
+    .login-page .input-group input {
         width: 100%;
         padding: 1.2rem 1.4rem 0.8rem 1.4rem;
         background: transparent;
@@ -146,7 +155,7 @@ h2 {
         padding-top: 1.5rem;
     }
 
-    .input-group label {
+    .login-page .input-group label {
         position: absolute;
         left: 1.4rem;
         top: 50%;
@@ -157,19 +166,19 @@ h2 {
         transition: all 0.3s ease;
     }
 
-    .input-group input:focus + label,
-    .input-group input:not(:placeholder-shown) + label {
+    .login-page .input-group input:focus + label,
+    .login-page .input-group input:not(:placeholder-shown) + label {
         top: 0.5rem;
         font-size: 0.8rem;
         color: var(--primary-red);
         transform: translateY(0);
     }
 
-    .input-group input:focus {
+    .login-page .input-group input:focus {
         border-color: var(--primary-red);
     }
 
-    .input-group .focus-border {
+    .login-page .input-group .focus-border {
         position: absolute;
         bottom: 0;
         left: 50%;
@@ -179,12 +188,12 @@ h2 {
         transition: width 0.3s ease-out, left 0.3s ease-out;
     }
 
-    .input-group input:focus ~ .focus-border {
+    .login-page .input-group input:focus ~ .focus-border {
         width: 100%;
         left: 0;
     }
 
-button[type="submit"] {
+.login-page button[type="submit"] {
     width: 100%;
     padding: 1.3rem;
     background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
@@ -200,13 +209,13 @@ button[type="submit"] {
     letter-spacing: 0.05em;
 }
 
-    button[type="submit"]:hover {
+    .login-page button[type="submit"]:hover {
         transform: translateY(-5px) scale(1.02);
         box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
     }
 
 /* --- Odkazy --- */
-.links {
+.login-page .links {
     text-align: center;
     margin-top: 2rem;
     font-size: 0.95rem;
@@ -217,7 +226,7 @@ button[type="submit"] {
     align-items: center;
 }
 
-    .links a {
+    .login-page .links a {
         color: var(--light-text);
         text-decoration: none;
         padding: 0.5rem 0;
@@ -229,57 +238,57 @@ button[type="submit"] {
         width: 100%;
     }
 
-        .links a:hover {
+        .login-page .links a:hover {
             color: var(--primary-red);
             transform: translateY(-2px);
         }
 
 /* --- 4. RESPONZIVITA --- */
 @media (max-width: 768px) {
-    .login-wrapper {
+    .login-page .login-wrapper {
         width: 80%;
         max-width: 480px;
     }
 
-    .login-container {
+    .login-page .login-container {
         padding: 2.5rem 2.8rem;
         border-radius: 15px;
     }
 }
 
 @media (max-width: 480px) {
-    .login-wrapper {
+    .login-page .login-wrapper {
         width: 90%;
         max-width: 350px;
     }
 
-    .login-container {
+    .login-page .login-container {
         padding: 2rem 1.5rem;
         border-radius: 10px;
         width: 100%;
     }
 
-    h2 {
+    .login-page h2 {
         font-size: 1.8rem;
         margin-bottom: 1.8rem;
     }
 
-    .input-group input {
+    .login-page .input-group input {
         padding: 1.1rem 1.5rem 0.7rem 1.5rem;
         font-size: 0.95rem;
     }
 
-    .input-group label {
+    .login-page .input-group label {
         left: 1.5rem;
     }
 
-    button[type="submit"] {
+    .login-page button[type="submit"] {
         padding: 0.9rem;
         font-size: 0.95rem;
     }
 }
 
-.modal-overlay {
+.login-page .modal-overlay {
     position: fixed;
     top: 0;
     left: 0;
@@ -305,7 +314,7 @@ button[type="submit"] {
     }
 }
 
-.modal-box {
+.login-page .modal-box {
     background: var(--dark-background);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
@@ -318,7 +327,7 @@ button[type="submit"] {
     animation: popIn 0.4s ease-out forwards;
 }
 
-    .modal-box h2 {
+    .login-page .modal-box h2 {
         color: #007BFF;
         font-size: 2rem;
         font-weight: 700;
@@ -327,14 +336,14 @@ button[type="submit"] {
         text-shadow: 0 0 15px rgba(0, 123, 255, 0.3);
     }
 
-    .modal-box p {
+    .login-page .modal-box p {
         color: var(--light-text);
         font-size: 1.1rem;
         margin-bottom: 2.5rem;
         line-height: 1.6;
     }
 
-.modal-close-btn {
+.login-page .modal-close-btn {
     width: 100%;
     padding: 1.1rem;
     background: linear-gradient(to right, #007BFF, #00A3FF);
@@ -350,22 +359,21 @@ button[type="submit"] {
     letter-spacing: 0.05em;
 }
 
-    .modal-close-btn:hover {
+    .login-page .modal-close-btn:hover {
         transform: translateY(-5px) scale(1.02);
         box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
     }
 
-
 @media (max-width: 480px) {
-    .modal-box {
+    .login-page .modal-box {
         padding: 2rem 1.5rem;
     }
 
-        .modal-box h2 {
+        .login-page .modal-box h2 {
             font-size: 1.6rem;
         }
 
-        .modal-box p {
+        .login-page .modal-box p {
             font-size: 1rem;
             margin-bottom: 2rem;
         }

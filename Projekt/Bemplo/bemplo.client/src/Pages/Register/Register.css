@@ -1,5 +1,13 @@
-﻿/* --- 1. ANIMOVANÉ POZADÍ --- */
-.background-animation {
+﻿.register-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+}
+
+/* --- 1. ANIMOVANÉ POZADÍ --- */
+.register-page .background-animation {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -10,8 +18,8 @@
     overflow: hidden;
 }
 
-    .background-animation::before,
-    .background-animation::after {
+    .register-page .background-animation::before,
+    .register-page .background-animation::after {
         content: '';
         position: absolute;
         border-radius: 50%;
@@ -20,7 +28,7 @@
         animation: floatLarge 20s infinite ease-in-out alternate;
     }
 
-    .background-animation::before {
+    .register-page .background-animation::before {
         width: 600px;
         height: 600px;
         top: -10%;
@@ -28,7 +36,7 @@
         animation-delay: 0s;
     }
 
-    .background-animation::after {
+    .register-page .background-animation::after {
         width: 700px;
         height: 700px;
         bottom: -15%;
@@ -37,6 +45,7 @@
         animation-delay: 10s;
     }
 
+/* Keyframes zůstávají globální */
 @keyframes floatLarge {
     0% {
         transform: translate(0, 0) scale(1);
@@ -55,7 +64,7 @@
 }
 
 /* --- 2. WRAPPER A HLAVNÍ KONTEJNER --- */
-.register-wrapper {
+.register-page .register-wrapper {
     position: relative;
     z-index: 10;
     perspective: 1000px;
@@ -67,7 +76,7 @@
     margin-bottom: 4rem;
 }
 
-.register-container {
+.register-page .register-container {
     background: var(--glass-background);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
@@ -94,7 +103,7 @@
     }
 }
 
-.register-container::before {
+.register-page .register-container::before {
     content: '';
     position: absolute;
     top: -50px;
@@ -108,7 +117,7 @@
     transform: translateZ(-1px);
 }
 
-.register-form {
+.register-page .register-form {
     position: relative;
     z-index: 1;
     display: flex;
@@ -116,7 +125,7 @@
     width: 100%;
 }
 
-h2 {
+.register-page h2 {
     text-align: center;
     margin-bottom: 2.5rem;
     font-weight: 700;
@@ -128,7 +137,7 @@ h2 {
 }
 
 /* Úpravy pro SWITCH */
-.toggle-switch {
+.register-page .toggle-switch {
     position: relative;
     display: flex;
     width: 100%;
@@ -140,11 +149,11 @@ h2 {
     border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-    .toggle-switch input[type="radio"] {
+    .register-page .toggle-switch input[type="radio"] {
         display: none;
     }
 
-    .toggle-switch label {
+    .register-page .toggle-switch label {
         width: 50%;
         padding: 0.75rem 1rem;
         text-align: center;
@@ -157,7 +166,7 @@ h2 {
         user-select: none;
     }
 
-    .toggle-switch .slider {
+    .register-page .toggle-switch .slider {
         position: absolute;
         width: 50%;
         height: 100%;
@@ -169,14 +178,16 @@ h2 {
         transition: transform 0.3s ease-out;
         z-index: 1;
     }
-    .toggle-switch input[type="radio"]:nth-of-type(2):checked ~ .slider {
+
+    .register-page .toggle-switch input[type="radio"]:nth-of-type(2):checked ~ .slider {
         transform: translateX(100%);
     }
-    .toggle-switch input[type="radio"]:checked + label {
+
+    .register-page .toggle-switch input[type="radio"]:checked + label {
         color: white;
     }
 
-.form-grid {
+.register-page .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem 2.5rem;
@@ -184,19 +195,19 @@ h2 {
     margin-bottom: 2rem;
 }
 
-.input-group.span-full {
+.register-page .input-group.span-full {
     grid-column: 1 / -1;
 }
 
-.input-group {
+.register-page .input-group {
     position: relative;
     width: 100%;
     text-align: left;
 }
 
-    .input-group input,
-    .input-group select,
-    .input-group textarea {
+    .register-page .input-group input,
+    .register-page .input-group select,
+    .register-page .input-group textarea {
         width: 100%;
         padding: 1.2rem 1.4rem 0.8rem 1.4rem;
         background: transparent;
@@ -211,7 +222,7 @@ h2 {
     }
 
     /* Úpravy pro LABEL */
-    .input-group label {
+    .register-page .input-group label {
         position: absolute;
         left: 1.4rem;
         top: 50%;
@@ -222,11 +233,11 @@ h2 {
         transition: all 0.3s ease;
     }
 
-        .input-group input:focus + label,
-        .input-group input:not(:placeholder-shown) + label,
-        .input-group textarea:focus + label,
-        .input-group textarea:not(:placeholder-shown) + label,
-        .input-group label.floated /* Třída pro select a date */ {
+        .register-page .input-group input:focus + label,
+        .register-page .input-group input:not(:placeholder-shown) + label,
+        .register-page .input-group textarea:focus + label,
+        .register-page .input-group textarea:not(:placeholder-shown) + label,
+        .register-page .input-group label.floated /* Třída pro select a date */ {
             top: 0.5rem;
             font-size: 0.8rem;
             color: var(--primary-red);
@@ -234,14 +245,14 @@ h2 {
         }
 
     /* Úpravy pro SELECT */
-    .input-group select {
+    .register-page .input-group select {
         appearance: none;
         -webkit-appearance: none;
         cursor: pointer;
         padding-right: 2.5rem;
     }
 
-    .input-group::after {
+    .register-page .input-group::after {
         content: '▼';
         position: absolute;
         top: 50%;
@@ -252,42 +263,42 @@ h2 {
         transition: color 0.3s ease;
     }
 
-    .input-group:not(:has(select))::after {
+    .register-page .input-group:not(:has(select))::after {
         display: none;
     }
 
-    .input-group select:focus + label + .focus-border + * {
+    .register-page .input-group select:focus + label + .focus-border + * {
         color: var(--primary-red);
     }
 
     /* Úpravy pro TEXTAREA */
-    .input-group textarea {
+    .register-page .input-group textarea {
         resize: vertical;
         min-height: 100px;
         line-height: 1.6;
     }
 
     /* Úpravy pro DATE */
-    .input-group input[type="date"] {
+    .register-page .input-group input[type="date"] {
         padding-right: 1rem;
     }
 
-        .input-group input[type="date"]::-webkit-calendar-picker-indicator {
+        .register-page .input-group input[type="date"]::-webkit-calendar-picker-indicator {
             filter: invert(30%) sepia(10%) saturate(1000%) hue-rotate(180deg) brightness(90%) contrast(90%);
             cursor: pointer;
         }
 
-        .input-group input[type="date"]:focus::-webkit-calendar-picker-indicator {
+        .register-page .input-group input[type="date"]:focus::-webkit-calendar-picker-indicator {
             filter: invert(40%) sepia(100%) saturate(5000%) hue-rotate(200deg) brightness(100%) contrast(100%);
         }
 
-    .input-group input:focus,
-    .input-group select:focus,
-    .input-group textarea:focus {
+    .register-page .input-group input:focus,
+    .register-page .input-group select:focus,
+    .register-page .input-group textarea:focus {
         border-color: var(--primary-red);
     }
 
-    .input-group .focus-border {
+    .register-page .input-group .focus-border {
         position: absolute;
         bottom: 0;
         left: 50%;
@@ -297,22 +308,22 @@ h2 {
         transition: width 0.3s ease-out, left 0.3s ease-out;
     }
 
-    .input-group input:focus ~ .focus-border,
-    .input-group select:focus ~ .focus-border,
-    .input-group textarea:focus ~ .focus-border {
+    .register-page .input-group input:focus ~ .focus-border,
+    .register-page .input-group select:focus ~ .focus-border,
+    .register-page .input-group textarea:focus ~ .focus-border {
         width: 100%;
         left: 0;
     }
 
 /* Úpravy pro CHECKBOX */
-.checkbox-group {
+.register-page .checkbox-group {
     display: flex;
     align-items: center;
     margin-top: 1rem;
     margin-bottom: 2rem;
 }
 
-    .checkbox-group input[type="checkbox"] {
+    .register-page .checkbox-group input[type="checkbox"] {
         appearance: none;
         -webkit-appearance: none;
         width: 22px;
@@ -327,12 +338,12 @@ h2 {
         top: -1px;
     }
 
-        .checkbox-group input[type="checkbox"]:checked {
+        .register-page .checkbox-group input[type="checkbox"]:checked {
             background: var(--primary-red);
             border-color: var(--primary-red);
         }
 
-        .checkbox-group input[type="checkbox"]::after {
+        .register-page .checkbox-group input[type="checkbox"]::after {
             content: '✔';
             color: white;
             position: absolute;
@@ -344,22 +355,22 @@ h2 {
             transition: transform 0.2s ease;
         }
 
-        .checkbox-group input[type="checkbox"]:checked::after {
+        .register-page .checkbox-group input[type="checkbox"]:checked::after {
             transform: translate(-50%, -50%) scale(1);
         }
 
-    .checkbox-group label {
+    .register-page .checkbox-group label {
         font-size: 0.9rem;
         color: var(--input-placeholder);
         cursor: pointer;
         user-select: none;
     }
 
-        .checkbox-group label:hover {
+        .register-page .checkbox-group label:hover {
             color: var(--light-text);
         }
 
-button[type="submit"] {
+.register-page button[type="submit"] {
     width: 100%;
     padding: 1.3rem;
     background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
@@ -375,82 +386,83 @@ button[type="submit"] {
     letter-spacing: 0.05em;
 }
 
-    button[type="submit"]:hover {
+    .register-page button[type="submit"]:hover {
         transform: translateY(-5px) scale(1.02);
         box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
     }
 
 /* Úpravy pro ODKAZY */
-.links {
+.register-page .links {
     text-align: center;
     margin-top: 2rem;
     font-size: 0.95rem;
 }
 
-    .links link-login {
+    .register-page .links link-login {
         color: var(--light-text);
         text-decoration: none;
         transition: color 0.3s ease;
     }
 
-        .links link-login:hover {
+        .register-page .links link-login:hover {
             color: var(--primary-red);
         }
 
 /* --- 3. RESPONZIVITA --- */
 @media (max-width: 768px) {
-    .register-container {
+    .register-page .register-container {
         padding: 2.5rem 2.8rem;
     }
 
-    .form-grid {
+    .register-page .form-grid {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
 }
 
 @media (max-width: 480px) {
-    body {
+    /* Upraveno z body na .register-page */
+    .register-page {
         padding: 2rem 0;
     }
 
-    .register-wrapper {
-        width: 90%;
-    }
+        .register-page .register-wrapper {
+            width: 90%;
+        }
 
-    .register-container {
-        padding: 2.5rem 1.5rem;
-    }
+        .register-page .register-container {
+            padding: 2.5rem 1.5rem;
+        }
 
-    h2 {
-        font-size: 2rem;
-        margin-bottom: 2rem;
-    }
+        .register-page h2 {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+        }
 
-    .toggle-switch label {
-        font-size: 0.85rem;
-        padding: 0.7rem 0.5rem;
-    }
+        .register-page .toggle-switch label {
+            font-size: 0.85rem;
+            padding: 0.7rem 0.5rem;
+        }
 
-    .form-grid {
-        gap: 1.5rem 0;
-    }
+        .register-page .form-grid {
+            gap: 1.5rem 0;
+        }
 
-    .input-group input,
-    .input-group select,
-    .input-group textarea {
-        font-size: 1rem;
-    }
+        .register-page .input-group input,
+        .register-page .input-group select,
+        .register-page .input-group textarea {
+            font-size: 1rem;
+        }
 
-    .input-group label {
-        font-size: 1rem;
-    }
+        .register-page .input-group label {
+            font-size: 1rem;
+        }
 
-    .checkbox-group label {
-        font-size: 0.85rem;
-    }
+        .register-page .checkbox-group label {
+            font-size: 0.85rem;
+        }
 
-    button[type="submit"] {
-        padding: 1.1rem;
-        font-size: 1rem;
-    }
+        .register-page button[type="submit"] {
+            padding: 1.1rem;
+            font-size: 1rem;
+        }
 }

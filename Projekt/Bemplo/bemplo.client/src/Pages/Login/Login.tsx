@@ -76,33 +76,36 @@ const Login: React.FC = () => {
 
     return (
         <>
-            <div className="background-animation"></div>
+            <div className="login-page">
 
-            {ReactDOM.createPortal(
-                modalContent,
-                document.getElementById('modal-root')!
-            )}
+                <div className="background-animation"></div>
 
-            <div className="login-wrapper">
-                <div className="login-container">
-                    <form className="login-form" onSubmit={handleSubmit}>
-                        <h2>Přihlášení</h2>
-                        <div className="input-group">
-                            <input type="email" id="username" name="username" required />
-                            <label htmlFor="username">Email</label>
-                            <span className="focus-border"></span>
-                        </div>
-                        <div className="input-group">
-                            <input type="password" id="password" name="password" required />
-                            <label htmlFor="password">Heslo</label>
-                            <span className="focus-border"></span>
-                        </div>
-                        <button type="submit">Přihlásit se</button>
-                        <div className="links">
-                            <Link to="/" className="link-forgot">Zapomenuté heslo?</Link>
-                            <Link to="/register" className="link-register">Vytvořit účet</Link>
-                        </div>
-                    </form>
+                {ReactDOM.createPortal(
+                    modalContent,
+                    document.getElementById('modal-root')!
+                )}
+
+                <div className="login-wrapper">
+                    <div className="login-container">
+                        <form className="login-form" onSubmit={handleSubmit}>
+                            <h2>Přihlášení</h2>
+                            <div className="input-group">
+                                <input type="email" id="username" name="username" required />
+                                <label htmlFor="username">Email</label>
+                                <span className="focus-border"></span>
+                            </div>
+                            <div className="input-group">
+                                <input type="password" id="password" name="password" required />
+                                <label htmlFor="password">Heslo</label>
+                                <span className="focus-border"></span>
+                            </div>
+                            <button type="submit">Přihlásit se</button>
+                            <div className="links">
+                                <Link to="/" className="link-forgot">Zapomenuté heslo?</Link>
+                                <Link to="/register" className="link-register">Vytvořit účet</Link>
+                            </div>
+                        </form>
+                    </div>
                 </div>
             </div>
         </>

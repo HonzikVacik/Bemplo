@@ -1,5 +1,13 @@
+.dashboard-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+}
+
 /* --- 1. ANIMOVANÉ POZADÍ --- */
-.background-animation {
+.dashboard-page .background-animation {
     position: fixed;
     width: 100%;
     height: 100%;
@@ -10,8 +18,8 @@
     overflow: hidden;
 }
 
-    .background-animation::before,
-    .background-animation::after {
+    .dashboard-page .background-animation::before,
+    .dashboard-page .background-animation::after {
         content: '';
         position: absolute;
         border-radius: 50%;
@@ -20,7 +28,7 @@
         animation: floatLarge 20s infinite ease-in-out alternate;
     }
 
-    .background-animation::before {
+    .dashboard-page .background-animation::before {
         width: 600px;
         height: 600px;
         top: -10%;
@@ -28,7 +36,7 @@
         animation-delay: 0s;
     }
 
-    .background-animation::after {
+    .dashboard-page .background-animation::after {
         width: 700px;
         height: 700px;
         bottom: -15%;
@@ -37,6 +45,7 @@
         animation-delay: 10s;
     }
 
+/* Keyframes zùstávají globální */
 @keyframes floatLarge {
     0% {
         transform: translate(0, 0) scale(1);
@@ -55,7 +64,7 @@
 }
 
 /* --- 2. WRAPPER A HLAVNÍ KONTEJNER --- */
-.profile-wrapper {
+.dashboard-page .profile-wrapper {
     position: relative;
     z-index: 10;
     perspective: 1000px;
@@ -65,7 +74,7 @@
     max-width: 1100px;
 }
 
-.profile-container {
+.dashboard-page .profile-container {
     background: var(--glass-background);
     border: 1px solid var(--glass-border);
     border-radius: 20px;
@@ -92,7 +101,7 @@
     }
 }
 
-.profile-container::before {
+.dashboard-page .profile-container::before {
     content: '';
     position: absolute;
     top: -50px;
@@ -106,7 +115,7 @@
     transform: translateZ(-1px);
 }
 
-.profile-form {
+.dashboard-page .profile-form {
     position: relative;
     z-index: 1;
     display: flex;
@@ -115,7 +124,7 @@
 }
 
 /* --- 3. ZÁHLAVÍ A TLAÈÍTKA --- */
-.profile-header {
+.dashboard-page .profile-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -124,7 +133,7 @@
     gap: 1rem;
 }
 
-    .profile-header h2 {
+    .dashboard-page .profile-header h2 {
         text-align: left;
         margin-bottom: 0;
         font-weight: 700;
@@ -135,7 +144,7 @@
         text-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
     }
 
-.header-actions {
+.dashboard-page .header-actions {
     display: flex;
     align-items: center;
     gap: 0.8rem;
@@ -143,7 +152,7 @@
 }
 
 /* --- Styl pro ikony (Chat, Search, atd.) --- */
-.btn-icon {
+.dashboard-page .btn-icon {
     background: transparent;
     border: none;
     cursor: pointer;
@@ -158,18 +167,18 @@
     line-height: 1;
 }
 
-    .btn-icon:hover {
+    .dashboard-page .btn-icon:hover {
         background: rgba(0, 123, 255, 0.1);
         color: var(--primary-red);
         transform: translateY(-2px);
     }
 
-    .btn-icon.logout:hover {
+    .dashboard-page .btn-icon.logout:hover {
         color: #dc3545;
         background: rgba(220, 53, 69, 0.1);
     }
 
-.separator {
+.dashboard-page .separator {
     width: 1px;
     height: 24px;
     background-color: var(--input-border);
@@ -177,7 +186,7 @@
 }
 
 /* --- 4. SEKCE (Panely) --- */
-.profile-section {
+.dashboard-page .profile-section {
     width: 100%;
     margin-bottom: 2rem;
     background: rgba(255, 255, 255, 0.4);
@@ -186,11 +195,11 @@
     padding: 2rem;
 }
 
-    .profile-section:last-of-type {
+    .dashboard-page .profile-section:last-of-type {
         margin-bottom: 1rem;
     }
 
-    .profile-section h3 {
+    .dashboard-page .profile-section h3 {
         text-transform: uppercase;
         font-weight: 600;
         font-size: 1.1rem;
@@ -199,32 +208,32 @@
         margin-bottom: 0.7rem;
     }
 
-    .profile-section p {
+    .dashboard-page .profile-section p {
         margin-bottom: 1rem;
         color: var(--input-placeholder);
     }
 
 /* --- 5. INPUTY A FORMULÁØE --- */
-.form-grid {
+.dashboard-page .form-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
     gap: 2rem 2.5rem;
     width: 100%;
 }
 
-.input-group.span-full {
+.dashboard-page .input-group.span-full {
     grid-column: 1 / -1;
 }
 
-.input-group {
+.dashboard-page .input-group {
     position: relative;
     width: 100%;
     text-align: left;
 }
 
-    .input-group input,
-    .input-group select,
-    .input-group textarea {
+    .dashboard-page .input-group input,
+    .dashboard-page .input-group select,
+    .dashboard-page .input-group textarea {
         width: 100%;
         padding: 1.2rem 1.4rem 0.8rem 1.4rem;
         background: transparent;
@@ -238,7 +247,7 @@
         padding-top: 1.6rem;
     }
 
-    .input-group label {
+    .dashboard-page .input-group label {
         position: absolute;
         left: 1.4rem;
         transform: translateY(-50%);
@@ -248,30 +257,30 @@
         transition: all 0.3s ease;
     }
 
-        .input-group input:focus + label,
-        .input-group input:not(:placeholder-shown) + label,
-        .input-group textarea:focus + label,
-        .input-group textarea:not(:placeholder-shown) + label,
-        .input-group label.floated {
+        .dashboard-page .input-group input:focus + label,
+        .dashboard-page .input-group input:not(:placeholder-shown) + label,
+        .dashboard-page .input-group textarea:focus + label,
+        .dashboard-page .input-group textarea:not(:placeholder-shown) + label,
+        .dashboard-page .input-group label.floated {
             top: 0.5rem;
             font-size: 0.8rem;
             color: var(--primary-red);
             transform: translateY(0);
         }
 
-    .input-group textarea {
+    .dashboard-page .input-group textarea {
         resize: vertical;
         min-height: 100px;
         line-height: 1.6;
     }
 
-        .input-group input:focus,
-        .input-group select:focus,
-        .input-group textarea:focus {
+        .dashboard-page .input-group input:focus,
+        .dashboard-page .input-group select:focus,
+        .dashboard-page .input-group textarea:focus {
             border-color: var(--primary-red);
         }
 
-    .input-group .focus-border {
+    .dashboard-page .input-group .focus-border {
         position: absolute;
         bottom: 0;
         left: 50%;
@@ -281,16 +290,16 @@
         transition: width 0.3s ease-out, left 0.3s ease-out;
     }
 
-    .input-group input:focus ~ .focus-border,
-    .input-group select:focus ~ .focus-border,
-    .input-group textarea:focus ~ .focus-border {
+    .dashboard-page .input-group input:focus ~ .focus-border,
+    .dashboard-page .input-group select:focus ~ .focus-border,
+    .dashboard-page .input-group textarea:focus ~ .focus-border {
         width: 100%;
         left: 0;
     }
 
 /* --- 6. KOMPONENTY (Pøepínaèe, Tabulky, Tlaèítka) --- */
 
-.toggle-switch {
+.dashboard-page .toggle-switch {
     position: relative;
     display: flex;
     width: 100%;
@@ -301,11 +310,11 @@
     border: 1px solid rgba(255, 255, 255, 0.5);
 }
 
-    .toggle-switch input[type="radio"] {
+    .dashboard-page .toggle-switch input[type="radio"] {
         display: none;
     }
 
-    .toggle-switch label {
+    .dashboard-page .toggle-switch label {
         width: 50%;
         padding: 0.75rem 1rem;
         text-align: center;
@@ -318,7 +327,7 @@
         user-select: none;
     }
 
-    .toggle-switch .slider {
+    .dashboard-page .toggle-switch .slider {
         position: absolute;
         width: 50%;
         height: 100%;
@@ -331,64 +340,63 @@
         z-index: 1;
     }
 
-    .toggle-switch input[type="radio"]:nth-of-type(2):checked ~ .slider {
+    .dashboard-page .toggle-switch input[type="radio"]:nth-of-type(2):checked ~ .slider {
         transform: translateX(100%);
     }
 
-    .toggle-switch input[type="radio"]:checked + label {
+    .dashboard-page .toggle-switch input[type="radio"]:checked + label {
         color: white;
     }
 
-.experience-table {
+.dashboard-page .experience-table {
     width: 100%;
     border-collapse: collapse;
 }
 
-    .experience-table td {
+    .dashboard-page .experience-table td {
         padding: 0.75rem;
         border-bottom: 1px solid var(--input-border);
         font-size: 0.95rem;
         color: var(--light-text);
     }
 
-    .experience-table tr:last-child td {
+    .dashboard-page .experience-table tr:last-child td {
         border-bottom: none;
     }
 
-    .experience-table td:nth-child(2) {
+    .dashboard-page .experience-table td:nth-child(2) {
         text-align: right;
         font-weight: 600;
         color: var(--input-placeholder);
     }
 
-    .experience-table td:nth-child(3) {
+    .dashboard-page .experience-table td:nth-child(3) {
         text-align: right;
         font-weight: 600;
         color: var(--primary-red);
         min-width: 50px;
     }
 
-
-    .experience-table .slider-cell {
+    .dashboard-page .experience-table .slider-cell {
         vertical-align: middle;
         padding: 0.5rem;
         width: 40%;
     }
 
-.slider-wrapper {
+.dashboard-page .slider-wrapper {
     display: flex;
     align-items: center;
     gap: 10px;
 }
 
-.slider-value {
+.dashboard-page .slider-value {
     font-weight: 600;
     color: var(--primary-red);
     min-width: 30px;
     text-align: right;
 }
 
-.custom-range {
+.dashboard-page .custom-range {
     -webkit-appearance: none;
     width: 100%;
     height: 6px;
@@ -400,7 +408,7 @@
 }
 
     /* Webkit (Chrome, Safari, Edge) */
-    .custom-range::-webkit-slider-thumb {
+    .dashboard-page .custom-range::-webkit-slider-thumb {
         -webkit-appearance: none;
         appearance: none;
         width: 18px;
@@ -413,12 +421,12 @@
         margin-top: 0;
     }
 
-        .custom-range::-webkit-slider-thumb:hover {
+        .dashboard-page .custom-range::-webkit-slider-thumb:hover {
             transform: scale(1.2);
         }
 
     /* Webkit (Firefox) */
-    .custom-range::-moz-range-thumb {
+    .dashboard-page .custom-range::-moz-range-thumb {
         width: 18px;
         height: 18px;
         border: none;
@@ -429,36 +437,36 @@
         transition: transform 0.2s ease;
     }
 
-        .custom-range::-moz-range-thumb:hover {
+        .dashboard-page .custom-range::-moz-range-thumb:hover {
             transform: scale(1.2);
         }
 
-.section-header {
+.dashboard-page .section-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 1.5rem;
 }
 
-    .section-header h3 {
+    .dashboard-page .section-header h3 {
         margin-bottom: 0;
     }
 
-.dynamic-list {
+.dashboard-page .dynamic-list {
     display: flex;
     flex-direction: column;
     gap: 1rem;
     grid-column: 1 / -1;
 }
 
-.contact-row {
+.dashboard-page .contact-row {
     display: flex;
     align-items: center;
     gap: 10px;
     width: 100%;
 }
 
-    .contact-row .remove-btn {
+    .dashboard-page .contact-row .remove-btn {
         flex-shrink: 0;
         width: 35px;
         height: 35px;
@@ -469,32 +477,32 @@
         transition: all 0.3s ease;
     }
 
-        .contact-row .remove-btn:hover {
+        .dashboard-page .contact-row .remove-btn:hover {
             background: #dc3545;
             color: white;
             transform: scale(1.1);
         }
 
-    .contact-row .input-group {
+    .dashboard-page .contact-row .input-group {
         flex-grow: 1;
         margin-bottom: 0;
     }
 
-.add-contact {
+.dashboard-page .add-contact {
     color: var(--primary-red) !important;
     background: rgba(0, 123, 255, 0.1) !important;
 }
 
-    .add-contact:hover {
+    .dashboard-page .add-contact:hover {
         background: var(--primary-red) !important;
         color: white !important;
     }
 
-.contact-action {
+.dashboard-page .contact-action {
     align-self: end;
 }
 
-.btn {
+.dashboard-page .btn {
     width: auto;
     padding: 0.8rem 2rem;
     border: none;
@@ -506,61 +514,61 @@
     letter-spacing: 0.05em;
 }
 
-.btn-primary {
+.dashboard-page .btn-primary {
     background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
     color: white;
     box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
 }
 
-    .btn-primary:hover {
+    .dashboard-page .btn-primary:hover {
         transform: translateY(-3px) scale(1.02);
         box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
     }
 
-.btn-secondary {
+.dashboard-page .btn-secondary {
     background: transparent;
     color: var(--primary-red);
     border: 2px solid var(--primary-red);
 }
 
-    .btn-secondary:hover {
+    .dashboard-page .btn-secondary:hover {
         background: var(--primary-red);
         color: white;
         transform: translateY(-3px);
     }
 
-.btn.full-width {
+.dashboard-page .btn.full-width {
     width: 100%;
     margin-top: 0.5rem;
 }
 
 /* --- 7. FOTOGALERIE --- */
-.photo-gallery {
+.dashboard-page .photo-gallery {
     display: flex;
     flex-direction: column;
     gap: 1.5rem;
 }
 
-    .photo-gallery .main-photo {
+    .dashboard-page .photo-gallery .main-photo {
         width: 100%;
         border-radius: 10px;
         overflow: hidden;
         line-height: 0;
     }
 
-        .photo-gallery .main-photo img {
+        .dashboard-page .photo-gallery .main-photo img {
             width: 100%;
             aspect-ratio: 16 / 10;
             object-fit: cover;
         }
 
-.thumbnail-grid {
+.dashboard-page .thumbnail-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
     gap: 0.75rem;
 }
 
-.thumbnail {
+.dashboard-page .thumbnail {
     border-radius: 8px;
     overflow: hidden;
     line-height: 0;
@@ -569,95 +577,95 @@
     cursor: grab;
 }
 
-    .thumbnail img {
+    .dashboard-page .thumbnail img {
         width: 100%;
         height: 100%;
         aspect-ratio: 1 / 1;
         object-fit: cover;
     }
 
-    .thumbnail:hover {
+    .dashboard-page .thumbnail:hover {
         border-color: var(--primary-red);
     }
 
-    .thumbnail:active {
+    .dashboard-page .thumbnail:active {
         cursor: grabbing;
     }
 
 /* --- 8. ODKAZY V PATIÈCE --- */
-.links {
+.dashboard-page .links {
     text-align: center;
     margin-top: 2rem;
     font-size: 0.95rem;
 }
 
-    .links a {
+    .dashboard-page .links a {
         color: var(--light-text);
         text-decoration: none;
         transition: color 0.3s ease;
         margin: 0 0.5rem;
     }
 
-        .links a:hover {
+        .dashboard-page .links a:hover {
             color: var(--primary-red);
         }
 
 
 /* --- 9. RESPONZIVITA --- */
 @media (max-width: 768px) {
-    .profile-container {
+    .dashboard-page .profile-container {
         padding: 2.5rem 2rem;
     }
 
-    .profile-header h2 {
+    .dashboard-page .profile-header h2 {
         font-size: 2rem;
     }
 
-    .form-grid {
+    .dashboard-page .form-grid {
         grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
     }
 }
 
 @media (max-width: 600px) {
-    .profile-wrapper {
+    .dashboard-page .profile-wrapper {
         width: 95%;
     }
 
-    .profile-container {
+    .dashboard-page .profile-container {
         padding: 2rem 1.5rem;
     }
 
     /* Zmìna hlavièky na sloupec */
-    .profile-header {
+    .dashboard-page .profile-header {
         flex-direction: row;
         align-items: center;
         gap: 1.5rem;
     }
 
-    .header-actions {
+    .dashboard-page .header-actions {
         justify-content: center;
         width: 100%;
     }
 
-    .separator {
+    .dashboard-page .separator {
         display: none;
     }
 
     /* Tlaèítko na celou šíøku na mobilu */
-    .header-actions .btn-secondary {
+    .dashboard-page .header-actions .btn-secondary {
         width: 100%;
         margin-top: 0.5rem;
     }
 
     /* Buòka tabulky se sliderem */
-    .experience-table .slider-cell {
+    .dashboard-page .experience-table .slider-cell {
         width: auto;
         display: block;
         padding: 2rem 0 2rem 0;
     }
 
     /* Obal slideru */
-    .slider-wrapper {
+    .dashboard-page .slider-wrapper {
         flex-direction: column-reverse;
         align-items: flex-start;
         gap: 5px;
@@ -665,12 +673,12 @@
     }
 
     /* Samotný slider */
-    .custom-range {
+    .dashboard-page .custom-range {
         width: 100%;
     }
 
     /* Èíslo (hodnota) */
-    .slider-value {
+    .dashboard-page .slider-value {
         text-align: center;
         width: 100%;
         font-size: 0.9rem;
@@ -678,8 +686,9 @@
         color: var(--primary-red);
     }
 }
-/* Styl pro ikony */
-.btn-icon {
+
+/* Styl pro ikony - duplicitní v pùvodním souboru, pøepsáno s prefixem */
+.dashboard-page .btn-icon {
     background: transparent;
     border: none;
     cursor: pointer;
@@ -692,48 +701,49 @@
     justify-content: center;
 }
 
-    .btn-icon svg {
+    .dashboard-page .btn-icon svg {
         width: 24px;
         height: 24px;
         stroke-width: 2;
         transition: stroke 0.3s ease;
     }
 
-    .btn-icon:hover {
+    .dashboard-page .btn-icon:hover {
         background: rgba(0, 123, 255, 0.1);
         color: var(--primary-red);
         transform: translateY(-2px);
     }
 
     /* Specifický hover pro odhlášení */
-    .btn-icon.logout:hover {
+    .dashboard-page .btn-icon.logout:hover {
         color: #dc3545;
         background: rgba(220, 53, 69, 0.1);
     }
 
 @media (max-width: 480px) {
-    body {
+    /* Pùvodnì body, zmìnìno na .dashboard-page pro lokální aplikaci */
+    .dashboard-page {
         padding: 2rem 0;
     }
 
-    .profile-wrapper {
-        width: 90%;
-    }
+        .dashboard-page .profile-wrapper {
+            width: 90%;
+        }
 
-    .profile-container {
-        padding: 2.5rem 1.5rem;
-    }
+        .dashboard-page .profile-container {
+            padding: 2.5rem 1.5rem;
+        }
 
-    h2 {
-        font-size: 2rem;
-    }
+        .dashboard-page h2 {
+            font-size: 2rem;
+        }
 
-    .profile-header {
-        justify-content: center;
-        text-align: center;
-    }
+        .dashboard-page .profile-header {
+            justify-content: center;
+            text-align: center;
+        }
 
-    .form-grid {
-        gap: 1.5rem 0;
-    }
+        .dashboard-page .form-grid {
+            gap: 1.5rem 0;
+        }
 }

@@ -195,248 +195,251 @@ const Register: React.FC = () => {
 
     return (
         <>
-            <div className="background-animation"></div>
+            <div className="register-page">
 
-            {ReactDOM.createPortal(
-                modalContent,
-                document.getElementById('modal-root')!
-            )}
+                <div className="background-animation"></div>
 
-            <div className="register-wrapper">
-                <div className="register-container">
-                    <form className="register-form" onSubmit={handleSubmit}>
-                        <h2>Vytvořit účet</h2>
+                {ReactDOM.createPortal(
+                    modalContent,
+                    document.getElementById('modal-root')!
+                )}
 
-                        <div className="toggle-switch">
-                            {/* Přepínač účtů */}
-                            <input
-                                type="radio"
-                                id="type-personal"
-                                name="account-type"
-                                value="personal"
-                                checked={accountType === 'personal'}
-                                onChange={() => setAccountType('personal')}
-                            />
-                            <label htmlFor="type-personal">Osobní</label>
-                            <input
-                                type="radio"
-                                id="type-company"
-                                name="account-type"
-                                value="company"
-                                checked={accountType === 'company'}
-                                onChange={() => setAccountType('company')}
-                            />
-                            <label htmlFor="type-company">Firemní</label>
-                            <span className="slider"></span>
-                        </div>
+                <div className="register-wrapper">
+                    <div className="register-container">
+                        <form className="register-form" onSubmit={handleSubmit}>
+                            <h2>Vytvořit účet</h2>
 
-                        <div className="form-grid">
-                            {/* Jméno */}
-                            <div className="input-group">
+                            <div className="toggle-switch">
+                                {/* Přepínač účtů */}
                                 <input
-                                    type="text"
-                                    id="fname"
-                                    name="fname"
-                                    placeholder=" "
+                                    type="radio"
+                                    id="type-personal"
+                                    name="account-type"
+                                    value="personal"
+                                    checked={accountType === 'personal'}
+                                    onChange={() => setAccountType('personal')}
+                                />
+                                <label htmlFor="type-personal">Osobní</label>
+                                <input
+                                    type="radio"
+                                    id="type-company"
+                                    name="account-type"
+                                    value="company"
+                                    checked={accountType === 'company'}
+                                    onChange={() => setAccountType('company')}
+                                />
+                                <label htmlFor="type-company">Firemní</label>
+                                <span className="slider"></span>
+                            </div>
+
+                            <div className="form-grid">
+                                {/* Jméno */}
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        id="fname"
+                                        name="fname"
+                                        placeholder=" "
+                                        required
+                                        value={formData.fname}
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="fname">Jméno</label>
+                                    <span className="focus-border"></span>
+                                </div>
+
+                                {/* Příjmení */}
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        id="lname"
+                                        name="lname"
+                                        placeholder=" "
+                                        required
+                                        value={formData.lname}
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="lname">Příjmení</label>
+                                    <span className="focus-border"></span>
+                                </div>
+
+                                {/* Email */}
+                                <div className="input-group">
+                                    <input
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        placeholder=" "
+                                        required
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="email">Email</label>
+                                    <span className="focus-border"></span>
+                                </div>
+
+                                {/* Pohlaví */}
+                                <div className="input-group">
+                                    <select
+                                        id="gender"
+                                        name="gender"
+                                        required
+                                        value={formData.gender}
+                                        onChange={handleChange}
+                                    >
+                                        <option value="" disabled hidden></option>
+                                        <option value="male">Muž</option>
+                                        <option value="female">Žena</option>
+                                        <option value="other">Jiné</option>
+                                    </select>
+                                    <label htmlFor="gender" className="floated">Pohlaví</label>
+                                    <span className="focus-border"></span>
+                                </div>
+
+                                {/* Datum narození */}
+                                <div className="input-group">
+                                    <input
+                                        type="date"
+                                        id="dob"
+                                        name="dob"
+                                        placeholder=" "
+                                        required
+                                        value={formData.dob}
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="dob" className="floated">Datum narození</label>
+                                    <span className="focus-border"></span>
+                                </div>
+
+                                {/* Stát */}
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        id="country"
+                                        name="country"
+                                        placeholder=" "
+                                        required
+                                        value={formData.country}
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="country">Stát</label>
+                                    <span className="focus-border"></span>
+                                </div>
+
+                                {/* Kraj */}
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        id="region"
+                                        name="region"
+                                        placeholder=" "
+                                        required
+                                        value={formData.region}
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="region">Kraj</label>
+                                    <span className="focus-border"></span>
+                                </div>
+
+                                {/* Město */}
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        id="city"
+                                        name="city"
+                                        placeholder=" "
+                                        required
+                                        value={formData.city}
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="city">Město</label>
+                                    <span className="focus-border"></span>
+                                </div>
+
+                                {/* Adresa */}
+                                <div className="input-group">
+                                    <input
+                                        type="text"
+                                        id="address"
+                                        name="address"
+                                        placeholder=" "
+                                        required
+                                        value={formData.address}
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="address">Adresa (ulice a č.p.)</label>
+                                    <span className="focus-border"></span>
+                                </div>
+
+                                {/* Heslo */}
+                                <div className="input-group">
+                                    <input
+                                        type="password"
+                                        id="password"
+                                        name="password"
+                                        placeholder=" "
+                                        required
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="password">Heslo</label>
+                                    <span className="focus-border"></span>
+                                </div>
+
+                                {/* Heslo znovu */}
+                                <div className="input-group">
+                                    <input
+                                        type="password"
+                                        id="password-confirm"
+                                        name="passwordConfirm"
+                                        placeholder=" "
+                                        required
+                                        value={formData.passwordConfirm}
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="password-confirm">Heslo znovu</label>
+                                    <span className="focus-border"></span>
+                                </div>
+
+                                {/* Popis */}
+                                <div className="input-group span-full">
+                                    <textarea
+                                        id="description"
+                                        name="description"
+                                        placeholder=" "
+                                        rows={5}
+                                        required
+                                        value={formData.description}
+                                        onChange={handleChange}
+                                    ></textarea>
+                                    <label htmlFor="description" className="floated">Popis</label>
+
+                                    <span className="focus-border"></span>
+                                </div>
+                            </div>
+
+                            {/* Souhlas */}
+                            <div className="checkbox-group">
+                                <input
+                                    type="checkbox"
+                                    id="terms"
+                                    name="terms"
                                     required
-                                    value={formData.fname}
+                                    checked={formData.terms}
                                     onChange={handleChange}
                                 />
-                                <label htmlFor="fname">Jméno</label>
-                                <span className="focus-border"></span>
+                                <label htmlFor="terms">
+                                    Souhlasím se zpracováním osobních údajů (P.P.)
+                                </label>
                             </div>
 
-                            {/* Příjmení */}
-                            <div className="input-group">
-                                <input
-                                    type="text"
-                                    id="lname"
-                                    name="lname"
-                                    placeholder=" "
-                                    required
-                                    value={formData.lname}
-                                    onChange={handleChange}
-                                />
-                                <label htmlFor="lname">Příjmení</label>
-                                <span className="focus-border"></span>
+                            <button type="submit">Registrovat</button>
+
+                            <div className="links">
+                                <Link to="/" className="link-login">Máte již účet? Přihlaste se</Link>
                             </div>
-
-                            {/* Email */}
-                            <div className="input-group">
-                                <input
-                                    type="email"
-                                    id="email"
-                                    name="email"
-                                    placeholder=" "
-                                    required
-                                    value={formData.email}
-                                    onChange={handleChange}
-                                />
-                                <label htmlFor="email">Email</label>
-                                <span className="focus-border"></span>
-                            </div>
-
-                            {/* Pohlaví */}
-                            <div className="input-group">
-                                <select
-                                    id="gender"
-                                    name="gender"
-                                    required
-                                    value={formData.gender}
-                                    onChange={handleChange}
-                                >
-                                    <option value="" disabled hidden></option>
-                                    <option value="male">Muž</option>
-                                    <option value="female">Žena</option>
-                                    <option value="other">Jiné</option>
-                                </select>
-                                <label htmlFor="gender" className="floated">Pohlaví</label>
-                                <span className="focus-border"></span>
-                            </div>
-
-                            {/* Datum narození */}
-                            <div className="input-group">
-                                <input
-                                    type="date"
-                                    id="dob"
-                                    name="dob"
-                                    placeholder=" "
-                                    required
-                                    value={formData.dob}
-                                    onChange={handleChange}
-                                />
-                                <label htmlFor="dob" className="floated">Datum narození</label>
-                                <span className="focus-border"></span>
-                            </div>
-
-                            {/* Stát */}
-                            <div className="input-group">
-                                <input
-                                    type="text"
-                                    id="country"
-                                    name="country"
-                                    placeholder=" "
-                                    required
-                                    value={formData.country}
-                                    onChange={handleChange}
-                                />
-                                <label htmlFor="country">Stát</label>
-                                <span className="focus-border"></span>
-                            </div>
-
-                            {/* Kraj */}
-                            <div className="input-group">
-                                <input
-                                    type="text"
-                                    id="region"
-                                    name="region"
-                                    placeholder=" "
-                                    required
-                                    value={formData.region}
-                                    onChange={handleChange}
-                                />
-                                <label htmlFor="region">Kraj</label>
-                                <span className="focus-border"></span>
-                            </div>
-
-                            {/* Město */}
-                            <div className="input-group">
-                                <input
-                                    type="text"
-                                    id="city"
-                                    name="city"
-                                    placeholder=" "
-                                    required
-                                    value={formData.city}
-                                    onChange={handleChange}
-                                />
-                                <label htmlFor="city">Město</label>
-                                <span className="focus-border"></span>
-                            </div>
-
-                            {/* Adresa */}
-                            <div className="input-group">
-                                <input
-                                    type="text"
-                                    id="address"
-                                    name="address"
-                                    placeholder=" "
-                                    required
-                                    value={formData.address}
-                                    onChange={handleChange}
-                                />
-                                <label htmlFor="address">Adresa (ulice a č.p.)</label>
-                                <span className="focus-border"></span>
-                            </div>
-
-                            {/* Heslo */}
-                            <div className="input-group">
-                                <input
-                                    type="password"
-                                    id="password"
-                                    name="password"
-                                    placeholder=" "
-                                    required
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                />
-                                <label htmlFor="password">Heslo</label>
-                                <span className="focus-border"></span>
-                            </div>
-
-                            {/* Heslo znovu */}
-                            <div className="input-group">
-                                <input
-                                    type="password"
-                                    id="password-confirm"
-                                    name="passwordConfirm"
-                                    placeholder=" "
-                                    required
-                                    value={formData.passwordConfirm}
-                                    onChange={handleChange}
-                                />
-                                <label htmlFor="password-confirm">Heslo znovu</label>
-                                <span className="focus-border"></span>
-                            </div>
-
-                            {/* Popis */}
-                            <div className="input-group span-full">
-                                <textarea
-                                    id="description"
-                                    name="description"
-                                    placeholder=" "
-                                    rows={5}
-                                    required
-                                    value={formData.description}
-                                    onChange={handleChange}
-                                ></textarea>
-                                <label htmlFor="description" className="floated">Popis</label>
-
-                                <span className="focus-border"></span>
-                            </div>
-                        </div>
-
-                        {/* Souhlas */}
-                        <div className="checkbox-group">
-                            <input
-                                type="checkbox"
-                                id="terms"
-                                name="terms"
-                                required
-                                checked={formData.terms}
-                                onChange={handleChange}
-                            />
-                            <label htmlFor="terms">
-                                Souhlasím se zpracováním osobních údajů (P.P.)
-                            </label>
-                        </div>
-
-                        <button type="submit">Registrovat</button>
-
-                        <div className="links">
-                            <Link to="/" className="link-login">Máte již účet? Přihlaste se</Link>
-                        </div>
-                    </form>
+                        </form>
+                    </div>
                 </div>
             </div>
         </>

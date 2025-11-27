@@ -16,60 +16,63 @@ function AddComment() {
 
     return (
         <>
-            <div className="background-animation"></div>
+            <div className="newComment-page">
 
-            <div className="wrapper">
-                <div className="glass-container">
+                <div className="background-animation"></div>
 
-                    <h2>Nové hodnocení</h2>
+                <div className="wrapper">
+                    <div className="glass-container">
 
-                    <form className="comment-form" onSubmit={handleSubmit}>
+                        <h2>Nové hodnocení</h2>
 
-                        <div className="input-group">
-                            <textarea
-                                id="comment"
-                                name="comment"
-                                placeholder=" "
-                                required
-                                rows={6}
-                                value={comment}
-                                onChange={(e) => setComment(e.target.value)}
-                            ></textarea>
-                            <label htmlFor="comment">Text hodnocení</label>
-                            <span className="focus-border"></span>
-                        </div>
+                        <form className="comment-form" onSubmit={handleSubmit}>
 
-                        <div className="form-footer">
-
-                            <div className="slider-group">
-                                <input
-                                    type="range"
-                                    id="rating"
-                                    name="rating"
-                                    min="1"
-                                    max="5"
-                                    value={rating}
-                                    className="custom-range"
-                                    onChange={(e) => setRating(Number(e.target.value))}
-                                />
-                                <span className="rating-value" id="ratingValue">
-                                    {rating}*
-                                </span>
+                            <div className="input-group">
+                                <textarea
+                                    id="comment"
+                                    name="comment"
+                                    placeholder=" "
+                                    required
+                                    rows={6}
+                                    value={comment}
+                                    onChange={(e) => setComment(e.target.value)}
+                                ></textarea>
+                                <label htmlFor="comment">Text hodnocení</label>
+                                <span className="focus-border"></span>
                             </div>
 
-                            <div className="btn-group">
-                                <Link to="/dashboard" className="btn btn-secondary">
-                                    Zpět
-                                </Link>
+                            <div className="form-footer">
 
-                                <button type="submit" className="btn btn-primary">
-                                    Potvrdit
-                                </button>
+                                <div className="slider-group">
+                                    <input
+                                        type="range"
+                                        id="rating"
+                                        name="rating"
+                                        min="1"
+                                        max="5"
+                                        value={rating}
+                                        className="custom-range"
+                                        onChange={(e) => setRating(Number(e.target.value))}
+                                    />
+                                    <span className="rating-value" id="ratingValue">
+                                        {rating}*
+                                    </span>
+                                </div>
+
+                                <div className="btn-group">
+                                    <Link to="/dashboard" className="btn btn-secondary">
+                                        Zpět
+                                    </Link>
+
+                                    <button type="submit" className="btn btn-primary">
+                                        Potvrdit
+                                    </button>
+                                </div>
                             </div>
-                        </div>
 
-                    </form>
+                        </form>
 
+                    </div>
                 </div>
             </div>
         </>
