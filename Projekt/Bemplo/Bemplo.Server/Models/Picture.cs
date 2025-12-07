@@ -8,5 +8,6 @@
         public byte[] ImageData { get; set; }
         public string ContentType { get; set; } = string.Empty;
         public long Size { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

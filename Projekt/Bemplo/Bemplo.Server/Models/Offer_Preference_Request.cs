@@ -6,5 +6,6 @@
         public Enums.ExperienceType ExperienceType { get; set; }
         public Account Account { get; set; }
         public string Content { get; set; } = string.Empty;
+        public bool IsDeleted { get; set; }
     }
 }

@@ -7,5 +7,6 @@
         public string PolicyText { get; set; } = string.Empty;
         public DateTime EffectiveDate { get; set; }
         public DateTime? ExpirationDate { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }
