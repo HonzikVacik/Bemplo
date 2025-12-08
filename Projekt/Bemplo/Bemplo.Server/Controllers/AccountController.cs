@@ -3,8 +3,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Claims;
 using System.Security.Cryptography;
+using System.Security.Principal;
 using System.Threading.Tasks;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory.Database;
 
 // For more information on enabling Web API for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 
@@ -88,12 +91,43 @@ namespace Bemplo.Server.Controllers
             return Ok("Účet byl úspěšně vytvořen");
         }
 
+        [HttpPost("GetAccountType")]
+        [Authorize]
+        public async Task<IActionResult> IsCommonAccount()
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return NotFound("Uživatel nenalezen.");
+            }
+
+            return Ok(account.AccountType == Enums.AccountType.User);
+        }
+
         [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetAllAccounts()
         {
             var accounts = await _context.Accounts.ToListAsync();
             return Ok(accounts);
+        }
+
+        [HttpGet("GetDashboard")]
+        [Authorize]
+        public async Task<IActionResult> GetDashboard()
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return Unauthorized("Uživatel nenalezen.");
+            }
+
+
+            return Ok();
         }
     }
 }
