@@ -2,7 +2,7 @@
 
 namespace Bemplo.Server.Services
 {
-    public class AccountSer : IAccountSer
+    public class ProfileSer : IProfileSer
     {
     }
 }
