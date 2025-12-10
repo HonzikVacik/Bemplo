@@ -16,7 +16,7 @@ namespace Bemplo.Server
                 return null;
             }
 
-            return await context.Accounts.FirstOrDefaultAsync(a => a.Email == email);
+            return await context.Accounts.FirstOrDefaultAsync(a => a.Email == email && a.IsDeleted == false);
         }
     }
 }

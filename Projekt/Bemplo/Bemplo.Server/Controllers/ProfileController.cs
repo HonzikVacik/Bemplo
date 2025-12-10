@@ -30,7 +30,14 @@ namespace Bemplo.Server.Controllers
                 return Unauthorized("Uživatel nenalezen.");
             }
 
-            return Ok();
+            var result = await _profileSer.GetProfile(account);
+
+            if (result == null)
+            {
+                return NotFound("Uživatel nenalezen");
+            }
+
+            return Ok(result);
         }
     }
 }
