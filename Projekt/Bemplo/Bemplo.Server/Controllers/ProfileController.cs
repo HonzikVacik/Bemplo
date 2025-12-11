@@ -1,6 +1,5 @@
 ﻿using Bemplo.Server.IServices;
 using Bemplo.Server.Models;
-using Bemplo.Server.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -12,12 +11,14 @@ namespace Bemplo.Server.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IProfileSer _profileSer;
         private readonly IAccountSer _accountSer;
+        private readonly IOffer_Preference_RequestSer _offer_Preference_RequestSer;
 
-        public ProfileController(ApplicationDbContext context, IProfileSer profileSer, IAccountSer accountSer)
+        public ProfileController(ApplicationDbContext context, IProfileSer profileSer, IAccountSer accountSer, IOffer_Preference_RequestSer offer_Preference_RequestSer)
         {
             _context = context;
             _profileSer = profileSer;
             _accountSer = accountSer;
+            _offer_Preference_RequestSer = offer_Preference_RequestSer;
         }
 
         [HttpGet("GetDashboard")]
@@ -55,7 +56,31 @@ namespace Bemplo.Server.Controllers
                 return Unauthorized("Uživatel nenalezen.");
             }
 
+            //Nastavení popisu
             string? result = await _accountSer.SetDescription(account, description);
+
+            if (result != null)
+            {
+                return Conflict(result);
+            }
+
+            return Ok();
+        }
+
+        [HttpPut("Offer")]
+        [Authorize]
+        public async Task<IActionResult> SetOffer(string value)
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return Unauthorized("Uživatel nenalezen.");
+            }
+
+            //Nastavení nabídky
+            string? result = await _offer_Preference_RequestSer.SetOffer(account, value);
 
             if (result != null)
             {

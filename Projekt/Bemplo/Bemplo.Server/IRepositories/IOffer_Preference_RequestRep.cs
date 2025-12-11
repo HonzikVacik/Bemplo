@@ -7,5 +7,6 @@ namespace Bemplo.Server.IRepositories
         public Task<string> GetLastOfferByAccount(Account account);
         public Task<string> GetLastPreferenceByAccount(Account account);
         public Task<string> GetLastReuestByAccount(Account account);
+        public Task<string?> SetOffer(Account account, string value);
     }
 }

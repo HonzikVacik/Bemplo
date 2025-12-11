@@ -85,6 +85,7 @@ namespace Bemplo.Server
             builder.Services.AddScoped<IReviewRep, ReviewRep>();
 
             builder.Services.AddScoped<IAccountSer, AccountSer>();
+            builder.Services.AddScoped<IOffer_Preference_RequestSer, Offer_Preference_RequestSer>();
             builder.Services.AddScoped<IProfileSer, ProfileSer>();
 
             // Configure Cors

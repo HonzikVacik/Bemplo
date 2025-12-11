@@ -51,5 +51,25 @@ namespace Bemplo.Server.Repositories
                 return opr.Content;
             }
         }
+
+        public async Task<string?> SetOffer(Account account, string value)
+        {
+            try
+            {
+                Offer_Preference_Request? offer = await _context.Offer_Preference_Requests.Include(o => o.Account).Where(o => o.Account.Id == account.Id && o.ExperienceType == Enums.ExperienceType.Offer && o.IsDeleted == false).FirstOrDefaultAsync();
+                if (offer == null)
+                {
+                    return "Nabídka nenalezena";
+                }
+                offer.Content = value;
+                _context.Update(offer);
+                await _context.SaveChangesAsync();
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return "Něco se nepovedlo";
+            }
+        }
     }
 }
