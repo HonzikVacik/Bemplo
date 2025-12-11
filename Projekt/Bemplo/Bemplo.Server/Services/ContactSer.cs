@@ -2,6 +2,7 @@
 using Bemplo.Server.IServices;
 using Bemplo.Server.Models;
 using Bemplo.Server.Repositories;
+using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics.Metrics;
 using System.Net;
 
@@ -20,7 +21,7 @@ namespace Bemplo.Server.Services
             this.accountRep = _accountRep;
         }
 
-        public async Task<string?> SetContact(Account account, string email)
+        public async Task<string?> SetContact(Account account, string email, TransportModels.Contact[] contacts)
         {
             if (!ValidityControl.IsValidEmail(email))
             {
@@ -30,9 +31,20 @@ namespace Bemplo.Server.Services
             {
                 return "Účet s tímto emailem již existuje.";
             }
+            foreach (TransportModels.Contact contact in contacts)
+            {
+                if (string.IsNullOrEmpty(contact.Content) || string.IsNullOrWhiteSpace(contact.Content))
+                {
+                    return "Kontakt nesmí být prázdný nebo obsahovat pouze neviditelné znaky.";
+                }
+            }
 
-            //TODO: dodělat kontakty
-           
+            string? result = await contactRep.SetContacts(account, contacts);
+
+            if (result != null)
+            {
+                return result;
+            }
             return await accountRep.SetEmailAddress(account, email);
         }
     }

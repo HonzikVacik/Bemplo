@@ -4,6 +4,6 @@ namespace Bemplo.Server.IServices
 {
     public interface IContactSer
     {
-        public Task<string?> SetContact(Account account, string email);
+        public Task<string?> SetContact(Account account, string email, TransportModels.Contact[] contacts);
     }
 }

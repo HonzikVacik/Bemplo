@@ -115,7 +115,7 @@ namespace Bemplo.Server.Controllers
             return Ok();
         }
 
-        public async Task<IActionResult> SetContacts(string email)
+        public async Task<IActionResult> SetContacts(string email, TransportModels.Contact[] contacts)
         {
             //Načtení uživatele
             Account? account = await User.GetAccountAsync(_context);
@@ -126,7 +126,7 @@ namespace Bemplo.Server.Controllers
             }
 
             //Nastavení adresy
-            string? result = await _contactSer.SetContact(account, email);
+            string? result = await _contactSer.SetContact(account, email, contacts);
 
             if (result != null)
             {
