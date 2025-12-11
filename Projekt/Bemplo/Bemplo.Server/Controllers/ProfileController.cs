@@ -89,5 +89,26 @@ namespace Bemplo.Server.Controllers
 
             return Ok();
         }
+
+        public async Task<IActionResult> SetAddress(string country, string region, string city, string address)
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return Unauthorized("Uživatel nenalezen.");
+            }
+
+            //Nastavení adresy
+            string? result = await _accountSer.SetAddress(account, country, region, city, address);
+
+            if (result != null)
+            {
+                return Conflict(result);
+            }
+
+            return Ok();
+        }
     }
 }

@@ -18,6 +18,29 @@ namespace Bemplo.Server.Repositories
             return await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id && a.IsDeleted == false);
         }
 
+        public async Task<string?> SetAddress(Account account, string country, string city, string region, string address)
+        {
+            try
+            {
+                Account? acc = await _context.Accounts.Where(a => a.Id == account.Id && a.IsDeleted == false).FirstOrDefaultAsync();
+                if (acc == null)
+                {
+                    return "Uživatel nenalezen";
+                }
+                acc.Country = country;
+                acc.Region = region;
+                acc.City = city;
+                acc.Address = address;
+                _context.Update(acc);
+                await _context.SaveChangesAsync();
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return "Něco se nepovedlo";
+            }
+        }
+
         public async Task<string?> SetDescription(Account account, string description)
         {
             try

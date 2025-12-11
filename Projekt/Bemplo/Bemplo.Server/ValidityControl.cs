@@ -83,7 +83,7 @@ namespace Bemplo.Server
             return false;
         }
 
-        private static bool IsValidLocation(byte accountType, string country, string region, string city, string address)
+        public static bool IsValidLocation(byte accountType, string country, string region, string city, string address)
         {
             bool validAddress = false;
             try
