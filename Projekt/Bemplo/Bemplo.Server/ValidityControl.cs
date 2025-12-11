@@ -51,7 +51,7 @@ namespace Bemplo.Server
             return date <= DateTime.Now;
         }
 
-        private static bool IsValidEmail(string email)
+        public static bool IsValidEmail(string email)
         {
             try
             {
@@ -110,7 +110,7 @@ namespace Bemplo.Server
             return agreeWithPrivacyPolicy;
         }
 
-        private static bool IsEmailUnique(ApplicationDbContext _context, string email)
+        public static bool IsEmailUnique(ApplicationDbContext _context, string email)
         {
             var existingAccount = _context.Accounts.FirstOrDefault(a => a.Email == email);
             return existingAccount == null;

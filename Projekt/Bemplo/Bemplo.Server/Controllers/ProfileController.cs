@@ -3,6 +3,8 @@ using Bemplo.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics.Metrics;
+using System.Net;
 
 namespace Bemplo.Server.Controllers
 {
@@ -12,13 +14,15 @@ namespace Bemplo.Server.Controllers
         private readonly IProfileSer _profileSer;
         private readonly IAccountSer _accountSer;
         private readonly IOffer_Preference_RequestSer _offer_Preference_RequestSer;
+        private readonly IContactSer _contactSer;
 
-        public ProfileController(ApplicationDbContext context, IProfileSer profileSer, IAccountSer accountSer, IOffer_Preference_RequestSer offer_Preference_RequestSer)
+        public ProfileController(ApplicationDbContext context, IProfileSer profileSer, IAccountSer accountSer, IOffer_Preference_RequestSer offer_Preference_RequestSer, IContactSer contactSer)
         {
             _context = context;
             _profileSer = profileSer;
             _accountSer = accountSer;
             _offer_Preference_RequestSer = offer_Preference_RequestSer;
+            _contactSer = contactSer;
         }
 
         [HttpGet("GetDashboard")]
@@ -102,6 +106,27 @@ namespace Bemplo.Server.Controllers
 
             //Nastavení adresy
             string? result = await _accountSer.SetAddress(account, country, region, city, address);
+
+            if (result != null)
+            {
+                return Conflict(result);
+            }
+
+            return Ok();
+        }
+
+        public async Task<IActionResult> SetContacts(string email)
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return Unauthorized("Uživatel nenalezen.");
+            }
+
+            //Nastavení adresy
+            string? result = await _contactSer.SetContact(account, email);
 
             if (result != null)
             {

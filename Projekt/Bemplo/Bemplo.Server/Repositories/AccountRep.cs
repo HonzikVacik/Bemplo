@@ -60,5 +60,25 @@ namespace Bemplo.Server.Repositories
                 return "Něco se nepovedlo";
             }
         }
+
+        public async Task<string?> SetEmailAddress(Account account, string email)
+        {
+            try
+            {
+                Account? acc = await _context.Accounts.Where(a => a.Id == account.Id && a.IsDeleted == false).FirstOrDefaultAsync();
+                if (acc == null)
+                {
+                    return "Uživatel nenalezen";
+                }
+                acc.Email = email;
+                _context.Update(acc);
+                await _context.SaveChangesAsync();
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return "Něco se nepovedlo";
+            }
+        }
     }
 }
