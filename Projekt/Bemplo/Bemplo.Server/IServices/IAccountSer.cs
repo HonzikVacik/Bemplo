@@ -1,10 +1,9 @@
 ﻿using Bemplo.Server.Models;
 
-namespace Bemplo.Server.IRepositories
+namespace Bemplo.Server.IServices
 {
-    public interface IAccountRep
+    public interface IAccountSer
     {
-        public Task<Account?> GetAccountById(int id);
         public Task<string?> SetDescription(Account account, string description);
     }
 }

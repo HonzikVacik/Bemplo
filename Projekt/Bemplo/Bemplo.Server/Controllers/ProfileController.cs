@@ -11,11 +11,13 @@ namespace Bemplo.Server.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IProfileSer _profileSer;
+        private readonly IAccountSer _accountSer;
 
-        public ProfileController(ApplicationDbContext context, IProfileSer profileSer)
+        public ProfileController(ApplicationDbContext context, IProfileSer profileSer, IAccountSer accountSer)
         {
             _context = context;
             _profileSer = profileSer;
+            _accountSer = accountSer;
         }
 
         [HttpGet("GetDashboard")]
@@ -30,6 +32,7 @@ namespace Bemplo.Server.Controllers
                 return Unauthorized("Uživatel nenalezen.");
             }
 
+            //Načtení profilu
             var result = await _profileSer.GetProfile(account);
 
             if (result == null)
@@ -38,6 +41,28 @@ namespace Bemplo.Server.Controllers
             }
 
             return Ok(result);
+        }
+
+        [HttpPut("Description")]
+        [Authorize]
+        public async Task<IActionResult> SetDescription(string description)
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return Unauthorized("Uživatel nenalezen.");
+            }
+
+            string? result = await _accountSer.SetDescription(account, description);
+
+            if (result != null)
+            {
+                return Conflict(result);
+            }
+
+            return Ok();
         }
     }
 }

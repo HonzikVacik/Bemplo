@@ -78,12 +78,13 @@ namespace Bemplo.Server
 
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-            builder.Services.AddScoped<IExperienceRep, ExperienceRep>();
             builder.Services.AddScoped<IAccountRep, AccountRep>();
             builder.Services.AddScoped<IContactRep, ContactRep>();
+            builder.Services.AddScoped<IExperienceRep, ExperienceRep>();
             builder.Services.AddScoped<IOffer_Preference_RequestRep, Offer_Preference_RequestRep>();
             builder.Services.AddScoped<IReviewRep, ReviewRep>();
 
+            builder.Services.AddScoped<IAccountSer, AccountSer>();
             builder.Services.AddScoped<IProfileSer, ProfileSer>();
 
             // Configure Cors

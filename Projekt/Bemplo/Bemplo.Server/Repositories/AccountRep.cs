@@ -17,5 +17,25 @@ namespace Bemplo.Server.Repositories
         {
             return await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id && a.IsDeleted == false);
         }
+
+        public async Task<string?> SetDescription(Account account, string description)
+        {
+            try
+            {
+                Account? acc = await _context.Accounts.Where(a => a.Id == account.Id && a.IsDeleted == false).FirstOrDefaultAsync();
+                if(acc == null)
+                {
+                    return "Uživatel nenalezen";
+                }
+                acc.Description = description;
+                _context.Update(acc);
+                await _context.SaveChangesAsync();
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return "Něco se nepovedlo";
+            }
+        }
     }
 }

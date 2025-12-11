@@ -100,7 +100,7 @@ namespace Bemplo.Server
                    !string.IsNullOrEmpty(address) && !string.IsNullOrWhiteSpace(address) && address.Length <= 100;
         }
 
-        private static bool IsValidDescription(string description)
+        public static bool IsValidDescription(string description)
         {
             return (!string.IsNullOrEmpty(description) && description.Length <= 5000);
         }
