@@ -113,21 +113,5 @@ namespace Bemplo.Server.Controllers
             var accounts = await _context.Accounts.ToListAsync();
             return Ok(accounts);
         }
-
-        [HttpGet("GetDashboard")]
-        [Authorize]
-        public async Task<IActionResult> GetDashboard()
-        {
-            //Načtení uživatele
-            Account? account = await User.GetAccountAsync(_context);
-
-            if (account == null)
-            {
-                return Unauthorized("Uživatel nenalezen.");
-            }
-
-
-            return Ok();
-        }
     }
 }

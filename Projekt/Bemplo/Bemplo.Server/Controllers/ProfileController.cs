@@ -8,6 +8,8 @@ using System.Net;
 
 namespace Bemplo.Server.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class ProfileController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -25,7 +27,7 @@ namespace Bemplo.Server.Controllers
             _contactSer = contactSer;
         }
 
-        [HttpGet("GetDashboard")]
+        [HttpGet]
         [Authorize]
         public async Task<IActionResult> GetDashboard()
         {
@@ -94,6 +96,54 @@ namespace Bemplo.Server.Controllers
             return Ok();
         }
 
+        [HttpPut("Preference")]
+        [Authorize]
+        public async Task<IActionResult> SetPreference(string value)
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return Unauthorized("Uživatel nenalezen.");
+            }
+
+            //Nastavení preferencí
+            string? result = await _offer_Preference_RequestSer.SetOffer(account, value);
+
+            if (result != null)
+            {
+                return Conflict(result);
+            }
+
+            return Ok();
+        }
+
+        [HttpPut("Request")]
+        [Authorize]
+        public async Task<IActionResult> SetRequest(string value)
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return Unauthorized("Uživatel nenalezen.");
+            }
+
+            //Nastavení požadavků
+            string? result = await _offer_Preference_RequestSer.SetOffer(account, value);
+
+            if (result != null)
+            {
+                return Conflict(result);
+            }
+
+            return Ok();
+        }
+
+        [HttpPut("Address")]
+        [Authorize]
         public async Task<IActionResult> SetAddress(string country, string region, string city, string address)
         {
             //Načtení uživatele
@@ -115,6 +165,8 @@ namespace Bemplo.Server.Controllers
             return Ok();
         }
 
+        [HttpPut("Contacts")]
+        [Authorize]
         public async Task<IActionResult> SetContacts(string email, TransportModels.Contact[] contacts)
         {
             //Načtení uživatele

@@ -1,0 +1,58 @@
+﻿using Bemplo.Server.IRepositories;
+using Bemplo.Server.Models;
+using Bemplo.Server.TransportModels;
+using Microsoft.EntityFrameworkCore;
+
+namespace Bemplo.Server.Repositories
+{
+    public class ChatRep : IChatRep
+    {
+        private readonly ApplicationDbContext _context;
+
+        public ChatRep(ApplicationDbContext context)
+        {
+            _context = context; 
+        }
+        public async Task<(ChatList[]?, string?)> GetChatList(Account account)
+        {
+            try
+            {
+                int userId = account.Id;
+
+                //Najde všechny ChatConnections, kde je account
+                var query = _context.ChatConnections
+                    .Where(c => c.Account_ID_1 == userId || c.Account_ID_2 == userId)
+                    .Select(conn => new
+                    {
+                        Connection = conn,
+                        //Najde všechny druhé kontakty
+                        OtherAccount = (conn.Account_ID_1 == userId) ? conn.Account_2 : conn.Account_1,
+
+                        //Získá poslední zprávu pro danou connection
+                        LastChat = _context.Chats
+                            .Where(chat => chat.Chat_Connection == conn)
+                            .OrderByDescending(chat => chat.Timestamp)
+                            .FirstOrDefault()
+                    });
+
+                List<ChatListWithDateTime> result = await query
+                    .Select(x => new ChatListWithDateTime
+                    {
+                        ContactId = x.OtherAccount.Id,
+                        Name = x.OtherAccount.Name + " " + x.OtherAccount.Surname,
+                        LastMessage = x.LastChat != null ? x.LastChat.Content : string.Empty,
+                        LastMessageDateTime = x.LastChat != null ? x.LastChat.Timestamp : DateTime.MinValue
+                    })
+                    //Seřadí zprávy tak, aby konverzace s nejnovější zprávou byla nahoře
+                    .OrderByDescending(x => x.LastMessageDateTime)
+                    .ToListAsync();
+
+                return (result.ToArray(), null);
+            }
+            catch (Exception ex)
+            {
+                return (null, "Něco se nepovedlo");
+            }
+        }
+    }
+}
