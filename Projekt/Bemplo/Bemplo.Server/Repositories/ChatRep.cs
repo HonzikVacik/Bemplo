@@ -54,5 +54,26 @@ namespace Bemplo.Server.Repositories
                 return (null, "Něco se nepovedlo");
             }
         }
+
+        public async Task<string?> SendMessage(Account account, ChatConnection chatConnection, string message)
+        {
+            try
+            {
+                Chat chat = new Chat()
+                {
+                    Chat_Connection = chatConnection,
+                    SenderId = account.Id,
+                    Content = message,
+                    Timestamp = DateTime.Now.ToUniversalTime()
+                };
+                _context.Chats.Add(chat);
+                await _context.SaveChangesAsync();
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return "Něco se nepovedlo";
+            }
+        }
     }
 }

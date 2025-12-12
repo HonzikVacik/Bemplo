@@ -115,5 +115,18 @@ namespace Bemplo.Server
             var existingAccount = _context.Accounts.FirstOrDefault(a => a.Email == email);
             return existingAccount == null;
         }
+
+        public static string? IsChatMessageValid(string message)
+        {
+            if(string.IsNullOrEmpty(message) || string.IsNullOrWhiteSpace(message))
+            {
+                return "Nelze odeslat prázdnou zprávu";
+            }
+            if(message.Length > 5000)
+            {
+                return "Zpráva je moc dlouhá (maximálně 5000 znaků)";
+            }
+            return null;
+        }
     }
 }

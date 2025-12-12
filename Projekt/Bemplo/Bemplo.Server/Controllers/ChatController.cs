@@ -49,5 +49,27 @@ namespace Bemplo.Server.Controllers
                 return Ok(result.chatlists);
             }
         }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> SendMessage(int ContactId, string Message)
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return NotFound("Uživatel nenalezen.");
+            }
+
+            string? error = await _chatSer.SendMessage(account, ContactId, Message);
+
+            if (error != null)
+            {
+                return Conflict(error);
+            }
+
+            return Ok();
+        }
     }
 }
