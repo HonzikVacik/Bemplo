@@ -17,5 +17,15 @@ namespace Bemplo.Server.Services
         {
             return await _offer_Preference_RequestRep.SetOffer(account, value);
         }
+
+        public async Task<string?> SetPreference(Account account, string value)
+        {
+            return await _offer_Preference_RequestRep.SetPreference(account, value);
+        }
+
+        public async Task<string?> SetRequest(Account account, string value)
+        {
+            return await _offer_Preference_RequestRep.SetRequest(account, value);
+        }
     }
 }

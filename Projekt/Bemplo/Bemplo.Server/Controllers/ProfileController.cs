@@ -109,7 +109,7 @@ namespace Bemplo.Server.Controllers
             }
 
             //Nastavení preferencí
-            string? result = await _offer_Preference_RequestSer.SetOffer(account, value);
+            string? result = await _offer_Preference_RequestSer.SetPreference(account, value);
 
             if (result != null)
             {
@@ -132,7 +132,7 @@ namespace Bemplo.Server.Controllers
             }
 
             //Nastavení požadavků
-            string? result = await _offer_Preference_RequestSer.SetOffer(account, value);
+            string? result = await _offer_Preference_RequestSer.SetRequest(account, value);
 
             if (result != null)
             {
