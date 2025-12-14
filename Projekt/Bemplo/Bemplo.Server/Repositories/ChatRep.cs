@@ -55,6 +55,24 @@ namespace Bemplo.Server.Repositories
             }
         }
 
+        public async Task<(Message[]?, string?)> GetMessages(Account account, ChatConnection chatConnection, int lastMessageId, int count)
+        {
+            try
+            {
+                DateTime? timestamp = await _context.Chats.Where(ch => ch.Id == lastMessageId).Select(ch => ch.Timestamp).FirstOrDefaultAsync();
+                if (timestamp == null)
+                {
+                    return (null, "MessageId neexistuje");
+                }
+                Message[] messages = await _context.Chats.Where(ch => ch.Chat_Connection == chatConnection).OrderByDescending(ch => ch.Timestamp).Where(ch => ch.Timestamp > timestamp).Take(count).Select(x => new Message() { Id = x.Id, Content = x.Content, Owned = x.SenderId == account.Id, Timestamp = x.Timestamp }).ToArrayAsync();
+                return (messages, null);
+            }
+            catch (Exception ex)
+            {
+                return (null, "Něco se nepovedlo");
+            }
+        }
+
         public async Task<string?> SendMessage(Account account, ChatConnection chatConnection, string message)
         {
             try
@@ -71,6 +89,40 @@ namespace Bemplo.Server.Repositories
                 return null;
             }
             catch (Exception ex)
+            {
+                return "Něco se nepovedlo";
+            }
+        }
+
+        public async Task<string?> SetLock(Account account, ChatConnection chatConnection, bool locked)
+        {
+            try
+            {
+                ChatConnection? chatConnection1 = await _context.ChatConnections.Where(chc => chc == chatConnection).FirstOrDefaultAsync();
+                if (chatConnection1 == null)
+                {
+                    return "Kontakt neexistuje";
+                }
+                
+                if(chatConnection.Account_ID_1 == account.Id)
+                {
+                    chatConnection1.Account_1_Agree = locked;
+                }
+                else if(chatConnection1.Account_ID_2 == account.Id)
+                {
+                    chatConnection1.Account_2_Agree = locked;
+                }
+                else
+                {
+                    return "Něco se nepovedlo";
+                }
+                
+                _context.Update(chatConnection1);
+                await _context.SaveChangesAsync();
+                
+                return null;
+            }
+            catch(Exception ex)
             {
                 return "Něco se nepovedlo";
             }

@@ -71,5 +71,49 @@ namespace Bemplo.Server.Controllers
 
             return Ok();
         }
+
+        [HttpGet("GetMessages")]
+        [Authorize]
+        public async Task<IActionResult> GetMessages(int ContactId, int lastMessageId)
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return NotFound("Uživatel nenalezen.");
+            }
+
+            (Message[]? messages, string? error) result = await _chatSer.GetMessages(account, ContactId, lastMessageId);
+
+            if (result.error != null)
+            {
+                return Conflict(result.error);
+            }
+
+            return Ok();
+        }
+
+        [HttpPost("SetLock")]
+        [Authorize]
+        public async Task<IActionResult> SetLock(int ContactId, bool Locked)
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return NotFound("Uživatel nenalezen.");
+            }
+
+            string? error = await _chatSer.SetLock(account, ContactId, Locked);
+
+            if (error != null)
+            {
+                return Conflict(error);
+            }
+
+            return Ok();
+        }
     }
 }
