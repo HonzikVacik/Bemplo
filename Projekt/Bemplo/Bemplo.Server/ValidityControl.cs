@@ -128,5 +128,27 @@ namespace Bemplo.Server
             }
             return null;
         }
+
+        public static string? IsCommentValid(string comment)
+        {
+            if (string.IsNullOrEmpty(comment) || string.IsNullOrWhiteSpace(comment))
+            {
+                return "Nelze potvrdit prázdné komentář";
+            }
+            if (comment.Length > 5000)
+            {
+                return "Komentář je moc dlouhý (maximálně 5000 znaků)";
+            }
+            return null;
+        }
+
+        public static string? IsStarCountValid(byte starCount)
+        {
+            if(starCount > 5 || starCount < 1)
+            {
+                return "Neplatný StarCount";
+            }
+            return null;
+        }
     }
 }

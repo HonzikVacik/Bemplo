@@ -35,5 +35,10 @@ namespace Bemplo.Server.Repositories
                 return resultExperiences.ToArray();
             }
         }
+
+        public async Task<Experience?> GetExperienceById(int experienceId)
+        {
+            return await _context.Experiences.Where(e => e.Id == experienceId).FirstOrDefaultAsync();
+        }
     }
 }
