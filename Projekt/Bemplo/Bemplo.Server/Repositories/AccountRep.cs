@@ -1,5 +1,6 @@
 ﻿using Bemplo.Server.IRepositories;
 using Bemplo.Server.Models;
+using Bemplo.Server.ResponseModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bemplo.Server.Repositories
@@ -16,6 +17,12 @@ namespace Bemplo.Server.Repositories
         public async Task<Account?> GetAccountById(int id)
         {
             return await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id && a.IsDeleted == false);
+        }
+
+        public async Task<SearchModel[]> SearchAccounts(string searchString)
+        {
+            Account[] accounts = await _context.Accounts.Where(a => a.Name.Contains(searchString) || a.Surname.Contains(searchString)).ToArrayAsync();
+            return accounts.Select(a => new SearchModel { Id = a.Id, Name = a.Name + " " + a.Surname, Description = a.Description }).ToArray();
         }
 
         public async Task<string?> SetAddress(Account account, string country, string city, string region, string address)

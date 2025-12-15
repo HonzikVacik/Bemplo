@@ -1,4 +1,5 @@
-﻿using Bemplo.Server.Models;
+﻿using Bemplo.Server.IRepositories;
+using Bemplo.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
@@ -18,10 +19,12 @@ namespace Bemplo.Server.Controllers
     public class AccountController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly IAccountRep _accountRep;
 
-        public AccountController(ApplicationDbContext context)
+        public AccountController(ApplicationDbContext context, IAccountRep accountRep)
         {
             _context = context;
+            _accountRep = accountRep;
         }
 
         [HttpPost]
@@ -112,6 +115,13 @@ namespace Bemplo.Server.Controllers
         {
             var accounts = await _context.Accounts.ToListAsync();
             return Ok(accounts);
+        }
+
+        [HttpPost("SearchAccounts")]
+        [Authorize]
+        public async Task<IActionResult> IsCommonAccount(string searchString)
+        {
+            return Ok(await _accountRep.SearchAccounts(searchString));
         }
     }
 }

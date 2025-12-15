@@ -1,4 +1,5 @@
 ﻿using Bemplo.Server.Models;
+using Bemplo.Server.ResponseModels;
 
 namespace Bemplo.Server.IRepositories
 {
@@ -8,5 +9,6 @@ namespace Bemplo.Server.IRepositories
         public Task<string?> SetDescription(Account account, string description);
         public Task<string?> SetAddress(Account account, string country, string city, string region, string address);
         public Task<string?> SetEmailAddress(Account account, string email);
+        public Task<SearchModel[]> SearchAccounts(string searchString);
     }
 }
