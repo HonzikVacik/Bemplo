@@ -5,6 +5,7 @@ namespace Bemplo.Server.IRepositories
     public interface IExperienceRep
     {
         public Task<Models.Experience?> GetExperienceById(int experienceId);
+        public Task<Models.Experience[]> GetExperiencesById(int experienceId);
         public Task<Experience[]> GetExperienceByAccount(Models.Account account);
     }
 }

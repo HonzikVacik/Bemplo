@@ -1,6 +1,8 @@
 ﻿using Bemplo.Server.IRepositories;
 using Bemplo.Server.IServices;
 using Bemplo.Server.Models;
+using Bemplo.Server.ResponseModels;
+using Bemplo.Server.TransportModels;
 
 namespace Bemplo.Server.Services
 {
@@ -14,9 +16,25 @@ namespace Bemplo.Server.Services
             _commentRep = commentRep;
             _experienceRep = experienceRep;
         }
+
+        public async Task<(Comments?, string?)> GetCommentsByExperience(int experienceId)
+        {
+            Models.Experience[] experiences = await _experienceRep.GetExperiencesById(experienceId);
+            if (experiences.Length == 0)
+            {
+                return (null, "Něco se nepovedlo");
+            }
+            TransportModels.Comment[] comments = await _commentRep.GetCommentsByExperience(experiences);
+
+            ExperienceToComment[] experienceToComment = experiences.Select(e => new ExperienceToComment { Content = e.Content, Percentage = e.Percentage, Timestamp = e.Timestamp }).ToArray();
+
+            Comments result = new Comments() { comments = comments, experiences = experienceToComment};
+            return (result, null);
+        }
+
         public async Task<string?> PostComment(Account account, int ExperienceId, string Comment, byte StarCount)
         {
-            Experience? experience = await _experienceRep.GetExperienceById(ExperienceId);
+            Models.Experience? experience = await _experienceRep.GetExperienceById(ExperienceId);
             if (experience == null)
             {
                 return "Zkušenost s id " + ExperienceId + " neexistuje";

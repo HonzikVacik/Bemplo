@@ -1,5 +1,6 @@
 ﻿using Bemplo.Server.IServices;
 using Bemplo.Server.Models;
+using Bemplo.Server.ResponseModels;
 using Bemplo.Server.Services;
 using Bemplo.Server.TransportModels;
 using Microsoft.AspNetCore.Authorization;
@@ -39,6 +40,28 @@ namespace Bemplo.Server.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpPost]
+        [Authorize]
+        public async Task<IActionResult> GetComments(int ExperienceId)
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return NotFound("Uživatel nenalezen.");
+            }
+
+            (Comments? comments, string? error) item = await _commentSer.GetCommentsByExperience(ExperienceId);
+
+            if (item.error != null)
+            {
+                return Conflict(item.error);
+            }
+
+            return Ok(item.comments);
         }
     }
 }

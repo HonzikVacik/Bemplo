@@ -1,5 +1,6 @@
 ﻿using Bemplo.Server.IRepositories;
 using Bemplo.Server.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bemplo.Server.Repositories
 {
@@ -11,6 +12,13 @@ namespace Bemplo.Server.Repositories
         {
             _context = context;
         }
+
+        public async Task<TransportModels.Comment[]> GetCommentsByExperience(Experience[] experience)
+        {
+            Review[] reviews = await _context.Rewiews.Include(r => r.Evaluator_Account).Where(r => experience.Contains(r.Experience)).ToArrayAsync();
+            return reviews.Select(r => new TransportModels.Comment { Id = r.Id, Content = r.Content, EvaluatorName = r.Evaluator_Account.Name + " " + r.Evaluator_Account.Surname, Percentage = r.Percentage, Timestamp = r.Timestamp }).ToArray(); 
+        }
+
         public async Task<string?> PostComment(Account account, Experience experience, string Comment, byte StarCount)
         {
             try

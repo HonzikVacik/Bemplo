@@ -40,5 +40,27 @@ namespace Bemplo.Server.Repositories
         {
             return await _context.Experiences.Where(e => e.Id == experienceId).FirstOrDefaultAsync();
         }
+
+        public async Task<Experience[]> GetExperiencesById(int experienceId)
+        {
+            List<Experience> experiences = new List<Experience>();
+
+            Experience? lastExperience = await _context.Experiences.Where(e => e.Id == experienceId).FirstOrDefaultAsync();
+            if (lastExperience == null)
+            {
+                return experiences.ToArray();
+            }
+            experiences.Add(lastExperience);
+            while (lastExperience != null)
+            {
+                Experience? nextExperience = await _context.Experiences.Where(e => e.OldExperience == lastExperience).FirstOrDefaultAsync();
+                lastExperience = nextExperience;
+                if (nextExperience != null)
+                {
+                    experiences.Add(nextExperience);
+                }
+            }
+            return experiences.ToArray();
+        }
     }
 }

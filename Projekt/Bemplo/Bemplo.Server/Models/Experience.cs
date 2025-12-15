@@ -8,5 +8,6 @@
         public byte Percentage { get; set; }
         public DateTime Timestamp { get; set; }
         public bool IsOld { get; set; }
+        public Experience? OldExperience { get; set; }
     }
 }
