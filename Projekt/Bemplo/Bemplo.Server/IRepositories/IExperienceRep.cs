@@ -1,4 +1,5 @@
-﻿using Bemplo.Server.TransportModels;
+﻿using Bemplo.Server.Models;
+using Bemplo.Server.TransportModels;
 
 namespace Bemplo.Server.IRepositories
 {
@@ -6,6 +7,7 @@ namespace Bemplo.Server.IRepositories
     {
         public Task<Models.Experience?> GetExperienceById(int experienceId);
         public Task<Models.Experience[]> GetExperiencesById(int experienceId);
-        public Task<Experience[]> GetExperienceByAccount(Models.Account account);
+        public Task<TransportModels.Experience[]> GetExperienceByAccount(Models.Account account);
+        public Task<string?> SetExperienceToAccount(Account account, SetExperience[] setExperiences);
     }
 }
