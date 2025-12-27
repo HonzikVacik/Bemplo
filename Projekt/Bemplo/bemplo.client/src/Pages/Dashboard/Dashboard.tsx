@@ -40,13 +40,15 @@ function isDashboardUser(data: DashboardBase): data is DashboardUser {
     return (data as DashboardUser).experiences !== undefined;
 }
 
+const TEST_SKILLS: Experience[] = [
+    { title: "Pozice A (např. Grafik)", percentage: 80, rating: 3.0 },
+    { title: "Pozice B (např. Webdesign)", percentage: 65, rating: 4.1 },
+    { title: "Pozice C (např. Kodér)", percentage: 40, rating: 2.6 },
+    { title: "Pozice D (např. Analytik)", percentage: 95, rating: 4.9 }
+];
+
 const Dashboard: React.FC = () => {
-    const [staticSkills, setStaticSkills] = useState({
-        posA: 80,
-        posB: 65,
-        posC: 40,
-        posD: 95,
-    });
+    const [skills, setSkills] = useState<Experience[]>(TEST_SKILLS);
 
     const [dashboardData, setDashboardData] = useState<DashboardBase | DashboardUser | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -55,7 +57,7 @@ const Dashboard: React.FC = () => {
     const [emails, setEmails] = useState<string[]>([]);
 
     // Stavy specifické pouze pro Usera (musíme ošetřit jejich existenci)
-    const [skills, setSkills] = useState<Experience[]>([]);
+    //const [skills, setSkills] = useState<Experience[]>([]);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -79,7 +81,8 @@ const Dashboard: React.FC = () => {
 
                     // Pokud je to User, nastavíme specifická data
                     if (isDashboardUser(data)) {
-                        setSkills(data.experiences || []);
+                        //setSkills(data.experiences || []);
+                        setSkills(TEST_SKILLS);
                     }
                 }
             } catch (error) {
@@ -93,10 +96,16 @@ const Dashboard: React.FC = () => {
     }, []);
 
     // Handlery pro formulář
-    const handleSkillChange = (index: number, value: string) => {
+    /*const handleSkillChange = (index: number, value: string) => {
         const newSkills = [...skills];
         newSkills[index].percentage = parseInt(value);
         setSkills(newSkills);
+    };*/
+
+    const handleSkillChange = (index: number, newValue: string) => {
+        const updatedSkills = [...skills]; // Vytvoříme kopii pole
+        updatedSkills[index].percentage = parseInt(newValue) || 0; // Upravíme konkrétní položku
+        setSkills(updatedSkills); // Uložíme zpět do state
     };
 
     const addEmailRow = () => setEmails([...emails, '']);
@@ -111,6 +120,7 @@ const Dashboard: React.FC = () => {
     if (!dashboardData) return <div>Chyba načítání dat.</div>;
 
     const isCommonAccount = isDashboardUser(dashboardData);
+    console.log("Pozor: " + skills);
 
     return (
         <>
@@ -231,17 +241,21 @@ const Dashboard: React.FC = () => {
                                     {/* Díky isUser ví TypeScript, že dashboardData je DashboardUser */}
                                     <table className="experience-table">
                                         <tbody>
-                                            {skills.map((staticSkills, index) => (
+                                            {skills.map((skill, index) => (
                                                 <tr key={index}>
-                                                    <td>{staticSkills.title}</td>
+                                                    <td>{skill?.title}</td>
                                                     <td className="slider-cell">
-                                                        <input
-                                                            type="range"
-                                                            value={staticSkills.percentage}
-                                                            onChange={(e) => handleSkillChange(index, e.target.value)}
-                                                        />
+                                                        <div className="slider-wrapper">
+                                                            <input
+                                                                type="range"
+                                                                value={skill?.percentage}
+                                                                onChange={(e) => handleSkillChange(index, e.target.value)}
+                                                                className="custom-range"
+                                                            />
+                                                            <span className="slider-value">{skill?.percentage}%</span>
+                                                        </div>
                                                     </td>
-                                                    <td>{staticSkills.rating}*</td>
+                                                    <td>{skill?.rating}*</td>
                                                 </tr>
                                             ))}
                                         </tbody>
