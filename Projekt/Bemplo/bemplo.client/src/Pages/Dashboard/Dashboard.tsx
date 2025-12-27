@@ -76,7 +76,8 @@ const Dashboard: React.FC = () => {
 
                     // Nastavíme společná data
                     if (data.contacts) {
-                        setEmails(data.contacts.map((c: any) => c.email));
+                        //setEmails(data.contacts.map((c: any) => c.email));
+                        setEmails([data.email, ...data.contacts.map((c: any) => c.email)]);
                     }
 
                     // Pokud je to User, nastavíme specifická data
@@ -120,7 +121,6 @@ const Dashboard: React.FC = () => {
     if (!dashboardData) return <div>Chyba načítání dat.</div>;
 
     const isCommonAccount = isDashboardUser(dashboardData);
-    console.log("Pozor: " + skills);
 
     return (
         <>
@@ -131,7 +131,7 @@ const Dashboard: React.FC = () => {
                 <div className="profile-wrapper">
                     <div className="profile-container">
                         <div className="profile-header">
-                            <h2>Jméno Příjmení</h2>
+                            <h2>{dashboardData.name}</h2>
 
                             <button type="button" className="btn-icon" title="Osobní kód">
                                 <svg
