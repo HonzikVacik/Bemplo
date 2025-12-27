@@ -94,7 +94,7 @@ namespace Bemplo.Server.Controllers
             return Ok("Účet byl úspěšně vytvořen");
         }
 
-        [HttpPost("GetAccountType")]
+        [HttpGet("GetAccountType")]
         [Authorize]
         public async Task<IActionResult> IsCommonAccount()
         {

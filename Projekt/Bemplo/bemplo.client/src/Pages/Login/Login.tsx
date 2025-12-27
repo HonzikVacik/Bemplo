@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import ReactDOM from 'react-dom';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Login.css';
 
 interface NotificationState {
     title: string;
     message: string;
+    type?: 'success' | 'error';
 }
 
 const Login: React.FC = () => {
+    const navigate = useNavigate();
     const [notification, setNotification] = useState<NotificationState | null>(null);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -39,14 +41,16 @@ const Login: React.FC = () => {
 
                 setNotification({
                     title: 'Přihlášení úspěšné',
-                    message: 'Byli jste úspěšně přihlášeni.'
+                    message: 'Byli jste úspěšně přihlášeni.',
+                    type: 'success'
                 });
 
             } else {
                 // Chyba: responseText obsahuje chybovou hlášku ze serveru
                 setNotification({
                     title: 'Chyba',
-                    message: responseText
+                    message: responseText,
+                    type: 'error'
                 });
             }
 
@@ -54,22 +58,34 @@ const Login: React.FC = () => {
             console.error('Chyba při přihlašování:', error);
             setNotification({
                 title: 'Chyba sítě',
-                message: 'Nelze se připojit k serveru. Zkuste to prosím později.'
+                message: 'Nelze se připojit k serveru. Zkuste to prosím později.',
+                type: 'error'
             });
         }
     };
 
+    const handleCloseModal = () => {
+        if (notification?.type === 'success') {
+            setNotification(null);
+            navigate('/dashboard');
+        } else {
+            setNotification(null);
+        }
+    };
+
     const modalContent = notification ? (
-        <div className="modal-overlay" onClick={() => setNotification(null)}>
-            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-                <h2>{notification.title}</h2>
-                <p>{notification.message}</p>
-                <button
-                    className="modal-close-btn"
-                    onClick={() => setNotification(null)}
-                >
-                    OK
-                </button>
+        <div className="login-page">
+            <div className="modal-overlay" onClick={() => setNotification(null)}>
+                <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                    <h2>{notification.title}</h2>
+                    <p>{notification.message}</p>
+                    <button
+                        className="modal-close-btn"
+                        onClick={handleCloseModal}
+                    >
+                        OK
+                    </button>
+                </div>
             </div>
         </div>
     ) : null;

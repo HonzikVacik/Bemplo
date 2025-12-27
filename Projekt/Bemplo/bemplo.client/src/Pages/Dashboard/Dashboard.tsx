@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 
 const Dashboard: React.FC = () => {
@@ -31,6 +31,41 @@ const Dashboard: React.FC = () => {
         newEmails[index] = value;
         setEmails(newEmails);
     };
+
+    const [isCommonAccount, setIsCommonAccount] = useState(true);
+
+    useEffect(() => {
+        const fetchAccountType = async () => {
+            const token = localStorage.getItem('jwtToken');
+
+            if (!token) {
+                console.warn("Chybí přihlašovací token.");
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/Account/GetAccountType', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const shouldShow = await response.text();
+
+                    setIsCommonAccount(shouldShow == 'true');
+                } else {
+                    console.error("Chyba při zjišťování typu účtu:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Chyba komunikace se serverem:", error);
+            }
+        };
+
+        fetchAccountType();
+    }, []);
 
     return (
         <>
@@ -143,131 +178,137 @@ const Dashboard: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="profile-section">
-                                <div className="section-header">
-                                    <h3>Zkušenosti</h3>
-                                    <button
-                                        type="button"
-                                        className="btn-icon add-contact"
-                                        title="Přidat další zkušenost"
-                                    >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
+                            {isCommonAccount && (
+                                <div className="profile-section">
+                                    <div className="section-header">
+                                        <h3>Zkušenosti</h3>
+                                        <button
+                                            type="button"
+                                            className="btn-icon add-contact"
+                                            title="Přidat další zkušenost"
                                         >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M12 4v16m8-8H4"
-                                            />
-                                        </svg>
-                                    </button>
+                                            <svg
+                                                xmlns="http://www.w3.org/2000/svg"
+                                                fill="none"
+                                                viewBox="0 0 24 24"
+                                                stroke="currentColor"
+                                            >
+                                                <path
+                                                    strokeLinecap="round"
+                                                    strokeLinejoin="round"
+                                                    strokeWidth="2"
+                                                    d="M12 4v16m8-8H4"
+                                                />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                    <table className="experience-table">
+                                        <thead></thead>
+                                        <tbody>
+                                            <tr>
+                                                <td>Pozice A (např. Grafik)</td>
+                                                <td className="slider-cell">
+                                                    <div className="slider-wrapper">
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="100"
+                                                            value={skills.posA}
+                                                            className="custom-range"
+                                                            onChange={(e) => handleSkillChange('posA', e.target.value)}
+                                                        />
+                                                        <span className="slider-value">{skills.posA}%</span>
+                                                    </div>
+                                                </td>
+                                                <td>3*</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Pozice B (např. Webdesign)</td>
+                                                <td className="slider-cell">
+                                                    <div className="slider-wrapper">
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="100"
+                                                            value={skills.posB}
+                                                            className="custom-range"
+                                                            onChange={(e) => handleSkillChange('posB', e.target.value)}
+                                                        />
+                                                        <span className="slider-value">{skills.posB}%</span>
+                                                    </div>
+                                                </td>
+                                                <td>4.1*</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Pozice C (např. Kodér)</td>
+                                                <td className="slider-cell">
+                                                    <div className="slider-wrapper">
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="100"
+                                                            value={skills.posC}
+                                                            className="custom-range"
+                                                            onChange={(e) => handleSkillChange('posC', e.target.value)}
+                                                        />
+                                                        <span className="slider-value">{skills.posC}%</span>
+                                                    </div>
+                                                </td>
+                                                <td>2.6*</td>
+                                            </tr>
+                                            <tr>
+                                                <td>Pozice D (např. Analytik)</td>
+                                                <td className="slider-cell">
+                                                    <div className="slider-wrapper">
+                                                        <input
+                                                            type="range"
+                                                            min="0"
+                                                            max="100"
+                                                            value={skills.posD}
+                                                            className="custom-range"
+                                                            onChange={(e) => handleSkillChange('posD', e.target.value)}
+                                                        />
+                                                        <span className="slider-value">{skills.posD}%</span>
+                                                    </div>
+                                                </td>
+                                                <td>4.9*</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
                                 </div>
-                                <table className="experience-table">
-                                    <thead></thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Pozice A (např. Grafik)</td>
-                                            <td className="slider-cell">
-                                                <div className="slider-wrapper">
-                                                    <input
-                                                        type="range"
-                                                        min="0"
-                                                        max="100"
-                                                        value={skills.posA}
-                                                        className="custom-range"
-                                                        onChange={(e) => handleSkillChange('posA', e.target.value)}
-                                                    />
-                                                    <span className="slider-value">{skills.posA}%</span>
-                                                </div>
-                                            </td>
-                                            <td>3*</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Pozice B (např. Webdesign)</td>
-                                            <td className="slider-cell">
-                                                <div className="slider-wrapper">
-                                                    <input
-                                                        type="range"
-                                                        min="0"
-                                                        max="100"
-                                                        value={skills.posB}
-                                                        className="custom-range"
-                                                        onChange={(e) => handleSkillChange('posB', e.target.value)}
-                                                    />
-                                                    <span className="slider-value">{skills.posB}%</span>
-                                                </div>
-                                            </td>
-                                            <td>4.1*</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Pozice C (např. Kodér)</td>
-                                            <td className="slider-cell">
-                                                <div className="slider-wrapper">
-                                                    <input
-                                                        type="range"
-                                                        min="0"
-                                                        max="100"
-                                                        value={skills.posC}
-                                                        className="custom-range"
-                                                        onChange={(e) => handleSkillChange('posC', e.target.value)}
-                                                    />
-                                                    <span className="slider-value">{skills.posC}%</span>
-                                                </div>
-                                            </td>
-                                            <td>2.6*</td>
-                                        </tr>
-                                        <tr>
-                                            <td>Pozice D (např. Analytik)</td>
-                                            <td className="slider-cell">
-                                                <div className="slider-wrapper">
-                                                    <input
-                                                        type="range"
-                                                        min="0"
-                                                        max="100"
-                                                        value={skills.posD}
-                                                        className="custom-range"
-                                                        onChange={(e) => handleSkillChange('posD', e.target.value)}
-                                                    />
-                                                    <span className="slider-value">{skills.posD}%</span>
-                                                </div>
-                                            </td>
-                                            <td>4.9*</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
+                            )}
 
-                            <div className="profile-section">
-                                <h3>Preference</h3>
-                                <div className="input-group span-full">
-                                    <textarea
-                                        id="preferences"
-                                        name="preferences"
-                                        placeholder=" "
-                                        rows={3}
-                                        defaultValue="Preferuji práci na dálku..."
-                                    ></textarea>
-                                    <span className="focus-border"></span>
+                            {isCommonAccount && (
+                                <div className="profile-section">
+                                    <h3>Preference</h3>
+                                    <div className="input-group span-full">
+                                        <textarea
+                                            id="preferences"
+                                            name="preferences"
+                                            placeholder=" "
+                                            rows={3}
+                                            defaultValue="Preferuji práci na dálku..."
+                                        ></textarea>
+                                        <span className="focus-border"></span>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
-                            <div className="profile-section">
-                                <h3>Požadavky</h3>
-                                <div className="input-group span-full">
-                                    <textarea
-                                        id="requirements"
-                                        name="requirements"
-                                        placeholder=" "
-                                        rows={3}
-                                        defaultValue="Požaduji flexibilní pracovní dobu..."
-                                    ></textarea>
-                                    <span className="focus-border"></span>
+                            {isCommonAccount && (
+                                <div className="profile-section">
+                                    <h3>Požadavky</h3>
+                                    <div className="input-group span-full">
+                                        <textarea
+                                            id="requirements"
+                                            name="requirements"
+                                            placeholder=" "
+                                            rows={3}
+                                            defaultValue="Požaduji flexibilní pracovní dobu..."
+                                        ></textarea>
+                                        <span className="focus-border"></span>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             <div className="profile-section">
                                 <h3>Adresa</h3>
@@ -397,28 +438,30 @@ const Dashboard: React.FC = () => {
                                 </div>
                             </div>
 
-                            <div className="profile-section">
-                                <h3>Pracovní vztahy</h3>
-                                <p>Status: V pracovní smlouvě</p>
-                                <div className="toggle-switch">
-                                    <input
-                                        type="radio"
-                                        id="status-active"
-                                        name="work-status"
-                                        value="active"
-                                        defaultChecked
-                                    />
-                                    <label htmlFor="status-active">Aktivní</label>
-                                    <input
-                                        type="radio"
-                                        id="status-inactive"
-                                        name="work-status"
-                                        value="inactive"
-                                    />
-                                    <label htmlFor="status-inactive">Neaktivní</label>
-                                    <span className="slider"></span>
+                            {isCommonAccount && (
+                                <div className="profile-section">
+                                    <h3>Pracovní vztahy</h3>
+                                    <p>Status: V pracovní smlouvě</p>
+                                    <div className="toggle-switch">
+                                        <input
+                                            type="radio"
+                                            id="status-active"
+                                            name="work-status"
+                                            value="active"
+                                            defaultChecked
+                                        />
+                                        <label htmlFor="status-active">Aktivní</label>
+                                        <input
+                                            type="radio"
+                                            id="status-inactive"
+                                            name="work-status"
+                                            value="inactive"
+                                        />
+                                        <label htmlFor="status-inactive">Neaktivní</label>
+                                        <span className="slider"></span>
+                                    </div>
                                 </div>
-                            </div>
+                            )}
 
                             <div className="profile-section">
                                 <h3>Foto</h3>
