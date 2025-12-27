@@ -1,71 +1,116 @@
 import React, { useState, useEffect } from 'react';
 import './Dashboard.css';
 
+// --- DEFINICE ROZHRANÍ ---
+interface Experience {
+    title: string;
+    percentage: number;
+    rating: number;
+}
+
+interface Contact {
+    email: string;
+}
+
+// 1. Základní interface (to, co mají všichni - Firmy i Uživatelé)
+interface DashboardBase {
+    id: number;
+    name: string;
+    description: string;
+    offer: string;
+    email: string; // Hlavní email
+    country: string;
+    region: string;
+    city: string;
+    address: string;
+    contacts: Contact[]; // Seznam dalších kontaktů
+    agreeWithPolicy: boolean;
+}
+
+// 2. Rozšířený interface pro Uživatele (dědí ze základu)
+interface DashboardUser extends DashboardBase {
+    preference: string;
+    request: string;
+    experiences: Experience[];
+}
+
+// 3. Type Guard funkce (Klíčový bod!)
+// Tato funkce ověří, zda data obsahují pole "experiences", čímž pozná DashboardUser
+function isDashboardUser(data: DashboardBase): data is DashboardUser {
+    return (data as DashboardUser).experiences !== undefined;
+}
+
 const Dashboard: React.FC = () => {
-    // Stav pro slidery (zkušenosti), aby se aktualizovala procenta
-    const [skills, setSkills] = useState({
+    const [staticSkills, setStaticSkills] = useState({
         posA: 80,
         posB: 65,
         posC: 40,
         posD: 95,
     });
 
-    // Stav pro emaily (přidávání/odebírání)
-    const [emails, setEmails] = useState(['jmeno.prijmeni@email.cz']);
+    const [dashboardData, setDashboardData] = useState<DashboardBase | DashboardUser | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const handleSkillChange = (key: string, value: string) => {
-        setSkills((prev) => ({ ...prev, [key]: parseInt(value) }));
-    };
+    // Pomocné stavy pro formuláře
+    const [emails, setEmails] = useState<string[]>([]);
 
-    const addEmailRow = () => {
-        setEmails([...emails, '']);
-    };
-
-    const removeEmailRow = (index: number) => {
-        const newEmails = emails.filter((_, i) => i !== index);
-        setEmails(newEmails);
-    };
-
-    const handleEmailChange = (index: number, value: string) => {
-        const newEmails = [...emails];
-        newEmails[index] = value;
-        setEmails(newEmails);
-    };
-
-    const [isCommonAccount, setIsCommonAccount] = useState(true);
+    // Stavy specifické pouze pro Usera (musíme ošetřit jejich existenci)
+    const [skills, setSkills] = useState<Experience[]>([]);
 
     useEffect(() => {
-        const fetchAccountType = async () => {
+        const fetchDashboardData = async () => {
             const token = localStorage.getItem('jwtToken');
-
-            if (!token) {
-                console.warn("Chybí přihlašovací token.");
-                return;
-            }
+            if (!token) return;
 
             try {
-                const response = await fetch('/api/Account/GetAccountType', {
-                    method: 'GET',
-                    headers: {
-                        'Authorization': `Bearer ${token}`,
-                        'Content-Type': 'application/json'
-                    }
+                // Voláme jen jeden endpoint, server rozhodne, co vrátí
+                const response = await fetch('/api/Profile', {
+                    headers: { 'Authorization': `Bearer ${token}` }
                 });
 
                 if (response.ok) {
-                    const shouldShow = await response.text();
+                    const data = await response.json();
+                    setDashboardData(data);
 
-                    setIsCommonAccount(shouldShow == 'true');
-                } else {
-                    console.error("Chyba při zjišťování typu účtu:", response.statusText);
+                    // Nastavíme společná data
+                    if (data.contacts) {
+                        setEmails(data.contacts.map((c: any) => c.email));
+                    }
+
+                    // Pokud je to User, nastavíme specifická data
+                    if (isDashboardUser(data)) {
+                        setSkills(data.experiences || []);
+                    }
                 }
             } catch (error) {
-                console.error("Chyba komunikace se serverem:", error);
+                console.error("Chyba:", error);
+            } finally {
+                setIsLoading(false);
             }
         };
 
-        fetchAccountType();
+        fetchDashboardData();
     }, []);
+
+    // Handlery pro formulář
+    const handleSkillChange = (index: number, value: string) => {
+        const newSkills = [...skills];
+        newSkills[index].percentage = parseInt(value);
+        setSkills(newSkills);
+    };
+
+    const addEmailRow = () => setEmails([...emails, '']);
+    const removeEmailRow = (idx: number) => setEmails(emails.filter((_, i) => i !== idx));
+    const handleEmailChange = (idx: number, val: string) => {
+        const newEmails = [...emails];
+        newEmails[idx] = val;
+        setEmails(newEmails);
+    };
+
+    if (isLoading) return <div>Načítám...</div>;
+    if (!dashboardData) return <div>Chyba načítání dat.</div>;
+
+    const isCommonAccount = isDashboardUser(dashboardData);
 
     return (
         <>
@@ -159,6 +204,7 @@ const Dashboard: React.FC = () => {
                                         placeholder=" "
                                         rows={5}
                                         defaultValue="Sem přijde text popisující uživatele. Může být i delší a zabrat více řádků..."
+                                        value={dashboardData?.description}
                                     ></textarea>
                                     <span className="focus-border"></span>
                                 </div>
@@ -173,6 +219,7 @@ const Dashboard: React.FC = () => {
                                         placeholder=" "
                                         rows={4}
                                         defaultValue="Nabízím své služby v oblasti..."
+                                        value={dashboardData?.offer}
                                     ></textarea>
                                     <span className="focus-border"></span>
                                 </div>
@@ -180,99 +227,23 @@ const Dashboard: React.FC = () => {
 
                             {isCommonAccount && (
                                 <div className="profile-section">
-                                    <div className="section-header">
-                                        <h3>Zkušenosti</h3>
-                                        <button
-                                            type="button"
-                                            className="btn-icon add-contact"
-                                            title="Přidat další zkušenost"
-                                        >
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    strokeWidth="2"
-                                                    d="M12 4v16m8-8H4"
-                                                />
-                                            </svg>
-                                        </button>
-                                    </div>
+                                    <h3>Zkušenosti</h3>
+                                    {/* Díky isUser ví TypeScript, že dashboardData je DashboardUser */}
                                     <table className="experience-table">
-                                        <thead></thead>
                                         <tbody>
-                                            <tr>
-                                                <td>Pozice A (např. Grafik)</td>
-                                                <td className="slider-cell">
-                                                    <div className="slider-wrapper">
+                                            {skills.map((staticSkills, index) => (
+                                                <tr key={index}>
+                                                    <td>{staticSkills.title}</td>
+                                                    <td className="slider-cell">
                                                         <input
                                                             type="range"
-                                                            min="0"
-                                                            max="100"
-                                                            value={skills.posA}
-                                                            className="custom-range"
-                                                            onChange={(e) => handleSkillChange('posA', e.target.value)}
+                                                            value={staticSkills.percentage}
+                                                            onChange={(e) => handleSkillChange(index, e.target.value)}
                                                         />
-                                                        <span className="slider-value">{skills.posA}%</span>
-                                                    </div>
-                                                </td>
-                                                <td>3*</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Pozice B (např. Webdesign)</td>
-                                                <td className="slider-cell">
-                                                    <div className="slider-wrapper">
-                                                        <input
-                                                            type="range"
-                                                            min="0"
-                                                            max="100"
-                                                            value={skills.posB}
-                                                            className="custom-range"
-                                                            onChange={(e) => handleSkillChange('posB', e.target.value)}
-                                                        />
-                                                        <span className="slider-value">{skills.posB}%</span>
-                                                    </div>
-                                                </td>
-                                                <td>4.1*</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Pozice C (např. Kodér)</td>
-                                                <td className="slider-cell">
-                                                    <div className="slider-wrapper">
-                                                        <input
-                                                            type="range"
-                                                            min="0"
-                                                            max="100"
-                                                            value={skills.posC}
-                                                            className="custom-range"
-                                                            onChange={(e) => handleSkillChange('posC', e.target.value)}
-                                                        />
-                                                        <span className="slider-value">{skills.posC}%</span>
-                                                    </div>
-                                                </td>
-                                                <td>2.6*</td>
-                                            </tr>
-                                            <tr>
-                                                <td>Pozice D (např. Analytik)</td>
-                                                <td className="slider-cell">
-                                                    <div className="slider-wrapper">
-                                                        <input
-                                                            type="range"
-                                                            min="0"
-                                                            max="100"
-                                                            value={skills.posD}
-                                                            className="custom-range"
-                                                            onChange={(e) => handleSkillChange('posD', e.target.value)}
-                                                        />
-                                                        <span className="slider-value">{skills.posD}%</span>
-                                                    </div>
-                                                </td>
-                                                <td>4.9*</td>
-                                            </tr>
+                                                    </td>
+                                                    <td>{staticSkills.rating}*</td>
+                                                </tr>
+                                            ))}
                                         </tbody>
                                     </table>
                                 </div>
@@ -288,6 +259,7 @@ const Dashboard: React.FC = () => {
                                             placeholder=" "
                                             rows={3}
                                             defaultValue="Preferuji práci na dálku..."
+                                            value={dashboardData?.preference}
                                         ></textarea>
                                         <span className="focus-border"></span>
                                     </div>
@@ -304,6 +276,7 @@ const Dashboard: React.FC = () => {
                                             placeholder=" "
                                             rows={3}
                                             defaultValue="Požaduji flexibilní pracovní dobu..."
+                                            value={dashboardData?.preference}
                                         ></textarea>
                                         <span className="focus-border"></span>
                                     </div>
@@ -321,6 +294,7 @@ const Dashboard: React.FC = () => {
                                             placeholder=" "
                                             required
                                             defaultValue="Česká republika"
+                                            value={dashboardData?.country}
                                         />
                                         <label htmlFor="country">Stát</label>
                                         <span className="focus-border"></span>
@@ -333,6 +307,7 @@ const Dashboard: React.FC = () => {
                                             placeholder=" "
                                             required
                                             defaultValue="Ústecký kraj"
+                                            value={dashboardData?.region}
                                         />
                                         <label htmlFor="region">Kraj</label>
                                         <span className="focus-border"></span>
@@ -345,6 +320,7 @@ const Dashboard: React.FC = () => {
                                             placeholder=" "
                                             required
                                             defaultValue="Ústí nad Labem"
+                                            value={dashboardData?.city}
                                         />
                                         <label htmlFor="city">Město (Okres)</label>
                                         <span className="focus-border"></span>
@@ -357,6 +333,7 @@ const Dashboard: React.FC = () => {
                                             placeholder=" "
                                             required
                                             defaultValue="Nějaká ulice 123/45"
+                                            value={dashboardData?.address}
                                         />
                                         <label htmlFor="address">Adresa</label>
                                         <span className="focus-border"></span>
