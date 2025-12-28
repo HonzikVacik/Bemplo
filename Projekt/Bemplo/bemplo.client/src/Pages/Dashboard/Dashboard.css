@@ -559,8 +559,6 @@
 
         .dashboard-page .photo-gallery .main-photo img {
             width: 100%;
-            aspect-ratio: 16 / 10;
-            object-fit: cover;
         }
 
 .dashboard-page .thumbnail-grid {
@@ -570,19 +568,22 @@
 }
 
 .dashboard-page .thumbnail {
+    cursor: pointer;
     border-radius: 8px;
     overflow: hidden;
     line-height: 0;
     border: 3px solid transparent;
     transition: all 0.3s ease;
     cursor: grab;
+    position: relative;
 }
 
     .dashboard-page .thumbnail img {
         width: 100%;
         height: 100%;
-        aspect-ratio: 1 / 1;
+        display: block;
         object-fit: cover;
+        aspect-ratio: 1 / 1;
     }
 
     .dashboard-page .thumbnail:hover {
@@ -591,7 +592,50 @@
 
     .dashboard-page .thumbnail:active {
         cursor: grabbing;
+        border-color: #007bff;
+        opacity: 1;
     }
+
+.delete-btn {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 24px;
+    height: 24px;
+    background-color: rgba(255, 255, 255, 0.9);
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.2s ease;
+    z-index: 10;
+}
+
+    .delete-btn svg {
+        width: 16px;
+        height: 16px;
+        color: #dc3545;
+    }
+
+    .delete-btn:hover {
+        background-color: #dc3545;
+        border-color: #dc3545;
+    }
+
+        .delete-btn:hover svg {
+            color: white;
+        }
+
+.thumbnail:hover .delete-btn {
+    opacity: 1;
+    visibility: visible;
+}
+}
 
 /* --- 8. ODKAZY V PATIÈCE --- */
 .dashboard-page .links {
@@ -747,4 +791,55 @@
         .dashboard-page .form-grid {
             gap: 1.5rem 0;
         }
+}
+
+.dashboard-page .action-buttons {
+    display: flex;
+    justify-content: flex-end; /* Zarovnání doprava */
+    gap: 10px; /* Mezera mezi tlaèítky */
+    margin-top: 8px;
+    margin-bottom: 10px;
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+.dashboard-page .btn-action {
+    padding: 6px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: background-color 0.2s;
+}
+
+.dashboard-page .btn-cancel {
+    background-color: #e0e0e0; /* Lehce šedá */
+    border-radius: 50px;
+    color: #333;
+}
+
+    .dashboard-page .btn-cancel:hover {
+        background-color: #c0c0c0;
+    }
+
+.dashboard-page .btn-confirm {
+    background-color: #007bff; /* Modrá */
+    border-radius: 50px;
+    color: white;
+}
+
+    .dashboard-page .btn-confirm:hover {
+        background-color: #0056b3;
+    }
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-5px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }

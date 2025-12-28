@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import './Dashboard.css';
 
-// --- DEFINICE ROZHRANÍ ---
 interface Experience {
     title: string;
     percentage: number;
@@ -12,30 +11,26 @@ interface Contact {
     email: string;
 }
 
-// 1. Základní interface (to, co mají všichni - Firmy i Uživatelé)
 interface DashboardBase {
     id: number;
     name: string;
     description: string;
     offer: string;
-    email: string; // Hlavní email
+    email: string;
     country: string;
     region: string;
     city: string;
     address: string;
-    contacts: Contact[]; // Seznam dalších kontaktů
+    contacts: Contact[];
     agreeWithPolicy: boolean;
 }
 
-// 2. Rozšířený interface pro Uživatele (dědí ze základu)
 interface DashboardUser extends DashboardBase {
     preference: string;
     request: string;
     experiences: Experience[];
 }
 
-// 3. Type Guard funkce (Klíčový bod!)
-// Tato funkce ověří, zda data obsahují pole "experiences", čímž pozná DashboardUser
 function isDashboardUser(data: DashboardBase): data is DashboardUser {
     return (data as DashboardUser).experiences !== undefined;
 }
@@ -47,17 +42,210 @@ const TEST_SKILLS: Experience[] = [
     { title: "Pozice D (např. Analytik)", percentage: 95, rating: 4.9 }
 ];
 
+const TEST_IMAGES = [
+    "o1 (1).png",
+    "o1 (1).png",
+    "o1 (2).png",
+    "o1 (3).png"
+];
+
+interface EditableTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
+    initialValue: string | undefined;
+    onSave: (newValue: string) => void;
+}
+
+const EditableTextarea: React.FC<EditableTextareaProps> = ({ initialValue, onSave, ...props }) => {
+    const [value, setValue] = useState(initialValue || '');
+
+    useEffect(() => {
+        setValue(initialValue || '');
+    }, [initialValue]);
+
+    const hasChanged = value !== (initialValue || '');
+
+    const handleCancel = () => {
+        setValue(initialValue || '');
+    };
+
+    const handleConfirm = () => {
+        onSave(value);
+    };
+
+    return (
+        <div className="input-group span-full">
+            <textarea
+                {...props}
+                value={value}
+                onChange={(e) => setValue(e.target.value)}
+            ></textarea>
+            <span className="focus-border"></span>
+
+            {hasChanged && (
+                <div className="action-buttons">
+                    <button type="button" className="btn-action btn-cancel" onClick={handleCancel}>
+                        Zrušit
+                    </button>
+                    <button type="button" className="btn-action btn-confirm" onClick={handleConfirm}>
+                        Potvrdit
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
+interface AddressData {
+    country: string;
+    region: string;
+    city: string;
+    address: string;
+}
+
+interface AddressSectionProps {
+    data: AddressData;
+    onSave: (newData: AddressData) => void;
+}
+
+const AddressSection: React.FC<AddressSectionProps> = ({ data, onSave }) => {
+    const [values, setValues] = useState<AddressData>({
+        country: data.country || '',
+        region: data.region || '',
+        city: data.city || '',
+        address: data.address || ''
+    });
+
+    useEffect(() => {
+        setValues({
+            country: data.country || '',
+            region: data.region || '',
+            city: data.city || '',
+            address: data.address || ''
+        });
+    }, [data]);
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = e.target;
+        setValues((prev) => ({
+            ...prev,
+            [name]: value
+        }));
+    };
+
+    const hasChanged =
+        values.country !== (data.country || '') ||
+        values.region !== (data.region || '') ||
+        values.city !== (data.city || '') ||
+        values.address !== (data.address || '');
+
+    const handleCancel = () => {
+        setValues({
+            country: data.country || '',
+            region: data.region || '',
+            city: data.city || '',
+            address: data.address || ''
+        });
+    };
+
+    const handleConfirm = () => {
+        onSave(values);
+    };
+
+    return (
+        <div className="profile-section">
+            <h3>Adresa</h3>
+            <div className="form-grid">
+                {/* 1. STÁT */}
+                <div className="input-group">
+                    <input
+                        type="text"
+                        id="country"
+                        name="country"
+                        placeholder=" "
+                        required
+                        value={values.country}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor="country">Stát</label>
+                    <span className="focus-border"></span>
+                </div>
+
+                {/* 2. KRAJ */}
+                <div className="input-group">
+                    <input
+                        type="text"
+                        id="region"
+                        name="region"
+                        placeholder=" "
+                        required
+                        value={values.region}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor="region">Kraj</label>
+                    <span className="focus-border"></span>
+                </div>
+
+                {/* 3. MĚSTO */}
+                <div className="input-group">
+                    <input
+                        type="text"
+                        id="city"
+                        name="city"
+                        placeholder=" "
+                        required
+                        value={values.city}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor="city">Město (Okres)</label>
+                    <span className="focus-border"></span>
+                </div>
+
+                {/* 4. ADRESA */}
+                <div className="input-group">
+                    <input
+                        type="text"
+                        id="address"
+                        name="address"
+                        placeholder=" "
+                        required
+                        value={values.address}
+                        onChange={handleChange}
+                    />
+                    <label htmlFor="address">Adresa</label>
+                    <span className="focus-border"></span>
+                </div>
+            </div>
+
+            {hasChanged && (
+                <div className="action-buttons" style={{ marginTop: '20px' }}>
+                    <button type="button" className="btn-action btn-cancel" onClick={handleCancel}>
+                        Zrušit
+                    </button>
+                    <button type="button" className="btn-action btn-confirm" onClick={handleConfirm}>
+                        Potvrdit
+                    </button>
+                </div>
+            )}
+        </div>
+    );
+};
+
 const Dashboard: React.FC = () => {
     const [skills, setSkills] = useState<Experience[]>(TEST_SKILLS);
 
     const [dashboardData, setDashboardData] = useState<DashboardBase | DashboardUser | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Pomocné stavy pro formuláře
     const [emails, setEmails] = useState<string[]>([]);
 
-    // Stavy specifické pouze pro Usera (musíme ošetřit jejich existenci)
     //const [skills, setSkills] = useState<Experience[]>([]);
+
+    const [images, setImages] = useState<string[]>(TEST_IMAGES);
+    const [selectedImage, setSelectedImage] = useState<string | null>(TEST_IMAGES[0] || null);
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const dragItem = useRef<number | null>(null);
+    const dragOverItem = useRef<number | null>(null);
 
     useEffect(() => {
         const fetchDashboardData = async () => {
@@ -65,7 +253,6 @@ const Dashboard: React.FC = () => {
             if (!token) return;
 
             try {
-                // Voláme jen jeden endpoint, server rozhodne, co vrátí
                 const response = await fetch('/api/Profile', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -74,13 +261,11 @@ const Dashboard: React.FC = () => {
                     const data = await response.json();
                     setDashboardData(data);
 
-                    // Nastavíme společná data
                     if (data.contacts) {
                         //setEmails(data.contacts.map((c: any) => c.email));
                         setEmails([data.email, ...data.contacts.map((c: any) => c.email)]);
                     }
 
-                    // Pokud je to User, nastavíme specifická data
                     if (isDashboardUser(data)) {
                         //setSkills(data.experiences || []);
                         setSkills(TEST_SKILLS);
@@ -104,9 +289,9 @@ const Dashboard: React.FC = () => {
     };*/
 
     const handleSkillChange = (index: number, newValue: string) => {
-        const updatedSkills = [...skills]; // Vytvoříme kopii pole
-        updatedSkills[index].percentage = parseInt(newValue) || 0; // Upravíme konkrétní položku
-        setSkills(updatedSkills); // Uložíme zpět do state
+        const updatedSkills = [...skills];
+        updatedSkills[index].percentage = parseInt(newValue) || 0;
+        setSkills(updatedSkills);
     };
 
     const addEmailRow = () => setEmails([...emails, '']);
@@ -117,10 +302,84 @@ const Dashboard: React.FC = () => {
         setEmails(newEmails);
     };
 
+    const triggerFileInput = () => {
+        fileInputRef.current?.click();
+    };
+
+    const handleImageUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const newImageUrl = URL.createObjectURL(file);
+
+            setImages((prevImages) => [...prevImages, newImageUrl]);
+
+            setSelectedImage(newImageUrl);
+        }
+
+        if (event.target) {
+            event.target.value = '';
+        }
+    };
+
+    const handleSelectImage = (imgUrl: string) => {
+        setSelectedImage(imgUrl);
+    };
+
     if (isLoading) return <div>Načítám...</div>;
     if (!dashboardData) return <div>Chyba načítání dat.</div>;
 
     const isCommonAccount = isDashboardUser(dashboardData);
+
+    const updateField = (field: keyof DashboardUser, value: string) => {
+        setDashboardData((prev) => {
+            if (!prev) return null;
+            return { ...prev, [field]: value };
+        });
+    };
+
+    const updateAddress = (newData: AddressData) => {
+        setDashboardData((prev) => {
+            if (!prev) return null;
+            return {
+                ...prev,
+                country: newData.country,
+                region: newData.region,
+                city: newData.city,
+                address: newData.address
+            };
+        });
+    };
+
+    const handleSort = () => {
+        let _images = [...images];
+
+        if (dragItem.current === null || dragOverItem.current === null) return;
+
+        const draggedItemContent = _images.splice(dragItem.current, 1)[0];
+
+        _images.splice(dragOverItem.current, 0, draggedItemContent);
+
+        dragItem.current = null;
+        dragOverItem.current = null;
+
+        setImages(_images);
+    };
+
+    const handleDeleteImage = (indexToDelete: number, e: React.MouseEvent) => {
+        e.stopPropagation();
+
+        const imageToDelete = images[indexToDelete];
+
+        const newImages = images.filter((_, index) => index !== indexToDelete);
+        setImages(newImages);
+
+        if (selectedImage === imageToDelete) {
+            setSelectedImage(newImages.length > 0 ? newImages[0] : null);
+        }
+
+        // Poznámka: Pokud jde o "URL.createObjectURL", měli bychom správně zavolat 
+        // URL.revokeObjectURL(imageToDelete), aby se uvolnila paměť, ale pro základní funkčnost to není kritické.
+    };
 
     return (
         <>
@@ -207,30 +466,27 @@ const Dashboard: React.FC = () => {
                         <form className="profile-form">
                             <div className="profile-section">
                                 <h3>Popis</h3>
-                                <div className="input-group span-full">
-                                    <textarea
-                                        id="description"
-                                        name="description"
-                                        placeholder=" "
-                                        rows={5}
-                                        defaultValue="Sem přijde text popisující uživatele. Může být i delší a zabrat více řádků..."
-                                        value={dashboardData?.description}
-                                    ></textarea>
-                                    <span className="focus-border"></span>
-                                </div>
+                                <EditableTextarea
+                                    id="description"
+                                    name="description"
+                                    placeholder=" "
+                                    rows={5}
+                                    initialValue={dashboardData.description}
+                                    onSave={(val) => updateField('description', val)}
+                                />
                             </div>
 
                             <div className="profile-section">
                                 <h3>Nabídka</h3>
                                 <div className="input-group span-full">
-                                    <textarea
+                                    <EditableTextarea
                                         id="offer"
                                         name="offer"
                                         placeholder=" "
                                         rows={4}
-                                        defaultValue="Nabízím své služby v oblasti..."
-                                        value={dashboardData?.offer}
-                                    ></textarea>
+                                        initialValue={dashboardData?.offer}
+                                        onSave={(val) => updateField('offer', val)}
+                                    />
                                     <span className="focus-border"></span>
                                 </div>
                             </div>
@@ -238,7 +494,6 @@ const Dashboard: React.FC = () => {
                             {isCommonAccount && (
                                 <div className="profile-section">
                                     <h3>Zkušenosti</h3>
-                                    {/* Díky isUser ví TypeScript, že dashboardData je DashboardUser */}
                                     <table className="experience-table">
                                         <tbody>
                                             {skills.map((skill, index) => (
@@ -267,14 +522,14 @@ const Dashboard: React.FC = () => {
                                 <div className="profile-section">
                                     <h3>Preference</h3>
                                     <div className="input-group span-full">
-                                        <textarea
+                                        <EditableTextarea
                                             id="preferences"
                                             name="preferences"
                                             placeholder=" "
                                             rows={3}
-                                            defaultValue="Preferuji práci na dálku..."
-                                            value={dashboardData?.preference}
-                                        ></textarea>
+                                            initialValue={dashboardData?.preference}
+                                            onSave={(val) => updateField('preference', val)}
+                                        />
                                         <span className="focus-border"></span>
                                     </div>
                                 </div>
@@ -284,76 +539,28 @@ const Dashboard: React.FC = () => {
                                 <div className="profile-section">
                                     <h3>Požadavky</h3>
                                     <div className="input-group span-full">
-                                        <textarea
+                                        <EditableTextarea
                                             id="requirements"
                                             name="requirements"
                                             placeholder=" "
                                             rows={3}
-                                            defaultValue="Požaduji flexibilní pracovní dobu..."
-                                            value={dashboardData?.preference}
-                                        ></textarea>
+                                            initialValue={dashboardData?.preference}
+                                            onSave={(val) => updateField('request', val)}
+                                        />
                                         <span className="focus-border"></span>
                                     </div>
                                 </div>
                             )}
 
-                            <div className="profile-section">
-                                <h3>Adresa</h3>
-                                <div className="form-grid">
-                                    <div className="input-group">
-                                        <input
-                                            type="text"
-                                            id="country"
-                                            name="country"
-                                            placeholder=" "
-                                            required
-                                            defaultValue="Česká republika"
-                                            value={dashboardData?.country}
-                                        />
-                                        <label htmlFor="country">Stát</label>
-                                        <span className="focus-border"></span>
-                                    </div>
-                                    <div className="input-group">
-                                        <input
-                                            type="text"
-                                            id="region"
-                                            name="region"
-                                            placeholder=" "
-                                            required
-                                            defaultValue="Ústecký kraj"
-                                            value={dashboardData?.region}
-                                        />
-                                        <label htmlFor="region">Kraj</label>
-                                        <span className="focus-border"></span>
-                                    </div>
-                                    <div className="input-group">
-                                        <input
-                                            type="text"
-                                            id="city"
-                                            name="city"
-                                            placeholder=" "
-                                            required
-                                            defaultValue="Ústí nad Labem"
-                                            value={dashboardData?.city}
-                                        />
-                                        <label htmlFor="city">Město (Okres)</label>
-                                        <span className="focus-border"></span>
-                                    </div>
-                                    <div className="input-group">
-                                        <input
-                                            type="text"
-                                            id="address"
-                                            name="address"
-                                            placeholder=" "
-                                            required
-                                            defaultValue="Nějaká ulice 123/45"
-                                            value={dashboardData?.address}
-                                        />
-                                        <label htmlFor="address">Adresa</label>
-                                        <span className="focus-border"></span>
-                                    </div>
-                                </div>
-                            </div>
+                            <AddressSection
+                                data={{
+                                    country: dashboardData?.country || '',
+                                    region: dashboardData?.region || '',
+                                    city: dashboardData?.city || '',
+                                    address: dashboardData?.address || ''
+                                }}
+                                onSave={updateAddress}
+                            />
 
                             <div className="profile-section">
                                 <div className="section-header">
@@ -457,24 +664,62 @@ const Dashboard: React.FC = () => {
                             <div className="profile-section">
                                 <h3>Foto</h3>
                                 <div className="photo-gallery">
+
+                                    {/* Hlavní velká fotka */}
                                     <div className="main-photo">
-                                        <img src="o1 (1).png" alt="Hlavní fotografie" />
+                                        {selectedImage ? (
+                                            <img src={selectedImage} alt="Hlavní fotografie" />
+                                        ) : (
+                                            <div className="placeholder-photo">Žádná fotka</div>
+                                        )}
                                     </div>
+
+                                    {/* Mřížka náhledů */}
                                     <div className="thumbnail-grid">
-                                        <div className="thumbnail" draggable="true">
-                                            <img src="o1 (1).png" alt="Náhled 1" />
-                                        </div>
-                                        <div className="thumbnail" draggable="true">
-                                            <img src="o1 (2).png" alt="Náhled 2" />
-                                        </div>
-                                        <div className="thumbnail" draggable="true">
-                                            <img src="o1 (3).png" alt="Náhled 3" />
-                                        </div>
-                                        <div className="thumbnail" draggable="true">
-                                            <img src="o1 (1).jpg" alt="Náhled 4" />
-                                        </div>
+                                        {images.map((imgUrl, index) => (
+                                            <div
+                                                key={index}
+                                                draggable
+                                                onDragStart={(e) => {
+                                                    dragItem.current = index;
+                                                }}
+                                                onDragEnter={(e) => {
+                                                    dragOverItem.current = index;
+                                                }}
+                                                onDragEnd={handleSort}
+                                                onDragOver={(e) => e.preventDefault()}
+
+                                                className={`thumbnail ${selectedImage === imgUrl ? 'active' : ''}`}
+                                                onClick={() => handleSelectImage(imgUrl)}
+                                            >
+                                                <img src={imgUrl} alt={`Náhled ${index + 1}`} />
+                                                <button
+                                                    type="button"
+                                                    className="delete-btn"
+                                                    title="Odstranit obrázek"
+                                                    onClick={(e) => handleDeleteImage(index, e)}
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                                                    </svg>
+                                                </button>
+                                            </div>
+                                        ))}
                                     </div>
-                                    <button type="button" className="btn btn-primary full-width">
+
+                                    <input
+                                        type="file"
+                                        ref={fileInputRef}
+                                        style={{ display: 'none' }}
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                    />
+
+                                    <button
+                                        type="button"
+                                        className="btn btn-primary full-width"
+                                        onClick={triggerFileInput}
+                                    >
                                         Nahrát +
                                     </button>
                                 </div>
