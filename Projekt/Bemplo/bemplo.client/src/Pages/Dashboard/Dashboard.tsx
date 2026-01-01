@@ -362,17 +362,42 @@ const Dashboard: React.FC = () => {
         });
     };
 
-    const updateAddress = (newData: AddressData) => {
-        setDashboardData((prev) => {
-            if (!prev) return null;
-            return {
-                ...prev,
-                country: newData.country,
-                region: newData.region,
-                city: newData.city,
-                address: newData.address
-            };
-        });
+    const handleSaveAddress = async (newData: AddressData) => {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) return;
+
+        try {
+            const response = await fetch('/api/Profile/Address', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                // Tělo požadavku - React objekt AddressData má stejné klíče jako C# AddressRequest
+                // (country, region, city, address), takže stačí jen stringify.
+                body: JSON.stringify(newData)
+            });
+
+            if (response.ok) {
+                // Pokud server potvrdí uložení, aktualizujeme lokální stav
+                // Tím se srovnají data v AddressSection a tlačítka zmizí
+                setDashboardData((prev) => {
+                    if (!prev) return null;
+                    return {
+                        ...prev,
+                        country: newData.country,
+                        region: newData.region,
+                        city: newData.city,
+                        address: newData.address
+                    };
+                });
+            } else {
+                const errorText = await response.text();
+                console.error('Chyba při ukládání adresy:', errorText);
+            }
+        } catch (error) {
+            console.error('Chyba sítě:', error);
+        }
     };
 
     const handleSort = () => {
@@ -584,7 +609,7 @@ const Dashboard: React.FC = () => {
                                     city: dashboardData?.city || '',
                                     address: dashboardData?.address || ''
                                 }}
-                                onSave={updateAddress}
+                                onSave={handleSaveAddress}
                             />
 
                             <div className="profile-section">

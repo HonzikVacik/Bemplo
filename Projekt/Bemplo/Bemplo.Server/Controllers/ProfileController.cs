@@ -172,7 +172,7 @@ namespace Bemplo.Server.Controllers
 
         [HttpPut("Address")]
         [Authorize]
-        public async Task<IActionResult> SetAddress(string country, string region, string city, string address)
+        public async Task<IActionResult> SetAddress([FromBody] AddressRequest request)
         {
             //Načtení uživatele
             Account? account = await User.GetAccountAsync(_context);
@@ -183,7 +183,7 @@ namespace Bemplo.Server.Controllers
             }
 
             //Nastavení adresy
-            string? result = await _accountSer.SetAddress(account, country, region, city, address);
+            string? result = await _accountSer.SetAddress(account, request.Country, request.Region, request.City, request.Address);
 
             if (result != null)
             {
