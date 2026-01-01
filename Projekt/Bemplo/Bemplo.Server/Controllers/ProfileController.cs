@@ -1,6 +1,7 @@
 ﻿using Bemplo.Server.IRepositories;
 using Bemplo.Server.IServices;
 using Bemplo.Server.Models;
+using Bemplo.Server.RequestModels;
 using Bemplo.Server.TransportModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -56,7 +57,7 @@ namespace Bemplo.Server.Controllers
 
         [HttpPut("Description")]
         [Authorize]
-        public async Task<IActionResult> SetDescription(string description)
+        public async Task<IActionResult> SetDescription([FromBody] DescriptionRequest request)
         {
             //Načtení uživatele
             Account? account = await User.GetAccountAsync(_context);
@@ -67,7 +68,7 @@ namespace Bemplo.Server.Controllers
             }
 
             //Nastavení popisu
-            string? result = await _accountSer.SetDescription(account, description);
+            string? result = await _accountSer.SetDescription(account, request.Description);
 
             if (result != null)
             {

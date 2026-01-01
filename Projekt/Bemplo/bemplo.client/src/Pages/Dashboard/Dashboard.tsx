@@ -281,6 +281,31 @@ const Dashboard: React.FC = () => {
         fetchDashboardData();
     }, []);
 
+    const handleSaveDescription = async (newDescription: string) => {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) return;
+
+        try {
+            const response = await fetch('/api/Profile/Description', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ description: newDescription })
+            });
+
+            if (response.ok) {
+                updateField('description', newDescription);
+            } else {
+                const errorText = await response.text();
+                console.error('Chyba při ukládání:', errorText);
+            }
+        } catch (error) {
+            console.error('Chyba sítě:', error);
+        }
+    };
+
     // Handlery pro formulář
     /*const handleSkillChange = (index: number, value: string) => {
         const newSkills = [...skills];
@@ -472,7 +497,7 @@ const Dashboard: React.FC = () => {
                                     placeholder=" "
                                     rows={5}
                                     initialValue={dashboardData.description}
-                                    onSave={(val) => updateField('description', val)}
+                                    onSave={handleSaveDescription}
                                 />
                             </div>
 
