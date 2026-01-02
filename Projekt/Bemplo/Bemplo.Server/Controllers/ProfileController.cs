@@ -80,7 +80,7 @@ namespace Bemplo.Server.Controllers
 
         [HttpPut("Offer")]
         [Authorize]
-        public async Task<IActionResult> SetOffer(string value)
+        public async Task<IActionResult> SetOffer([FromBody] OfferRequest request)
         {
             //Načtení uživatele
             Account? account = await User.GetAccountAsync(_context);
@@ -91,7 +91,7 @@ namespace Bemplo.Server.Controllers
             }
 
             //Nastavení nabídky
-            string? result = await _offer_Preference_RequestSer.SetOffer(account, value);
+            string? result = await _offer_Preference_RequestSer.SetOffer(account, request.Offer);
 
             if (result != null)
             {
@@ -126,7 +126,7 @@ namespace Bemplo.Server.Controllers
 
         [HttpPut("Preference")]
         [Authorize]
-        public async Task<IActionResult> SetPreference(string value)
+        public async Task<IActionResult> SetPreference([FromBody] PreferenceRequest request)
         {
             //Načtení uživatele
             Account? account = await User.GetAccountAsync(_context);
@@ -137,7 +137,7 @@ namespace Bemplo.Server.Controllers
             }
 
             //Nastavení preferencí
-            string? result = await _offer_Preference_RequestSer.SetPreference(account, value);
+            string? result = await _offer_Preference_RequestSer.SetPreference(account, request.Preference);
 
             if (result != null)
             {
@@ -149,7 +149,7 @@ namespace Bemplo.Server.Controllers
 
         [HttpPut("Request")]
         [Authorize]
-        public async Task<IActionResult> SetRequest(string value)
+        public async Task<IActionResult> SetRequest([FromBody] RequestRequest request)
         {
             //Načtení uživatele
             Account? account = await User.GetAccountAsync(_context);
@@ -160,7 +160,7 @@ namespace Bemplo.Server.Controllers
             }
 
             //Nastavení požadavků
-            string? result = await _offer_Preference_RequestSer.SetRequest(account, value);
+            string? result = await _offer_Preference_RequestSer.SetRequest(account, request.Request);
 
             if (result != null)
             {

@@ -306,6 +306,81 @@ const Dashboard: React.FC = () => {
         }
     };
 
+    const handleSaveOffer = async (newOffer: string) => {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) return;
+
+        try {
+            const response = await fetch('/api/Profile/Offer', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ offer: newOffer })
+            });
+
+            if (response.ok) {
+                updateField('offer', newOffer);
+            } else {
+                const errorText = await response.text();
+                console.error('Chyba při ukládání:', errorText);
+            }
+        } catch (error) {
+            console.error('Chyba sítě:', error);
+        }
+    };
+
+    const handleSavePreference = async (newPreference: string) => {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) return;
+
+        try {
+            const response = await fetch('/api/Profile/Preference', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ preference: newPreference })
+            });
+
+            if (response.ok) {
+                updateField('preference', newPreference);
+            } else {
+                const errorText = await response.text();
+                console.error('Chyba při ukládání:', errorText);
+            }
+        } catch (error) {
+            console.error('Chyba sítě:', error);
+        }
+    };
+
+    const handleSaveRequest = async (newRequest: string) => {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) return;
+
+        try {
+            const response = await fetch('/api/Profile/Request', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ request: newRequest })
+            });
+
+            if (response.ok) {
+                updateField('request', newRequest);
+            } else {
+                const errorText = await response.text();
+                console.error('Chyba při ukládání:', errorText);
+            }
+        } catch (error) {
+            console.error('Chyba sítě:', error);
+        }
+    };
+
     // Handlery pro formulář
     /*const handleSkillChange = (index: number, value: string) => {
         const newSkills = [...skills];
@@ -531,7 +606,7 @@ const Dashboard: React.FC = () => {
                                         placeholder=" "
                                         rows={4}
                                         initialValue={dashboardData?.offer}
-                                        onSave={(val) => updateField('offer', val)}
+                                        onSave={handleSaveOffer}
                                     />
                                     <span className="focus-border"></span>
                                 </div>
@@ -574,7 +649,7 @@ const Dashboard: React.FC = () => {
                                             placeholder=" "
                                             rows={3}
                                             initialValue={dashboardData?.preference}
-                                            onSave={(val) => updateField('preference', val)}
+                                            onSave={handleSavePreference}
                                         />
                                         <span className="focus-border"></span>
                                     </div>
@@ -591,7 +666,7 @@ const Dashboard: React.FC = () => {
                                             placeholder=" "
                                             rows={3}
                                             initialValue={dashboardData?.request}
-                                            onSave={(val) => updateField('request', val)}
+                                            onSave={handleSaveRequest}
                                         />
                                         <span className="focus-border"></span>
                                     </div>

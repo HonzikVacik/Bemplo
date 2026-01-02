@@ -122,20 +122,30 @@ namespace Bemplo.Server.Controllers
                     ExperienceType = Enums.ExperienceType.Offer,
                     IsDeleted = false
                 };
-                Offer_Preference_Request newPreference = new Offer_Preference_Request()
+                _context.Offer_Preference_Requests.Add(newOffer);
+
+                if(registerAccount.AccountType == Enums.AccountType.User)
                 {
-                    Account = registerAccount,
-                    Content = "",
-                    ExperienceType = Enums.ExperienceType.Preference,
-                    IsDeleted = false
-                };
-                Offer_Preference_Request newRequest = new Offer_Preference_Request()
-                {
-                    Account = registerAccount,
-                    Content = "",
-                    ExperienceType = Enums.ExperienceType.Request,
-                    IsDeleted = false
-                };
+                    Offer_Preference_Request newPreference = new Offer_Preference_Request()
+                    {
+                        Account = registerAccount,
+                        Content = "",
+                        ExperienceType = Enums.ExperienceType.Preference,
+                        IsDeleted = false
+                    };
+                    _context.Offer_Preference_Requests.Add(newPreference);
+
+                    Offer_Preference_Request newRequest = new Offer_Preference_Request()
+                    {
+                        Account = registerAccount,
+                        Content = "",
+                        ExperienceType = Enums.ExperienceType.Request,
+                        IsDeleted = false
+                    };
+                    _context.Offer_Preference_Requests.Add(newRequest);
+                }
+
+                await _context.SaveChangesAsync();
             }
             catch(Exception ex)
             {
