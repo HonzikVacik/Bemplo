@@ -239,6 +239,7 @@ const Dashboard: React.FC = () => {
 
     //const [skills, setSkills] = useState<Experience[]>([]);
 
+    const [savedImages, setSavedImages] = useState<string[]>(TEST_IMAGES);
     const [images, setImages] = useState<string[]>(TEST_IMAGES);
     const [selectedImage, setSelectedImage] = useState<string | null>(TEST_IMAGES[0] || null);
 
@@ -423,6 +424,38 @@ const Dashboard: React.FC = () => {
 
     const handleSelectImage = (imgUrl: string) => {
         setSelectedImage(imgUrl);
+    };
+
+    const hasPhotosChanged = JSON.stringify(images) !== JSON.stringify(savedImages);
+
+    const handleCancelPhotos = () => {
+        // Vrátíme zpět uloženou verzi
+        setImages([...savedImages]);
+
+        // Resetujeme vybraný obrázek na první z původních (pokud existuje)
+        if (savedImages.length > 0) {
+            setSelectedImage(savedImages[0]);
+        } else {
+            setSelectedImage(null);
+        }
+    };
+
+    const handleConfirmPhotos = async () => {
+        // 1. Uložíme pracovní verzi jako novou "trvalou"
+        setSavedImages([...images]);
+
+        // 2. ZDE BYSTE VOLAL API PRO ULOŽENÍ DO DB
+        // Příklad:
+        /*
+        try {
+            await fetch('/api/Profile/Images', {
+                method: 'PUT',
+                body: JSON.stringify(images)
+            });
+        } catch (err) { console.error(err); }
+        */
+
+        console.log("Fotografie potvrzeny a uloženy:", images);
     };
 
     if (isLoading) return <div>Načítám...</div>;
@@ -843,6 +876,25 @@ const Dashboard: React.FC = () => {
                                     >
                                         Nahrát +
                                     </button>
+
+                                    {hasPhotosChanged && (
+                                        <div className="action-buttons" style={{ marginTop: '20px' }}>
+                                            <button
+                                                type="button"
+                                                className="btn-action btn-cancel"
+                                                onClick={handleCancelPhotos}
+                                            >
+                                                Zrušit
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="btn-action btn-confirm"
+                                                onClick={handleConfirmPhotos}
+                                            >
+                                                Potvrdit
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
