@@ -373,14 +373,10 @@ const Dashboard: React.FC = () => {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
                 },
-                // Tělo požadavku - React objekt AddressData má stejné klíče jako C# AddressRequest
-                // (country, region, city, address), takže stačí jen stringify.
                 body: JSON.stringify(newData)
             });
 
             if (response.ok) {
-                // Pokud server potvrdí uložení, aktualizujeme lokální stav
-                // Tím se srovnají data v AddressSection a tlačítka zmizí
                 setDashboardData((prev) => {
                     if (!prev) return null;
                     return {
@@ -401,7 +397,7 @@ const Dashboard: React.FC = () => {
     };
 
     const handleSort = () => {
-        let _images = [...images];
+        const _images = [...images];
 
         if (dragItem.current === null || dragOverItem.current === null) return;
 
@@ -594,7 +590,7 @@ const Dashboard: React.FC = () => {
                                             name="requirements"
                                             placeholder=" "
                                             rows={3}
-                                            initialValue={dashboardData?.preference}
+                                            initialValue={dashboardData?.request}
                                             onSave={(val) => updateField('request', val)}
                                         />
                                         <span className="focus-border"></span>

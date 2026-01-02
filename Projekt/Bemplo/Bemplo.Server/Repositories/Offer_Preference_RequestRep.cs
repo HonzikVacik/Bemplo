@@ -59,10 +59,20 @@ namespace Bemplo.Server.Repositories
                 Offer_Preference_Request? offer = await _context.Offer_Preference_Requests.Include(o => o.Account).Where(o => o.Account.Id == account.Id && o.ExperienceType == Enums.ExperienceType.Offer && o.IsDeleted == false).FirstOrDefaultAsync();
                 if (offer == null)
                 {
-                    return "Nabídka nenalezena";
+                    Offer_Preference_Request newOffer = new Offer_Preference_Request()
+                    {
+                        Account = account,
+                        Content = value,
+                        ExperienceType = Enums.ExperienceType.Offer,
+                        IsDeleted = false
+                    };
+                    _context.Offer_Preference_Requests.Add(newOffer);
                 }
-                offer.Content = value;
-                _context.Update(offer);
+                else
+                {
+                    offer.Content = value;
+                    _context.Update(offer);
+                }
                 await _context.SaveChangesAsync();
                 return null;
             }

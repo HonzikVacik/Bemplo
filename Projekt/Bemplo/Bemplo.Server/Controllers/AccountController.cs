@@ -30,37 +30,45 @@ namespace Bemplo.Server.Controllers
         [HttpPost]
         public async Task<IActionResult> Register(byte accountType, string name, string surname, byte sexType, DateTime date, string email, string password, string country, string region, string city, string address, string description, bool agreeWithPrivacyPolicy)
         {
-            string? error = ValidityControl.CheckNewAccount(_context, accountType, name, surname, sexType, date, email, password, country, region, city, address, description, agreeWithPrivacyPolicy);
-            if (error != null)
-                return BadRequest(error);
-
-            byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
-            string hashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                password: password!,
-                salt: salt,
-                prf: KeyDerivationPrf.HMACSHA256,
-                iterationCount: 100000,
-                numBytesRequested: 256 / 8));
-
-            Account accountTemp = new Account()
+            Account accountTemp = new Account();
+            try
             {
-                AccountType = (Enums.AccountType)accountType,
-                Name = name,
-                Surname = surname,
-                SexType = (Enums.SexType)sexType,
-                Email = email,
-                Password = hashedPassword,
-                Country = country,
-                Region = region,
-                City = city,
-                Address = address,
-                Description = description,
-                Created_At = DateTime.Now.ToUniversalTime(),
-                Salt = salt
-            };
+                string? error = ValidityControl.CheckNewAccount(_context, accountType, name, surname, sexType, date, email, password, country, region, city, address, description, agreeWithPrivacyPolicy);
+                if (error != null)
+                    return BadRequest(error);
 
-            _context.Accounts.Add(accountTemp);
-            await _context.SaveChangesAsync();
+                byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+                string hashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                    password: password!,
+                    salt: salt,
+                    prf: KeyDerivationPrf.HMACSHA256,
+                    iterationCount: 100000,
+                    numBytesRequested: 256 / 8));
+
+                accountTemp = new Account()
+                {
+                    AccountType = (Enums.AccountType)accountType,
+                    Name = name,
+                    Surname = surname,
+                    SexType = (Enums.SexType)sexType,
+                    Email = email,
+                    Password = hashedPassword,
+                    Country = country,
+                    Region = region,
+                    City = city,
+                    Address = address,
+                    Description = description,
+                    Created_At = DateTime.Now.ToUniversalTime(),
+                    Salt = salt
+                };
+
+                _context.Accounts.Add(accountTemp);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return Conflict("Někde nastala chyba");
+            }
 
             Account? registerAccount = await _context.Accounts.Where(a => a.Email == accountTemp.Email).FirstOrDefaultAsync();
             if (registerAccount == null)
@@ -68,25 +76,68 @@ namespace Bemplo.Server.Controllers
 
             if (registerAccount.AccountType == Enums.AccountType.User)
             {
-                User userTemp = new User()
+                try
                 {
-                    Account = registerAccount,
-                    Date_of_Birth = date.Date.ToUniversalTime()
-                };
-                _context.Users.Add(userTemp);
-                await _context.SaveChangesAsync();
+                    User userTemp = new User()
+                    {
+                        Account = registerAccount,
+                        Date_of_Birth = date.Date.ToUniversalTime()
+                    };
+                    _context.Users.Add(userTemp);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    Conflict("Někde nastala chyba");
+                }
             }
             else if (registerAccount.AccountType == Enums.AccountType.Company)
             {
-                Company companyTemp = new Company()
+                try
                 {
-                    Account = registerAccount,
-                    Founded_At = date.Date.ToUniversalTime()
-                };
-                _context.Companies.Add(companyTemp);
-                await _context.SaveChangesAsync();
+                    Company companyTemp = new Company()
+                    {
+                        Account = registerAccount,
+                        Founded_At = date.Date.ToUniversalTime()
+                    };
+                    _context.Companies.Add(companyTemp);
+                    await _context.SaveChangesAsync();
+                }
+                catch (Exception ex)
+                {
+                    Conflict("Někde nastala chyba");
+                }
             }
             else
+            {
+                return Conflict("Někde nastala chyba.");
+            }
+
+            try
+            {
+                Offer_Preference_Request newOffer = new Offer_Preference_Request()
+                {
+                    Account = registerAccount,
+                    Content = "",
+                    ExperienceType = Enums.ExperienceType.Offer,
+                    IsDeleted = false
+                };
+                Offer_Preference_Request newPreference = new Offer_Preference_Request()
+                {
+                    Account = registerAccount,
+                    Content = "",
+                    ExperienceType = Enums.ExperienceType.Preference,
+                    IsDeleted = false
+                };
+                Offer_Preference_Request newRequest = new Offer_Preference_Request()
+                {
+                    Account = registerAccount,
+                    Content = "",
+                    ExperienceType = Enums.ExperienceType.Request,
+                    IsDeleted = false
+                };
+            }
+            catch(Exception ex)
             {
                 return Conflict("Někde nastala chyba.");
             }
