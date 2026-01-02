@@ -429,10 +429,8 @@ const Dashboard: React.FC = () => {
     const hasPhotosChanged = JSON.stringify(images) !== JSON.stringify(savedImages);
 
     const handleCancelPhotos = () => {
-        // Vrátíme zpět uloženou verzi
         setImages([...savedImages]);
 
-        // Resetujeme vybraný obrázek na první z původních (pokud existuje)
         if (savedImages.length > 0) {
             setSelectedImage(savedImages[0]);
         } else {
@@ -441,7 +439,6 @@ const Dashboard: React.FC = () => {
     };
 
     const handleConfirmPhotos = async () => {
-        // 1. Uložíme pracovní verzi jako novou "trvalou"
         setSavedImages([...images]);
 
         // 2. ZDE BYSTE VOLAL API PRO ULOŽENÍ DO DB
@@ -454,8 +451,6 @@ const Dashboard: React.FC = () => {
             });
         } catch (err) { console.error(err); }
         */
-
-        console.log("Fotografie potvrzeny a uloženy:", images);
     };
 
     if (isLoading) return <div>Načítám...</div>;
