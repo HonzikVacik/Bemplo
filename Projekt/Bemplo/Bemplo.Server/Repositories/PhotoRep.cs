@@ -18,7 +18,7 @@ namespace Bemplo.Server.Repositories
         public async Task<List<Picture>?> GetPhoto(int accountId)
         {
             var allUserPhotos = await _context.Pictures
-                .Where(p => p.Account.Id == accountId)
+                .Where(p => p.Account.Id == accountId && p.IsDeleted == false)
                 .ToListAsync();
 
             return allUserPhotos;

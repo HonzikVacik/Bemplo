@@ -92,6 +92,7 @@ namespace Bemplo.Server
             builder.Services.AddScoped<IOffer_Preference_RequestSer, Offer_Preference_RequestSer>();
             builder.Services.AddScoped<IProfileSer, ProfileSer>();
             builder.Services.AddScoped<IChatSer, ChatSer>();
+            builder.Services.AddScoped<IPhotoSer, PhotoSer>();
 
             // Configure Cors
             builder.Services.AddCors(options =>
