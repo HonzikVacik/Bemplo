@@ -9,7 +9,8 @@ interface Experience {
 }
 
 interface Contact {
-    email: string;
+    id: number;
+    content: string;
 }
 
 interface DashboardBase {
@@ -232,8 +233,8 @@ const Dashboard: React.FC = () => {
     const [dashboardData, setDashboardData] = useState<DashboardBase | DashboardUser | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const [contacts, setContacts] = useState<string[]>([]);
-    const [savedContacts, setSavedContacts] = useState<string[]>([]);
+    const [contacts, setContacts] = useState<Contact[]>([]);
+    const [savedContacts, setSavedContacts] = useState<Contact[]>([]);
 
     //const [skills, setSkills] = useState<Experience[]>([]);
 
@@ -276,7 +277,10 @@ const Dashboard: React.FC = () => {
                     }
 
                     if (data.contacts) {
-                        const loadedContacts = data.contacts.map((c: any) => c.email);
+                        const loadedContacts = data.contacts.map((c: any) => ({
+                            id: c.id,
+                            content: c.content || c.Content
+                        }));
 
                         setContacts(loadedContacts);
                         setSavedContacts(loadedContacts);
@@ -410,21 +414,17 @@ const Dashboard: React.FC = () => {
         setSkills(updatedSkills);
     };
 
-    const addContactRow = () => setContacts([...contacts, '']);
+    const addContactRow = () => setContacts([...contacts, { id: 0, content: '' }]);
     const removeContactRow = (idx: number) => setContacts(contacts.filter((_, i) => i !== idx));
     const handleContactChange = (idx: number, val: string) => {
-        const newEmails = [...contacts];
-        newEmails[idx] = val;
-        setContacts(newEmails);
+        const newContacts = [...contacts];
+        newContacts[idx] = { ...newContacts[idx], content: val };
+        setContacts(newContacts);
     };
 
-    // --- LOGIKA PRO KONTAKTY ---
-
-    // Zjistíme, zda se kontakty změnily (porovnáme pole stringů)
     const hasContactsChanged = JSON.stringify(contacts) !== JSON.stringify(savedContacts);
 
     const handleCancelContacts = () => {
-        // Vrátíme zpět uloženou verzi
         setContacts([...savedContacts]);
     };
 
@@ -433,14 +433,10 @@ const Dashboard: React.FC = () => {
         if (!token) return;
 
         try {
-            // Musíme poslat data ve formátu, který očekává backend.
-            // Předpokládám, že endpoint je /api/Profile/Contacts a očekává:
-            // { email: "hlavni@email.cz", contacts: [{ email: "dalsi@email.cz" }] }
-
-            const payload = {
-                email: dashboardData?.email, // Hlavní email musíme poslat taky, i když ho tady neměníme
-                contacts: contacts.map(c => ({ email: c })) // Převedeme string[] zpět na objekt[]
-            };
+            const payload = contacts.map(c => ({
+                id: c.id,
+                content: c.content
+            }));
 
             const response = await fetch('/api/Profile/Contacts', {
                 method: 'PUT',
@@ -452,11 +448,17 @@ const Dashboard: React.FC = () => {
             });
 
             if (response.ok) {
-                setSavedContacts([...contacts]);
-                console.log("Kontakty uloženy");
+                const updatedData = await response.json();
+
+                const newContactState = updatedData.map((d: any) => ({ id: d.id, content: d.content }));
+
+                setContacts(newContactState);
+                setSavedContacts(newContactState);
+
+                console.log("Kontakty úspěšně aktualizovány");
             } else {
                 const errorText = await response.text();
-                console.error('Chyba při ukládání kontaktů:', errorText);
+                console.error('Chyba:', errorText);
             }
         } catch (error) {
             console.error('Chyba sítě:', error);
@@ -850,7 +852,7 @@ const Dashboard: React.FC = () => {
                                                         name="contacts"
                                                         placeholder=" "
                                                         required
-                                                        value={contact}
+                                                        value={contact.content}
                                                         onChange={(e) => handleContactChange(index, e.target.value)}
                                                     />
                                                     <span className="focus-border"></span>

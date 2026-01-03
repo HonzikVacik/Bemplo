@@ -23,14 +23,14 @@ namespace Bemplo.Server.Services
 
         public async Task<string?> SetContact(Account account, string email, TransportModels.Contact[] contacts)
         {
-            if (!ValidityControl.IsValidEmail(email))
+            /*if (!ValidityControl.IsValidEmail(email))
             {
                 return "Neplatný formát emailu";
             }
             if(!ValidityControl.IsEmailUnique(_context, email))
             {
                 return "Účet s tímto emailem již existuje.";
-            }
+            }*/
             foreach (TransportModels.Contact contact in contacts)
             {
                 if (string.IsNullOrEmpty(contact.Content) || string.IsNullOrWhiteSpace(contact.Content))
@@ -41,11 +41,13 @@ namespace Bemplo.Server.Services
 
             string? result = await contactRep.SetContacts(account, contacts);
 
-            if (result != null)
+            /*if (result != null)
             {
                 return result;
             }
-            return await accountRep.SetEmailAddress(account, email);
+            return await accountRep.SetEmailAddress(account, email);*/
+
+            return result;
         }
     }
 }

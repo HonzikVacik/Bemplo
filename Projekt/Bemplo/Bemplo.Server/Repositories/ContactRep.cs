@@ -15,7 +15,7 @@ namespace Bemplo.Server.Repositories
         public async Task<TransportModels.Contact[]> GetAllContacByAccount(Account Account)
         {
             List<TransportModels.Contact> resultContact = new List<TransportModels.Contact>();
-            Contact[]? contact = await _context.Contacts.Where(c => c.Account == Account).ToArrayAsync();
+            Contact[]? contact = await _context.Contacts.Where(c => c.Account == Account && c.IsDeleted == false).ToArrayAsync();
 
             if (contact == null)
                 return resultContact.ToArray();
