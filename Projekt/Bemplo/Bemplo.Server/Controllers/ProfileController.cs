@@ -174,7 +174,7 @@ namespace Bemplo.Server.Controllers
 
         [HttpPut("Contacts")]
         [Authorize]
-        public async Task<IActionResult> SetContacts([FromBody] TransportModels.Contact[] contactsRequest)
+        public async Task<IActionResult> SetContacts([FromBody] TransportModels.Contact[] request)
         {
             try
             {
@@ -186,60 +186,13 @@ namespace Bemplo.Server.Controllers
                     return Unauthorized("Uživatel nenalezen.");
                 }
 
-                var existingContacts = await _context.Contacts
-                    .Where(c => c.Account.Id == account.Id)
-                    .ToListAsync();
-
-                foreach (var reqItem in contactsRequest)
+                string? error = await _contactSer.UpdateContacts(account, request);
+                if (error != null)
                 {
-                    if (string.IsNullOrWhiteSpace(reqItem.Content)) continue; // Přeskočit prázdné
-
-                    if (reqItem.Id == 0)
-                    {
-                        // A) INSERT - Nový kontakt
-                        var newContact = new Bemplo.Server.Models.Contact
-                        {
-                            Content = reqItem.Content,
-                            Account = account
-                        };
-                        _context.Contacts.Add(newContact);
-                    }
-                    else
-                    {
-                        // B) UPDATE - Existující kontakt
-                        var contactToUpdate = existingContacts.FirstOrDefault(c => c.Id == reqItem.Id);
-                        if (contactToUpdate != null)
-                        {
-                            contactToUpdate.Content = reqItem.Content;
-                        }
-                    }
+                    return Conflict(error);
                 }
 
-                var requestIds = contactsRequest
-                    .Where(r => r.Id != 0)
-                    .Select(r => r.Id)
-                    .ToList();
-
-                var contactsToDelete = existingContacts
-                    .Where(c => !requestIds.Contains(c.Id))
-                    .ToList();
-
-                foreach (Models.Contact contact in contactsToDelete)
-                {
-                    contact.IsDeleted = true;
-                }
-
-                if (contactsToDelete.Count > 0)
-                {
-                    _context.Contacts.UpdateRange(contactsToDelete);
-                }
-
-                await _context.SaveChangesAsync();
-
-                var updatedContacts = await _context.Contacts
-                    .Where(c => c.Account.Id == account.Id && c.IsDeleted == false)
-                    .Select(c => new Models.Contact { Id = c.Id, Content = c.Content })
-                    .ToListAsync();
+                TransportModels.Contact[] updatedContacts = await _contactSer.GetAllContacByAccount(account);
 
                 return Ok(updatedContacts);
             }
