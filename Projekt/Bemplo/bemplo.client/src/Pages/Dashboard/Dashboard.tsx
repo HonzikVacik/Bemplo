@@ -232,7 +232,8 @@ const Dashboard: React.FC = () => {
     const [dashboardData, setDashboardData] = useState<DashboardBase | DashboardUser | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
-    const [emails, setEmails] = useState<string[]>([]);
+    const [contacts, setContacts] = useState<string[]>([]);
+    const [savedContacts, setSavedContacts] = useState<string[]>([]);
 
     //const [skills, setSkills] = useState<Experience[]>([]);
 
@@ -275,8 +276,10 @@ const Dashboard: React.FC = () => {
                     }
 
                     if (data.contacts) {
-                        //setEmails(data.contacts.map((c: any) => c.email));
-                        setEmails([data.email, ...data.contacts.map((c: any) => c.email)]);
+                        const loadedContacts = data.contacts.map((c: any) => c.email);
+
+                        setContacts(loadedContacts);
+                        setSavedContacts(loadedContacts);
                     }
 
                     if (isDashboardUser(data)) {
@@ -407,12 +410,57 @@ const Dashboard: React.FC = () => {
         setSkills(updatedSkills);
     };
 
-    const addEmailRow = () => setEmails([...emails, '']);
-    const removeEmailRow = (idx: number) => setEmails(emails.filter((_, i) => i !== idx));
-    const handleEmailChange = (idx: number, val: string) => {
-        const newEmails = [...emails];
+    const addContactRow = () => setContacts([...contacts, '']);
+    const removeContactRow = (idx: number) => setContacts(contacts.filter((_, i) => i !== idx));
+    const handleContactChange = (idx: number, val: string) => {
+        const newEmails = [...contacts];
         newEmails[idx] = val;
-        setEmails(newEmails);
+        setContacts(newEmails);
+    };
+
+    // --- LOGIKA PRO KONTAKTY ---
+
+    // Zjistíme, zda se kontakty změnily (porovnáme pole stringů)
+    const hasContactsChanged = JSON.stringify(contacts) !== JSON.stringify(savedContacts);
+
+    const handleCancelContacts = () => {
+        // Vrátíme zpět uloženou verzi
+        setContacts([...savedContacts]);
+    };
+
+    const handleConfirmContacts = async () => {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) return;
+
+        try {
+            // Musíme poslat data ve formátu, který očekává backend.
+            // Předpokládám, že endpoint je /api/Profile/Contacts a očekává:
+            // { email: "hlavni@email.cz", contacts: [{ email: "dalsi@email.cz" }] }
+
+            const payload = {
+                email: dashboardData?.email, // Hlavní email musíme poslat taky, i když ho tady neměníme
+                contacts: contacts.map(c => ({ email: c })) // Převedeme string[] zpět na objekt[]
+            };
+
+            const response = await fetch('/api/Profile/Contacts', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(payload)
+            });
+
+            if (response.ok) {
+                setSavedContacts([...contacts]);
+                console.log("Kontakty uloženy");
+            } else {
+                const errorText = await response.text();
+                console.error('Chyba při ukládání kontaktů:', errorText);
+            }
+        } catch (error) {
+            console.error('Chyba sítě:', error);
+        }
     };
 
     const triggerFileInput = () => {
@@ -773,59 +821,38 @@ const Dashboard: React.FC = () => {
                                         type="button"
                                         className="btn-icon add-contact"
                                         title="Přidat další kontakt"
-                                        onClick={addEmailRow}
+                                        onClick={addContactRow}
                                     >
-                                        <svg
-                                            xmlns="http://www.w3.org/2000/svg"
-                                            fill="none"
-                                            viewBox="0 0 24 24"
-                                            stroke="currentColor"
-                                        >
-                                            <path
-                                                strokeLinecap="round"
-                                                strokeLinejoin="round"
-                                                strokeWidth="2"
-                                                d="M12 4v16m8-8H4"
-                                            />
+                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                                         </svg>
                                     </button>
                                 </div>
 
                                 <div className="form-grid">
                                     <div className="dynamic-list" id="emailList">
-                                        {emails.map((email, index) => (
+                                        {contacts.map((contact, index) => (
                                             <div className="contact-row" key={index}>
                                                 <button
                                                     type="button"
                                                     className="btn-icon remove-btn"
                                                     title="Odstranit"
-                                                    onClick={() => removeEmailRow(index)}
+                                                    onClick={() => removeContactRow(index)}
                                                 >
-                                                    <svg
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                        stroke="currentColor"
-                                                    >
-                                                        <path
-                                                            strokeLinecap="round"
-                                                            strokeLinejoin="round"
-                                                            strokeWidth="2"
-                                                            d="M20 12H4"
-                                                        />
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
                                                     </svg>
                                                 </button>
 
                                                 <div className="input-group">
                                                     <input
-                                                        type="email"
-                                                        name="email[]"
+                                                        type="text"
+                                                        name="contacts"
                                                         placeholder=" "
                                                         required
-                                                        value={email}
-                                                        onChange={(e) => handleEmailChange(index, e.target.value)}
+                                                        value={contact}
+                                                        onChange={(e) => handleContactChange(index, e.target.value)}
                                                     />
-                                                    <label>Email</label>
                                                     <span className="focus-border"></span>
                                                 </div>
                                             </div>
@@ -837,6 +864,25 @@ const Dashboard: React.FC = () => {
                                             Kontaktovat
                                         </button>
                                     </div>
+
+                                    {hasContactsChanged && (
+                                        <div className="action-buttons" style={{ marginTop: '20px' }}>
+                                            <button
+                                                type="button"
+                                                className="btn-action btn-cancel"
+                                                onClick={handleCancelContacts}
+                                            >
+                                                Zrušit
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="btn-action btn-confirm"
+                                                onClick={handleConfirmContacts}
+                                            >
+                                                Potvrdit
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
