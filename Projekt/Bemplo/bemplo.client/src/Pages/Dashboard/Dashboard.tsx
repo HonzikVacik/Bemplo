@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 interface Experience {
@@ -224,6 +225,8 @@ const AddressSection: React.FC<AddressSectionProps> = ({ data, onSave }) => {
 };
 
 const Dashboard: React.FC = () => {
+    const navigate = useNavigate();
+
     const [skills, setSkills] = useState<Experience[]>(TEST_SKILLS);
 
     const [dashboardData, setDashboardData] = useState<DashboardBase | DashboardUser | null>(null);
@@ -577,6 +580,11 @@ const Dashboard: React.FC = () => {
         // URL.revokeObjectURL(imageToDelete), aby se uvolnila paměť, ale pro základní funkčnost to není kritické.
     };
 
+    const handleLogout = () => {
+        localStorage.removeItem('jwtToken');
+        navigate('/');
+    }
+
     return (
         <>
             <div className="dashboard-page">
@@ -638,7 +646,7 @@ const Dashboard: React.FC = () => {
 
                             <div className="separator"></div>
 
-                            <button type="button" className="btn-icon logout" title="Odhlásit se">
+                            <button type="button" className="btn-icon logout" title="Odhlásit se" onClick={handleLogout}>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"
