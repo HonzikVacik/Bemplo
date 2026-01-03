@@ -170,11 +170,11 @@ namespace Bemplo.Server.Controllers
             return Ok();
         }
 
-        [HttpPut("Address")]
+        [HttpPut("PhotoGallery")]
         [Authorize]
-        public async Task<IActionResult> SetAddress([FromBody] AddressRequest request)
+        public async Task<IActionResult> SetPictures([FromForm] PhotoGalleryRequest request)
         {
-            //Načtení uživatele
+            // Načtení uživatele
             Account? account = await User.GetAccountAsync(_context);
 
             if (account == null)
@@ -182,38 +182,100 @@ namespace Bemplo.Server.Controllers
                 return Unauthorized("Uživatel nenalezen.");
             }
 
-            //Nastavení adresy
-            string? result = await _accountSer.SetAddress(account, request.Country, request.Region, request.City, request.Address);
+            var finalPhotoCollection = new List<Picture>();
+            int fileIndex = 0;
 
-            if (result != null)
+            if (request.PhotoUrls != null)
             {
-                return Conflict(result);
+                for (int i = 0; i < request.PhotoUrls.Length; i++)
+                {
+                    string urlItem = request.PhotoUrls[i];
+
+                    // A) NOVÁ FOTKA (blob)
+                    if (urlItem.StartsWith("blob:") && request.NewFiles != null && fileIndex < request.NewFiles.Count)
+                    {
+                        var file = request.NewFiles[fileIndex];
+                        using (var memoryStream = new MemoryStream())
+                        {
+                            await file.CopyToAsync(memoryStream);
+                            finalPhotoCollection.Add(new Picture
+                            {
+                                ImageData = memoryStream.ToArray(),
+                                ContentType = file.ContentType,
+                                Order = i,
+                                Account = account
+                                // Id je 0
+                            });
+                        }
+                        fileIndex++;
+                    }
+                    // B) EXISTUJÍCÍ FOTKA (URL z API)
+                    else
+                    {
+                        var segments = urlItem.Split('/');
+                        if (int.TryParse(segments.Last(), out int photoId))
+                        {
+                            // Ověří, že fotka patří uživateli
+                            var existingPhoto = await _context.Pictures
+                                .FirstOrDefaultAsync(p => p.Id == photoId && p.Account.Id == account.Id);
+
+                            if (existingPhoto != null)
+                            {
+                                existingPhoto.Order = i;
+                                finalPhotoCollection.Add(existingPhoto);
+                            }
+                        }
+                    }
+                }
             }
 
-            return Ok();
+            // a) Načte všechny aktuální fotky tohoto uživatele
+            var allUserPhotos = await _context.Pictures
+                .Where(p => p.Account.Id == account.Id)
+                .ToListAsync();
+
+            // b) Získáme seznam id, která potřebuji zachovat (ignoruje nová Id=0)
+            var idsToKeep = finalPhotoCollection
+                .Select(p => p.Id)
+                .Where(id => id != 0)
+                .ToList();
+
+            // c) Smaže ty, co nejsou v seznamu k zachování
+            var photosToDelete = allUserPhotos
+                .Where(p => !idsToKeep.Contains(p.Id))
+                .ToList();
+
+            _context.Pictures.RemoveRange(photosToDelete);
+
+            // přidá nové fotky
+            foreach (var photo in finalPhotoCollection.Where(p => p.Id == 0))
+            {
+                _context.Pictures.Add(photo);
+            }
+
+            await _context.SaveChangesAsync();
+
+            var resultUrls = finalPhotoCollection
+                .OrderBy(p => p.Order)
+                .Select(p => $"/api/Profile/Photo/{p.Id}")
+                .ToList();
+
+            return Ok(resultUrls);
         }
 
-        [HttpPut("Contacts")]
-        [Authorize]
-        public async Task<IActionResult> SetContacts(string email, TransportModels.Contact[] contacts)
+        [HttpGet("Photo/{id}")]
+        [AllowAnonymous] // Obvykle chceme, aby profilovky viděli i ostatní (záleží na vás)
+        public async Task<IActionResult> GetPhoto(int id)
         {
-            //Načtení uživatele
-            Account? account = await User.GetAccountAsync(_context);
+            var photo = await _context.Pictures.FindAsync(id);
 
-            if (account == null)
+            if (photo == null)
             {
-                return Unauthorized("Uživatel nenalezen.");
+                return NotFound();
             }
 
-            //Nastavení adresy
-            string? result = await _contactSer.SetContact(account, email, contacts);
-
-            if (result != null)
-            {
-                return Conflict(result);
-            }
-
-            return Ok();
+            // Vrátí soubor přímo z paměti
+            return File(photo.ImageData, photo.ContentType);
         }
     }
 }

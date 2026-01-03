@@ -11,13 +11,15 @@ namespace Bemplo.Server.Services
         private readonly IContactRep _contactRep;
         private readonly IExperienceRep _experienceRep;
         private readonly IOffer_Preference_RequestRep _offer_Preference_RequestRep;
+        private readonly IPhotoRep _photoRep;
 
-        public ProfileSer(IAccountRep accountRep, IOffer_Preference_RequestRep offer_Preference_RequestRep, IExperienceRep experienceRep, IContactRep contactRep)
+        public ProfileSer(IAccountRep accountRep, IOffer_Preference_RequestRep offer_Preference_RequestRep, IExperienceRep experienceRep, IContactRep contactRep, IPhotoRep photoRep)
         {
             _accountRep = accountRep;
             _offer_Preference_RequestRep = offer_Preference_RequestRep;
             _experienceRep = experienceRep;
             _contactRep = contactRep;
+            _photoRep = photoRep;
         }
 
         public async Task<object> GetProfile(Account Account)
@@ -58,7 +60,7 @@ namespace Bemplo.Server.Services
             dc.Address = Account.Address;
             dc.Contacts = await _contactRep.GetAllContacByAccount(Account);
             dc.AgreeWithPolicy = Account.AgreeWithPolicy;
-            //Pictures
+            dc.Photos = await _photoRep.SetPhoto(Account.Id);
             return dc;
         }
         private async Task<DashboardUser> GetDashboardUser(Account Account)
@@ -75,7 +77,7 @@ namespace Bemplo.Server.Services
             du.Address = Account.Address;
             du.Contacts = await _contactRep.GetAllContacByAccount(Account);
             du.AgreeWithPolicy = Account.AgreeWithPolicy;
-            //Pictures
+            du.Photos = await _photoRep.SetPhoto(Account.Id);
             du.Preference = await _offer_Preference_RequestRep.GetLastPreferenceByAccount(Account);
             du.Request = await _offer_Preference_RequestRep.GetLastReuestByAccount(Account);
             du.Experiences = await _experienceRep.GetExperienceByAccount(Account);

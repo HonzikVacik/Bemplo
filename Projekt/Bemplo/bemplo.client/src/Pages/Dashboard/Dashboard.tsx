@@ -22,6 +22,7 @@ interface DashboardBase {
     city: string;
     address: string;
     contacts: Contact[];
+    photos: string[];
     agreeWithPolicy: boolean;
 }
 
@@ -40,13 +41,6 @@ const TEST_SKILLS: Experience[] = [
     { title: "Pozice B (např. Webdesign)", percentage: 65, rating: 4.1 },
     { title: "Pozice C (např. Kodér)", percentage: 40, rating: 2.6 },
     { title: "Pozice D (např. Analytik)", percentage: 95, rating: 4.9 }
-];
-
-const TEST_IMAGES = [
-    "o1 (1).png",
-    "o1 (1).png",
-    "o1 (2).png",
-    "o1 (3).png"
 ];
 
 interface EditableTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
@@ -239,9 +233,10 @@ const Dashboard: React.FC = () => {
 
     //const [skills, setSkills] = useState<Experience[]>([]);
 
-    const [savedImages, setSavedImages] = useState<string[]>(TEST_IMAGES);
-    const [images, setImages] = useState<string[]>(TEST_IMAGES);
-    const [selectedImage, setSelectedImage] = useState<string | null>(TEST_IMAGES[0] || null);
+    const [savedImages, setSavedImages] = useState<string[]>([]);
+    const [images, setImages] = useState<string[]>([]);
+    const [selectedImage, setSelectedImage] = useState<string | null>(null);
+    const [pendingFiles, setPendingFiles] = useState<Record<string, File>>({});
 
     const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -261,6 +256,20 @@ const Dashboard: React.FC = () => {
                 if (response.ok) {
                     const data = await response.json();
                     setDashboardData(data);
+
+                    const realUrls: string[] = data.photos;
+
+                    // Aktualizuje stavy pro obrázky
+                    setSavedImages(realUrls);
+                    setImages(realUrls);
+                    setPendingFiles({});
+
+                    if (selectedImage && realUrls.length > 0) {
+                        setSelectedImage(realUrls[0]);
+                    }
+                    else {
+                        setSelectedImage(null);
+                    }
 
                     if (data.contacts) {
                         //setEmails(data.contacts.map((c: any) => c.email));
@@ -413,8 +422,12 @@ const Dashboard: React.FC = () => {
             const newImageUrl = URL.createObjectURL(file);
 
             setImages((prevImages) => [...prevImages, newImageUrl]);
-
             setSelectedImage(newImageUrl);
+
+            setPendingFiles((prev) => ({
+                ...prev,
+                [newImageUrl]: file
+            }));
         }
 
         if (event.target) {
@@ -431,6 +444,8 @@ const Dashboard: React.FC = () => {
     const handleCancelPhotos = () => {
         setImages([...savedImages]);
 
+        setPendingFiles({});
+
         if (savedImages.length > 0) {
             setSelectedImage(savedImages[0]);
         } else {
@@ -441,16 +456,48 @@ const Dashboard: React.FC = () => {
     const handleConfirmPhotos = async () => {
         setSavedImages([...images]);
 
-        // 2. ZDE BYSTE VOLAL API PRO ULOŽENÍ DO DB
-        // Příklad:
-        /*
+        const token = localStorage.getItem('jwtToken');
+        if (!token) return;
+
+        const formData = new FormData();
+
+        images.forEach((imgUrl) => {
+            formData.append('photoUrls', imgUrl);
+
+            if (pendingFiles[imgUrl]) {
+                formData.append('newFiles', pendingFiles[imgUrl]);
+            }
+        });
+
         try {
-            await fetch('/api/Profile/Images', {
+            const response = await fetch('/api/Profile/PhotoGallery', {
                 method: 'PUT',
-                body: JSON.stringify(images)
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
             });
-        } catch (err) { console.error(err); }
-        */
+
+            if (response.ok) {
+                // Server vrátí seznam nových reálných URL (už ne blob:)
+                const realUrls: string[] = await response.json();
+
+                // Aktualizuje stavy
+                setSavedImages(realUrls);
+                setImages(realUrls);
+                setPendingFiles({});
+
+                if (selectedImage && realUrls.length > 0) {
+                    setSelectedImage(realUrls[0]);
+                }
+                
+                console.log("Fotky úspěšně uloženy.");
+            } else {
+                console.error("Chyba při ukládání fotek");
+            }
+        } catch (error) {
+            console.error("Chyba sítě:", error);
+        }
     };
 
     if (isLoading) return <div>Načítám...</div>;

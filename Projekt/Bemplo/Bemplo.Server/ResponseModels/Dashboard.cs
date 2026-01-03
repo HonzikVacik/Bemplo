@@ -14,8 +14,7 @@ namespace Bemplo.Server.ResponseModels
         public string City { get; set; }
         public string Address { get; set; }
         public Contact[] Contacts { get; set; }
+        public string[] Photos { get; set; }
         public bool AgreeWithPolicy { get; set; }
-
-        //TODO: Add Pictures
     }
 }
