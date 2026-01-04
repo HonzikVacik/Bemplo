@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 interface Experience {
@@ -221,6 +221,8 @@ const AddressSection: React.FC<AddressSectionProps> = ({ data, onSave }) => {
 
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
+
+    const [isEditing, setIsEditing] = useState(false);
 
     const [skills, setSkills] = useState<Experience[]>([]);
     const [savedSkills, setSavedSkills] = useState<Experience[]>([]);
@@ -750,12 +752,15 @@ const Dashboard: React.FC = () => {
                                 </svg>
                             </button>
 
-                            <button type="button" className="btn btn-secondary">
+                            <button type="button" className="btn btn-secondary" onClick={() => setIsEditing(!isEditing)}>
                                 Změnit profil
                             </button>
                         </div>
 
                         <form className="profile-form">
+
+                            <fieldset disabled={!isEditing} style={{ border: 'none', padding: 0, margin: 0 }}>
+
                             <div className="profile-section">
                                 <h3>Popis</h3>
                                 <EditableTextarea
@@ -1013,11 +1018,16 @@ const Dashboard: React.FC = () => {
                                         {images.map((imgUrl, index) => (
                                             <div
                                                 key={index}
-                                                draggable
+                                                draggable={isEditing}
                                                 onDragStart={(e) => {
+                                                    if (!isEditing) {
+                                                        e.preventDefault();
+                                                        return;
+                                                    }
                                                     dragItem.current = index;
                                                 }}
                                                 onDragEnter={(e) => {
+                                                    if (!isEditing) return;
                                                     dragOverItem.current = index;
                                                 }}
                                                 onDragEnd={handleSort}
@@ -1027,7 +1037,7 @@ const Dashboard: React.FC = () => {
                                                 onClick={() => handleSelectImage(imgUrl)}
                                             >
                                                 <img src={imgUrl} alt={`Náhled ${index + 1}`} />
-                                                <button
+                                                {isEditing && (< button
                                                     type="button"
                                                     className="delete-btn"
                                                     title="Odstranit obrázek"
@@ -1037,6 +1047,7 @@ const Dashboard: React.FC = () => {
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                                                     </svg>
                                                 </button>
+                                                )}
                                             </div>
                                         ))}
                                     </div>
@@ -1078,9 +1089,10 @@ const Dashboard: React.FC = () => {
                                 </div>
                             </div>
 
+                            </fieldset>
+
                             <div className="links">
-                                <a href="#">Uložit změny</a>
-                                <a href="#">Odhlásit se</a>
+                                <a onClick={handleLogout}>Odhlásit se</a>
                             </div>
                         </form>
                     </div>
