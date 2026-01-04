@@ -6,7 +6,7 @@ interface Experience {
     id: number;
     content: string;
     percentage: number;
-    rating: number;
+    rating: number | null;
 }
 
 interface Contact {
@@ -285,6 +285,7 @@ const Dashboard: React.FC = () => {
                         const loadedSkills = data.experiences || [];
                         setSkills(loadedSkills);
                         setSavedSkills(loadedSkills);
+                        console.log(data.experiences);
                     }
                 }
             } catch (error) {
@@ -398,7 +399,7 @@ const Dashboard: React.FC = () => {
     };
 
     const addSkillRow = () => {
-        setSkills([...skills, { id: 0, content: '', percentage: 50, rating: 0 }]);
+        setSkills([...skills, { id: 0, content: '', percentage: 50, rating: null }]);
     };
 
     const handleSkillContentChange = (index: number, newContent: string) => {
@@ -426,7 +427,6 @@ const Dashboard: React.FC = () => {
         if (!token) return;
 
         try {
-            // Předpokládám endpoint /api/Profile/Experience, který přijímá pole
             const response = await fetch('/api/Profile/Experience', {
                 method: 'PUT',
                 headers: {
@@ -437,7 +437,11 @@ const Dashboard: React.FC = () => {
             });
 
             if (response.ok) {
-                setSavedSkills([...skills]);
+                const updatedData = await response.json();
+
+                setSkills(updatedData);
+                setSavedSkills(updatedData);
+
                 console.log("Zkušenosti uloženy");
             } else {
                 const errorText = await response.text();

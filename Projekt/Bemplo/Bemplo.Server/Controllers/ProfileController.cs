@@ -105,25 +105,21 @@ namespace Bemplo.Server.Controllers
 
         [HttpPut("Experience")]
         [Authorize]
-        public async Task<IActionResult> SetExperience(SetExperience[] setExperiences)
+        public async Task<IActionResult> SetExperience([FromBody] SetExperience[] request)
         {
-            //Načtení uživatele
+            // Načtení uživatele
             Account? account = await User.GetAccountAsync(_context);
+            if (account == null) return Unauthorized("Uživatel nenalezen.");
 
-            if (account == null)
+            string? error = await _experienceRep.SetExperienceToAccount(account, request);
+            if (error != null)
             {
-                return Unauthorized("Uživatel nenalezen.");
+                return Conflict(error);
             }
 
-            //Nastavení nabídky
-            string? result = await _experienceRep.SetExperienceToAccount(account, setExperiences);
+            var updatedExperiences = await _experienceRep.GetExperienceByAccount(account);
 
-            if (result != null)
-            {
-                return Conflict(result);
-            }
-
-            return Ok();
+            return Ok(updatedExperiences);
         }
 
         [HttpPut("Preference")]
@@ -170,26 +166,6 @@ namespace Bemplo.Server.Controllers
             }
 
             return Ok();
-        }
-
-        [HttpPut("Experiences")]
-        [Authorize]
-        public async Task<IActionResult> SetExperiences([FromBody] TransportModels.SetExperience[] request)
-        {
-            // Načtení uživatele
-            Account? account = await User.GetAccountAsync(_context);
-            if (account == null) return Unauthorized("Uživatel nenalezen.");
-
-            string? error = await _experienceRep.SetExperienceToAccount(account, request);
-            if (error != null)
-            {
-                return Conflict(error);
-            }
-
-            var updatedExperiences = await _experienceRep.GetExperienceByAccount(account);
-
-            return Ok(updatedExperiences);
-
         }
 
         [HttpPut("Contacts")]
