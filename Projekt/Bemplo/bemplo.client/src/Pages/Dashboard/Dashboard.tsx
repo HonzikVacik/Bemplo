@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 interface Experience {
-    title: string;
+    content: string;
     percentage: number;
     rating: number;
 }
@@ -37,13 +37,6 @@ interface DashboardUser extends DashboardBase {
 function isDashboardUser(data: DashboardBase): data is DashboardUser {
     return (data as DashboardUser).experiences !== undefined;
 }
-
-const TEST_SKILLS: Experience[] = [
-    { title: "Pozice A (např. Grafik)", percentage: 80, rating: 3.0 },
-    { title: "Pozice B (např. Webdesign)", percentage: 65, rating: 4.1 },
-    { title: "Pozice C (např. Kodér)", percentage: 40, rating: 2.6 },
-    { title: "Pozice D (např. Analytik)", percentage: 95, rating: 4.9 }
-];
 
 interface EditableTextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {
     initialValue: string | undefined;
@@ -228,7 +221,8 @@ const AddressSection: React.FC<AddressSectionProps> = ({ data, onSave }) => {
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
 
-    const [skills, setSkills] = useState<Experience[]>(TEST_SKILLS);
+    const [skills, setSkills] = useState<Experience[]>([]);
+    const [savedSkills, setSavedSkills] = useState<Experience[]>([]);
 
     const [dashboardData, setDashboardData] = useState<DashboardBase | DashboardUser | null>(null);
     const [isLoading, setIsLoading] = useState(true);
@@ -287,8 +281,9 @@ const Dashboard: React.FC = () => {
                     }
 
                     if (isDashboardUser(data)) {
-                        //setSkills(data.experiences || []);
-                        setSkills(TEST_SKILLS);
+                        const loadedSkills = data.experiences || [];
+                        setSkills(loadedSkills);
+                        setSavedSkills(loadedSkills);
                     }
                 }
             } catch (error) {
@@ -401,17 +396,51 @@ const Dashboard: React.FC = () => {
         }
     };
 
-    // Handlery pro formulář
-    /*const handleSkillChange = (index: number, value: string) => {
-        const newSkills = [...skills];
-        newSkills[index].percentage = parseInt(value);
-        setSkills(newSkills);
-    };*/
-
-    const handleSkillChange = (index: number, newValue: string) => {
-        const updatedSkills = [...skills];
-        updatedSkills[index].percentage = parseInt(newValue) || 0;
+    const handleSkillContentChange = (index: number, newContent: string) => {
+        const updatedSkills = skills.map((skill, i) =>
+            i === index ? { ...skill, content: newContent } : skill
+        );
         setSkills(updatedSkills);
+    };
+
+    const handleSkillPercentageChange = (index: number, newValue: string) => {
+        const updatedSkills = skills.map((skill, i) =>
+            i === index ? { ...skill, percentage: parseInt(newValue) || 0 } : skill
+        );
+        setSkills(updatedSkills);
+    };
+
+    const hasSkillsChanged = JSON.stringify(skills) !== JSON.stringify(savedSkills);
+
+    const handleCancelSkills = () => {
+        setSkills([...savedSkills]);
+    };
+
+    const handleConfirmSkills = async () => {
+        const token = localStorage.getItem('jwtToken');
+        if (!token) return;
+
+        try {
+            // Předpokládám endpoint /api/Profile/Experience, který přijímá pole
+            const response = await fetch('/api/Profile/Experience', {
+                method: 'PUT',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify(skills)
+            });
+
+            if (response.ok) {
+                setSavedSkills([...skills]);
+                console.log("Zkušenosti uloženy");
+            } else {
+                const errorText = await response.text();
+                console.error('Chyba při ukládání zkušeností:', errorText);
+            }
+        } catch (error) {
+            console.error('Chyba sítě:', error);
+        }
     };
 
     const addContactRow = () => setContacts([...contacts, { id: 0, content: '' }]);
@@ -752,23 +781,55 @@ const Dashboard: React.FC = () => {
                                         <tbody>
                                             {skills.map((skill, index) => (
                                                 <tr key={index}>
-                                                    <td>{skill?.title}</td>
+                                                    <td style={{ width: '40%' }}>
+                                                        <div className="input-group">
+                                                            <input
+                                                                type="text"
+                                                                value={skill.content}
+                                                                onChange={(e) => handleSkillContentChange(index, e.target.value)}
+                                                                placeholder="Název pozice"
+                                                            />
+                                                            <span className="focus-border"></span>
+                                                        </div>
+                                                    </td>
+
                                                     <td className="slider-cell">
                                                         <div className="slider-wrapper">
                                                             <input
                                                                 type="range"
-                                                                value={skill?.percentage}
-                                                                onChange={(e) => handleSkillChange(index, e.target.value)}
+                                                                min="0"
+                                                                max="100"
+                                                                value={skill.percentage}
+                                                                onChange={(e) => handleSkillPercentageChange(index, e.target.value)}
                                                                 className="custom-range"
                                                             />
-                                                            <span className="slider-value">{skill?.percentage}%</span>
+                                                            <span className="slider-value">{skill.percentage}%</span>
                                                         </div>
                                                     </td>
-                                                    <td>{skill?.rating}*</td>
+                                                    <td>{skill.rating}*</td>
                                                 </tr>
                                             ))}
                                         </tbody>
                                     </table>
+
+                                    {hasSkillsChanged && (
+                                        <div className="action-buttons" style={{ marginTop: '20px' }}>
+                                            <button
+                                                type="button"
+                                                className="btn-action btn-cancel"
+                                                onClick={handleCancelSkills}
+                                            >
+                                                Zrušit
+                                            </button>
+                                            <button
+                                                type="button"
+                                                className="btn-action btn-confirm"
+                                                onClick={handleConfirmSkills}
+                                            >
+                                                Potvrdit
+                                            </button>
+                                        </div>
+                                    )}
                                 </div>
                             )}
 

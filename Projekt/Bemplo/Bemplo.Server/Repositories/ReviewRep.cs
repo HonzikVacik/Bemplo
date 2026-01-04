@@ -6,6 +6,12 @@ namespace Bemplo.Server.Repositories
     public class ReviewRep : IReviewRep
     {
         private readonly ApplicationDbContext _context;
+
+        public ReviewRep(ApplicationDbContext context)
+        {
+            _context = context;
+        }
+
         public async Task<double?> GetAveragePercentageForExperience(Experience experience)
         {
             var query = _context.Rewiews
