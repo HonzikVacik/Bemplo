@@ -172,6 +172,26 @@ namespace Bemplo.Server.Controllers
             return Ok();
         }
 
+        [HttpPut("Experiences")]
+        [Authorize]
+        public async Task<IActionResult> SetExperiences([FromBody] TransportModels.SetExperience[] request)
+        {
+            // Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+            if (account == null) return Unauthorized("Uživatel nenalezen.");
+
+            string? error = await _experienceRep.SetExperienceToAccount(account, request);
+            if (error != null)
+            {
+                return Conflict(error);
+            }
+
+            var updatedExperiences = _experienceRep.GetExperienceByAccount(account);
+
+            return Ok(updatedExperiences);
+
+        }
+
         [HttpPut("Contacts")]
         [Authorize]
         public async Task<IActionResult> SetContacts([FromBody] TransportModels.Contact[] request)

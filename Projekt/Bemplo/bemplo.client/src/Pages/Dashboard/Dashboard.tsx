@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 interface Experience {
+    id: number;
     content: string;
     percentage: number;
     rating: number;

@@ -83,7 +83,8 @@ namespace Bemplo.Server.Repositories
 
             foreach(TransportModels.SetExperience setExperience in setExperiences)
             {
-                if(setExperience.Id < 0)
+                // A) Nová zkušenost
+                if(setExperience.Id == 0)
                 {
                     Experience experience = new Experience()
                     {
@@ -98,7 +99,8 @@ namespace Bemplo.Server.Repositories
                 }
                 else
                 {
-                    Experience? oldExperience = await _context.Experiences.Where(e => e.Account == account && e.Id == (int)setExperience.Id).FirstOrDefaultAsync();
+                    // B) Existující zkušenost
+                    Experience? oldExperience = await _context.Experiences.Where(e => e.Account == account && e.Id == setExperience.Id).FirstOrDefaultAsync();
                     if(oldExperience == null)
                     {
                         error = "Zkušenost s id " + setExperience.Id + " neexistuje";
@@ -106,9 +108,11 @@ namespace Bemplo.Server.Repositories
                     }
                     else
                     {
+                        // Nastaví na IsOld
                         oldExperience.IsOld = true;
                         experiencesUpdate.Add(oldExperience);
 
+                        //Vytvoří updatovanou kopii
                         Experience experience = new Experience()
                         {
                             Account = account,
