@@ -186,7 +186,7 @@ namespace Bemplo.Server.Controllers
                 return Conflict(error);
             }
 
-            var updatedExperiences = _experienceRep.GetExperienceByAccount(account);
+            var updatedExperiences = await _experienceRep.GetExperienceByAccount(account);
 
             return Ok(updatedExperiences);
 

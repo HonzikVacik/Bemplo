@@ -397,6 +397,10 @@ const Dashboard: React.FC = () => {
         }
     };
 
+    const addSkillRow = () => {
+        setSkills([...skills, { id: 0, content: '', percentage: 50, rating: 0 }]);
+    };
+
     const handleSkillContentChange = (index: number, newContent: string) => {
         const updatedSkills = skills.map((skill, i) =>
             i === index ? { ...skill, content: newContent } : skill
@@ -777,7 +781,19 @@ const Dashboard: React.FC = () => {
 
                             {isCommonAccount && (
                                 <div className="profile-section">
-                                    <h3>Zkušenosti</h3>
+                                    <div className="section-header">
+                                        <h3>Zkušenosti</h3>
+                                        <button
+                                            type="button"
+                                            className="btn-icon add-contact"
+                                            title="Přidat další zkušenost"
+                                            onClick={addSkillRow}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    </div>
                                     <table className="experience-table">
                                         <tbody>
                                             {skills.map((skill, index) => (

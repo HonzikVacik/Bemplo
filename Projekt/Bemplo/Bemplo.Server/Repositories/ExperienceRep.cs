@@ -81,10 +81,10 @@ namespace Bemplo.Server.Repositories
             List<Experience> experiencesAdd = new List<Experience>();
             string? error = null;
 
-            foreach(TransportModels.SetExperience setExperience in setExperiences)
+            foreach (TransportModels.SetExperience setExperience in setExperiences)
             {
                 // A) Nová zkušenost
-                if(setExperience.Id == 0)
+                if (setExperience.Id == 0)
                 {
                     Experience experience = new Experience()
                     {
@@ -100,19 +100,27 @@ namespace Bemplo.Server.Repositories
                 else
                 {
                     // B) Existující zkušenost
-                    Experience? oldExperience = await _context.Experiences.Where(e => e.Account == account && e.Id == setExperience.Id).FirstOrDefaultAsync();
-                    if(oldExperience == null)
+                    Experience? oldExperience = await _context.Experiences
+                        .Where(e => e.Account == account && e.Id == setExperience.Id && e.IsOld == false)
+                        .FirstOrDefaultAsync();
+
+                    if (oldExperience == null)
                     {
                         error = "Zkušenost s id " + setExperience.Id + " neexistuje";
                         break;
                     }
                     else
                     {
-                        // Nastaví na IsOld
+                        if (oldExperience.Content == setExperience.Content &&
+                            oldExperience.Percentage == setExperience.Percentage)
+                        {
+                            continue;
+                        }
+
                         oldExperience.IsOld = true;
                         experiencesUpdate.Add(oldExperience);
 
-                        //Vytvoří updatovanou kopii
+                        // Vytvoří updatovanou kopii
                         Experience experience = new Experience()
                         {
                             Account = account,
@@ -125,10 +133,10 @@ namespace Bemplo.Server.Repositories
                         experiencesAdd.Add(experience);
                     }
                 }
-            }
-            if (error != null)
-            {
-                return error;
+                if (error != null)
+                {
+                    return error;
+                }
             }
 
             try
