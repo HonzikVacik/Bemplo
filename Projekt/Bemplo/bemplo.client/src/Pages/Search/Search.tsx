@@ -2,15 +2,69 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './Search.css';
 
+interface SearchModel {
+    id: number;
+    name: string;
+    description: string;
+}
+
 function Search() {
     // Stav pro zobrazení/skrytí filtrů
     const [showFilters, setShowFilters] = useState(false);
     // Stav pro hodnotu hodnocení (slider)
     const [rating, setRating] = useState(50);
 
+    // --- NOVÉ STAVY ---
+    // 1. Text, který uživatel píše do vyhledávače
+    const [searchQuery, setSearchQuery] = useState('');
+    // 2. Pole výsledků, které přijdou ze serveru
+    const [searchResults, setSearchResults] = useState<SearchModel[]>([]);
+    // 3. Indikace načítání (volitelné, ale dobré pro UX)
+    const [isLoading, setIsLoading] = useState(false);
+
     // Funkce pro přepínání filtrů
     const toggleFilters = () => {
         setShowFilters(!showFilters);
+    };
+
+    // --- NOVÁ FUNKCE PRO HLEDÁNÍ ---
+    const handleSearch = async () => {
+        // Pokud je pole prázdné, nic neděláme (nebo můžeme načíst vše)
+        // if (!searchQuery.trim()) return; 
+
+        setIsLoading(true);
+        const token = localStorage.getItem('jwtToken'); // Pokud je endpoint chráněný
+
+        try {
+            // Odeslání požadavku na server.
+            // Předpokládám endpoint /api/Search, který přijímá parametr 'query' v URL.
+            // Příklad: /api/Search?query=programator
+            const response = await fetch(`api/Account/SearchAccounts?searchString=${encodeURIComponent(searchQuery)}`, {
+                method: 'GET', // Nebo POST, záleží na vašem backendu
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+
+            if (response.ok) {
+                const data: SearchModel[] = await response.json();
+                setSearchResults(data); // Uložíme data do stavu -> React automaticky překreslí "search-results"
+            } else {
+                console.error("Chyba při hledání:", response.statusText);
+            }
+        } catch (error) {
+            console.error("Chyba sítě:", error);
+        } finally {
+            setIsLoading(false);
+        }
+    };
+
+    // Handler pro stisk klávesy Enter v inputu
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === 'Enter') {
+            handleSearch();
+        }
     };
 
     return (
@@ -30,10 +84,16 @@ function Search() {
                             </Link>
 
                             <div className="search-bar">
-                                <input type="text" placeholder="Zadejte hledaný výraz..." />
+                                <input
+                                    type="text"
+                                    placeholder="Zadejte hledaný výraz..."
+                                    value={searchQuery}
+                                    onChange={(e) => setSearchQuery(e.target.value)}
+                                    onKeyDown={handleKeyDown}
+                                />
                             </div>
 
-                            <button type="button" className="btn-icon search-btn" title="Hledat">
+                            <button type="button" className="btn-icon search-btn" title="Hledat" onClick={handleSearch}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
                                 </svg>
@@ -95,20 +155,20 @@ function Search() {
 
                         <div className="search-results">
 
-                            <div className="result-card">
-                                <h3>Jan Novák</h3>
-                                <p>Grafický designér se zaměřením na branding a webdesign. 5 let praxe v oboru...</p>
-                            </div>
+                            {isLoading && <div style={{ textAlign: 'center', padding: '20px' }}>Načítám...</div>}
 
-                            <div className="result-card">
-                                <h3>Petra Svobodová</h3>
-                                <p>Copywriterka a korektorka. Specializuji se na technické texty a marketingové slogany...</p>
-                            </div>
+                            {!isLoading && searchResults.length === 0 && (
+                                <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
+                                    Zatím žádné výsledky.
+                                </div>
+                            )}
 
-                            <div className="result-card">
-                                <h3>Tomáš Kučera</h3>
-                                <p>Full-stack vývojář (React, Node.js). Hledám zajímavé projekty na dlouhodobou spolupráci...</p>
-                            </div>
+                            {searchResults.map((item) => (
+                                <div className="result-card" key={item.id}>
+                                    <h3>{item.name}</h3>
+                                    <p>{item.description || "Bez popisu"}</p>
+                                </div>
+                            ))}
 
                         </div>
 

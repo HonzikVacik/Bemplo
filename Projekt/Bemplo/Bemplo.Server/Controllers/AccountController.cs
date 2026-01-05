@@ -178,9 +178,9 @@ namespace Bemplo.Server.Controllers
             return Ok(accounts);
         }
 
-        [HttpPost("SearchAccounts")]
-        [Authorize]
-        public async Task<IActionResult> IsCommonAccount(string searchString)
+        [HttpGet("SearchAccounts")]
+        //[Authorize]
+        public async Task<IActionResult> IsCommonAccount([FromQuery] string searchString)
         {
             return Ok(await _accountRep.SearchAccounts(searchString));
         }
