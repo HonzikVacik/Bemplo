@@ -51,7 +51,7 @@ namespace Bemplo.Server
             return date <= DateTime.Now;
         }
 
-        private static bool IsValidEmail(string email)
+        public static bool IsValidEmail(string email)
         {
             try
             {
@@ -83,7 +83,7 @@ namespace Bemplo.Server
             return false;
         }
 
-        private static bool IsValidLocation(byte accountType, string country, string region, string city, string address)
+        public static bool IsValidLocation(byte accountType, string country, string region, string city, string address)
         {
             bool validAddress = false;
             try
@@ -100,7 +100,7 @@ namespace Bemplo.Server
                    !string.IsNullOrEmpty(address) && !string.IsNullOrWhiteSpace(address) && address.Length <= 100;
         }
 
-        private static bool IsValidDescription(string description)
+        public static bool IsValidDescription(string description)
         {
             return (!string.IsNullOrEmpty(description) && description.Length <= 5000);
         }
@@ -110,10 +110,45 @@ namespace Bemplo.Server
             return agreeWithPrivacyPolicy;
         }
 
-        private static bool IsEmailUnique(ApplicationDbContext _context, string email)
+        public static bool IsEmailUnique(ApplicationDbContext _context, string email)
         {
             var existingAccount = _context.Accounts.FirstOrDefault(a => a.Email == email);
             return existingAccount == null;
+        }
+
+        public static string? IsChatMessageValid(string message)
+        {
+            if(string.IsNullOrEmpty(message) || string.IsNullOrWhiteSpace(message))
+            {
+                return "Nelze odeslat prázdnou zprávu";
+            }
+            if(message.Length > 5000)
+            {
+                return "Zpráva je moc dlouhá (maximálně 5000 znaků)";
+            }
+            return null;
+        }
+
+        public static string? IsCommentValid(string comment)
+        {
+            if (string.IsNullOrEmpty(comment) || string.IsNullOrWhiteSpace(comment))
+            {
+                return "Nelze potvrdit prázdné komentář";
+            }
+            if (comment.Length > 5000)
+            {
+                return "Komentář je moc dlouhý (maximálně 5000 znaků)";
+            }
+            return null;
+        }
+
+        public static string? IsStarCountValid(byte starCount)
+        {
+            if(starCount > 5 || starCount < 1)
+            {
+                return "Neplatný StarCount";
+            }
+            return null;
         }
     }
 }

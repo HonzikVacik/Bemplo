@@ -1,11 +1,13 @@
 ﻿using Bemplo.Server.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace Bemplo.Server
 {
     public class ApplicationDbContext : DbContext
     {
         //Add-Migration InitialMigration -c ApplicationDbContext -o Migrations
+        //Add-Migration FirstUpdateMigration -c ApplicationDbContext -o Migrations -s bemplo.server
         //Update-Database
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }

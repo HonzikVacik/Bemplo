@@ -1,5 +1,10 @@
+using Bemplo.Server.IRepositories;
+using Bemplo.Server.IServices;
+using Bemplo.Server.Repositories;
+using Bemplo.Server.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -71,6 +76,22 @@ namespace Bemplo.Server
                 });
 
             builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+            builder.Services.AddScoped<IAccountRep, AccountRep>();
+            builder.Services.AddScoped<IContactRep, ContactRep>();
+            builder.Services.AddScoped<IExperienceRep, ExperienceRep>();
+            builder.Services.AddScoped<IOffer_Preference_RequestRep, Offer_Preference_RequestRep>();
+            builder.Services.AddScoped<IReviewRep, ReviewRep>();
+            builder.Services.AddScoped<IChatRep, ChatRep>();
+            builder.Services.AddScoped<IChatConnectionRep,  ChatConnectionRep>();
+            builder.Services.AddScoped<IPhotoRep, PhotoRep>();
+
+            builder.Services.AddScoped<IAccountSer, AccountSer>();
+            builder.Services.AddScoped<IContactSer, ContactSer>();
+            builder.Services.AddScoped<IOffer_Preference_RequestSer, Offer_Preference_RequestSer>();
+            builder.Services.AddScoped<IProfileSer, ProfileSer>();
+            builder.Services.AddScoped<IChatSer, ChatSer>();
+            builder.Services.AddScoped<IPhotoSer, PhotoSer>();
 
             // Configure Cors
             builder.Services.AddCors(options =>

@@ -16,5 +16,7 @@
         public string Password { get; set; }
         public DateTime Created_At { get; set; }
         public byte[] Salt { get; set; }
+        public bool AgreeWithPolicy { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

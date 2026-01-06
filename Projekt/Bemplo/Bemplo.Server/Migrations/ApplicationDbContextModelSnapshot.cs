@@ -37,6 +37,9 @@ namespace Bemplo.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("AgreeWithPolicy")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("City")
                         .IsRequired()
                         .HasColumnType("text");
@@ -55,6 +58,9 @@ namespace Bemplo.Server.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("Name")
                         .IsRequired()
@@ -102,6 +108,9 @@ namespace Bemplo.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<int>("SenderId")
+                        .HasColumnType("integer");
+
                     b.Property<DateTime>("Timestamp")
                         .HasColumnType("timestamp with time zone");
 
@@ -119,6 +128,12 @@ namespace Bemplo.Server.Migrations
 
                     b.Property<int>("Account_ID_2")
                         .HasColumnType("integer");
+
+                    b.Property<bool>("Account_1_Agree")
+                        .HasColumnType("boolean");
+
+                    b.Property<bool>("Account_2_Agree")
+                        .HasColumnType("boolean");
 
                     b.Property<int?>("ChatId")
                         .HasColumnType("integer");
@@ -146,6 +161,9 @@ namespace Bemplo.Server.Migrations
                     b.Property<DateTime>("Founded_At")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
@@ -167,6 +185,9 @@ namespace Bemplo.Server.Migrations
                     b.Property<string>("Content")
                         .IsRequired()
                         .HasColumnType("text");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 
@@ -195,8 +216,17 @@ namespace Bemplo.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
+                    b.Property<bool>("IsOld")
+                        .HasColumnType("boolean");
+
+                    b.Property<int?>("OriginalExperienceId")
+                        .HasColumnType("integer");
+
                     b.Property<byte>("Percentage")
                         .HasColumnType("smallint");
+
+                    b.Property<DateTime>("Timestamp")
+                        .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
 
@@ -245,6 +275,9 @@ namespace Bemplo.Server.Migrations
                     b.Property<int>("ExperienceType")
                         .HasColumnType("integer");
 
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
                     b.HasKey("Id");
 
                     b.HasIndex("AccountId");
@@ -267,16 +300,15 @@ namespace Bemplo.Server.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<string>("FileName")
-                        .IsRequired()
-                        .HasColumnType("text");
-
                     b.Property<byte[]>("ImageData")
                         .IsRequired()
                         .HasColumnType("bytea");
 
-                    b.Property<long>("Size")
-                        .HasColumnType("bigint");
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("Order")
+                        .HasColumnType("integer");
 
                     b.HasKey("Id");
 
@@ -301,6 +333,9 @@ namespace Bemplo.Server.Migrations
 
                     b.Property<DateTime?>("ExpirationDate")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.Property<string>("PolicyText")
                         .IsRequired()
@@ -357,6 +392,9 @@ namespace Bemplo.Server.Migrations
 
                     b.Property<DateTime>("Date_of_Birth")
                         .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("IsDeleted")
+                        .HasColumnType("boolean");
 
                     b.HasKey("Id");
 

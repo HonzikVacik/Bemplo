@@ -6,5 +6,8 @@
         public Account Account { get; set; }
         public string Content { get; set; } = string.Empty;
         public byte Percentage { get; set; }
+        public DateTime Timestamp { get; set; }
+        public bool IsOld { get; set; }
+        public int? OriginalExperienceId { get; set; }
     }
 }
