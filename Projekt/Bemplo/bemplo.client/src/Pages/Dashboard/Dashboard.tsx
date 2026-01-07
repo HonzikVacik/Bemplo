@@ -233,8 +233,6 @@ const Dashboard: React.FC = () => {
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [savedContacts, setSavedContacts] = useState<Contact[]>([]);
 
-    //const [skills, setSkills] = useState<Experience[]>([]);
-
     const [savedImages, setSavedImages] = useState<string[]>([]);
     const [images, setImages] = useState<string[]>([]);
     const [selectedImage, setSelectedImage] = useState<string | null>(null);

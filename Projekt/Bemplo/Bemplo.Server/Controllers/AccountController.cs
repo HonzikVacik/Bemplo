@@ -179,7 +179,6 @@ namespace Bemplo.Server.Controllers
         }
 
         [HttpGet("SearchAccounts")]
-        //[Authorize]
         public async Task<IActionResult> IsCommonAccount([FromQuery] string searchString)
         {
             return Ok(await _accountRep.SearchAccounts(searchString));

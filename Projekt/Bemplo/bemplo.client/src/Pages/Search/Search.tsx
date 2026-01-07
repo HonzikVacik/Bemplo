@@ -14,12 +14,8 @@ function Search() {
     // Stav pro hodnotu hodnocení (slider)
     const [rating, setRating] = useState(50);
 
-    // --- NOVÉ STAVY ---
-    // 1. Text, který uživatel píše do vyhledávače
     const [searchQuery, setSearchQuery] = useState('');
-    // 2. Pole výsledků, které přijdou ze serveru
     const [searchResults, setSearchResults] = useState<SearchModel[]>([]);
-    // 3. Indikace načítání (volitelné, ale dobré pro UX)
     const [isLoading, setIsLoading] = useState(false);
 
     // Funkce pro přepínání filtrů
@@ -27,20 +23,15 @@ function Search() {
         setShowFilters(!showFilters);
     };
 
-    // --- NOVÁ FUNKCE PRO HLEDÁNÍ ---
     const handleSearch = async () => {
-        // Pokud je pole prázdné, nic neděláme (nebo můžeme načíst vše)
-        // if (!searchQuery.trim()) return; 
 
         setIsLoading(true);
-        const token = localStorage.getItem('jwtToken'); // Pokud je endpoint chráněný
+        // Pro jistotu :)
+        const token = localStorage.getItem('jwtToken');
 
         try {
-            // Odeslání požadavku na server.
-            // Předpokládám endpoint /api/Search, který přijímá parametr 'query' v URL.
-            // Příklad: /api/Search?query=programator
             const response = await fetch(`api/Account/SearchAccounts?searchString=${encodeURIComponent(searchQuery)}`, {
-                method: 'GET', // Nebo POST, záleží na vašem backendu
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -49,7 +40,7 @@ function Search() {
 
             if (response.ok) {
                 const data: SearchModel[] = await response.json();
-                setSearchResults(data); // Uložíme data do stavu -> React automaticky překreslí "search-results"
+                setSearchResults(data);
             } else {
                 console.error("Chyba při hledání:", response.statusText);
             }
