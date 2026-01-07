@@ -1,0 +1,51 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    container_name: bemplo-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: Bemplo
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgrespassword
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+
+  pgadmin:
+    image: dpage/pgadmin4:8
+    container_name: bemplo-pgadmin
+    restart: unless-stopped
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@admin.com
+      PGADMIN_DEFAULT_PASSWORD: adminpassword
+    ports:
+      - "8081:80"
+    depends_on:
+      - db
+
+  api:
+    build:
+      context: .
+      dockerfile: Bemplo.Server/Dockerfile
+    container_name: bemplo-api
+    restart: unless-stopped
+    environment:
+      ASPNETCORE_ENVIRONMENT: "Development"
+      # Override the connection string to use the dockerized Postgres
+      ConnectionStrings__DefaultConnection: "Server=db;Port=5432;Database=Bemplo;User Id=postgres;Password=postgrespassword"
+      # You can override JWT settings here if needed; otherwise appsettings.json values are used
+      # JwtSettings__SecretKey: "YourSecretKey1234567890secretkeyfordemo"
+      # JwtSettings__Issuer: "http://localhost:8080"
+      # JwtSettings__Audience: "http://localhost:8080"
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+
+volumes:
+  db_data:
+
+

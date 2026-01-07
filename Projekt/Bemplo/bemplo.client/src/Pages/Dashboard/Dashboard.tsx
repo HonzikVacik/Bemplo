@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Dashboard.css';
 
 interface Experience {
@@ -1026,7 +1026,7 @@ const Dashboard: React.FC = () => {
                                                     }
                                                     dragItem.current = index;
                                                 }}
-                                                onDragEnter={(e) => {
+                                                onDragEnter={() => {
                                                     if (!isEditing) return;
                                                     dragOverItem.current = index;
                                                 }}
