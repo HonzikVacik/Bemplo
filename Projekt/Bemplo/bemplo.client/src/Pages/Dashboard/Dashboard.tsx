@@ -245,6 +245,8 @@ const Dashboard: React.FC = () => {
     const dragItem = useRef<number | null>(null);
     const dragOverItem = useRef<number | null>(null);
 
+    const [resetKey, setResetKey] = useState(0);
+
     useEffect(() => {
         const fetchDashboardData = async () => {
             const token = localStorage.getItem('jwtToken');
@@ -675,6 +677,19 @@ const Dashboard: React.FC = () => {
         navigate('/');
     }
 
+    const toggleEditing = () => {
+        if (isEditing) {
+
+            handleCancelSkills();
+            handleCancelContacts();
+            handleCancelPhotos();
+
+            setResetKey(prev => prev + 1);
+        }
+
+        setIsEditing(!isEditing);
+    };
+
     return (
         <>
             <div className="dashboard-page">
@@ -752,8 +767,8 @@ const Dashboard: React.FC = () => {
                                 </svg>
                             </button>
 
-                            <button type="button" className="btn btn-secondary" onClick={() => setIsEditing(!isEditing)}>
-                                Změnit profil
+                            <button type="button" className="btn btn-secondary" onClick={toggleEditing}>
+                                {isEditing ? 'Ukončit úpravy' : 'Změnit profil'}
                             </button>
                         </div>
 
@@ -764,6 +779,7 @@ const Dashboard: React.FC = () => {
                             <div className="profile-section">
                                 <h3>Popis</h3>
                                 <EditableTextarea
+                                    key={resetKey}
                                     id="description"
                                     name="description"
                                     placeholder=" "
@@ -777,6 +793,7 @@ const Dashboard: React.FC = () => {
                                 <h3>Nabídka</h3>
                                 <div className="input-group span-full">
                                     <EditableTextarea
+                                        key={resetKey}
                                         id="offer"
                                         name="offer"
                                         placeholder=" "
@@ -864,6 +881,7 @@ const Dashboard: React.FC = () => {
                                     <h3>Preference</h3>
                                     <div className="input-group span-full">
                                         <EditableTextarea
+                                            key={resetKey}
                                             id="preferences"
                                             name="preferences"
                                             placeholder=" "
@@ -881,6 +899,7 @@ const Dashboard: React.FC = () => {
                                     <h3>Požadavky</h3>
                                     <div className="input-group span-full">
                                         <EditableTextarea
+                                            key={resetKey}
                                             id="requirements"
                                             name="requirements"
                                             placeholder=" "
@@ -894,6 +913,7 @@ const Dashboard: React.FC = () => {
                             )}
 
                             <AddressSection
+                                key={resetKey}
                                 data={{
                                     country: dashboardData?.country || '',
                                     region: dashboardData?.region || '',
