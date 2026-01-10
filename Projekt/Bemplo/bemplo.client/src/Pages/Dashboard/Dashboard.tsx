@@ -690,6 +690,10 @@ const Dashboard: React.FC = () => {
         setIsEditing(!isEditing);
     };
 
+    const navigateToSearch = () => {
+        navigate('/search');
+    }
+
     return (
         <>
             <div className="dashboard-page">
@@ -733,7 +737,7 @@ const Dashboard: React.FC = () => {
                                 </svg>
                             </button>
 
-                            <button type="button" className="btn-icon" title="Vyhledávání">
+                            <button type="button" className="btn-icon" title="Vyhledávání" onClick={navigateToSearch}>
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     fill="none"

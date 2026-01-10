@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Search.css';
 
 interface SearchModel {
@@ -56,6 +56,8 @@ function Search() {
         }
     };
 
+    const navigate = useNavigate();
+
     return (
         <>
             <div className="search-page">
@@ -66,11 +68,11 @@ function Search() {
                     <div className="glass-container">
 
                         <header className="search-header">
-                            <Link to="/dashboard" className="btn-icon back-btn" title="Zpět">
+                            <button className="btn-icon back-btn" title="Zpět" onClick={() => navigate(-1)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                                 </svg>
-                            </Link>
+                            </button>
 
                             <div className="search-bar">
                                 <input
