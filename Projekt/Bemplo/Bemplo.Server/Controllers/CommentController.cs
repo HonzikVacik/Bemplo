@@ -9,15 +9,17 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bemplo.Server.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class CommentController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly ICommentSer _commentSer;
 
-        public CommentController(ICommentSer commentSer, ApplicationDbContext context)
+        public CommentController(ApplicationDbContext context, ICommentSer commentSer)
         {
-            _commentSer = commentSer;
             _context = context;
+            _commentSer = commentSer;
         }
 
         [HttpPost]
@@ -42,9 +44,9 @@ namespace Bemplo.Server.Controllers
             return Ok();
         }
 
-        [HttpPost]
+        [HttpGet]
         [Authorize]
-        public async Task<IActionResult> GetComments(int ExperienceId)
+        public async Task<IActionResult> GetComments(int UserId, int ExperienceId)
         {
             //Načtení uživatele
             Account? account = await User.GetAccountAsync(_context);
@@ -54,7 +56,7 @@ namespace Bemplo.Server.Controllers
                 return NotFound("Uživatel nenalezen.");
             }
 
-            (Comments? comments, string? error) item = await _commentSer.GetCommentsByExperience(ExperienceId);
+            (Comments? comments, string? error) item = await _commentSer.GetCommentsByExperience(UserId, ExperienceId);
 
             if (item.error != null)
             {

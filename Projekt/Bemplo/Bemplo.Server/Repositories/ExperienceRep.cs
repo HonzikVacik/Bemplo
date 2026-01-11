@@ -120,6 +120,12 @@ namespace Bemplo.Server.Repositories
                         oldExperience.IsOld = true;
                         experiencesUpdate.Add(oldExperience);
 
+                        int? originalExperienceId = oldExperience.OriginalExperienceId;
+                        if (originalExperienceId == null)
+                        {
+                            originalExperienceId = oldExperience.Id;
+                        }
+
                         // Vytvoří updatovanou kopii
                         Experience experience = new Experience()
                         {
@@ -127,7 +133,7 @@ namespace Bemplo.Server.Repositories
                             Content = setExperience.Content,
                             Percentage = setExperience.Percentage,
                             IsOld = false,
-                            OriginalExperienceId = oldExperience.OriginalExperienceId,
+                            OriginalExperienceId = originalExperienceId,
                             Timestamp = DateTime.Now.ToUniversalTime()
                         };
                         experiencesAdd.Add(experience);
