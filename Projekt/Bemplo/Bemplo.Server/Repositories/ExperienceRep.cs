@@ -38,14 +38,14 @@ namespace Bemplo.Server.Repositories
 
         public async Task<Experience?> GetExperienceById(int experienceId)
         {
-            return await _context.Experiences.Where(e => e.Id == experienceId).FirstOrDefaultAsync();
+            return await _context.Experiences.Where(e => e.Id == experienceId && e.IsOld == false).FirstOrDefaultAsync();
         }
 
         public async Task<Experience[]> GetExperiencesById(int experienceId)
         {
             List<Experience> experiences = new List<Experience>();
 
-            Experience? lastExperience = await _context.Experiences.Where(e => e.Id == experienceId).FirstOrDefaultAsync();
+            Experience? lastExperience = await _context.Experiences.Where(e => e.Id == experienceId && e.IsOld == false).FirstOrDefaultAsync();
             if (lastExperience == null)
             {
                 return experiences.ToArray();
@@ -72,7 +72,8 @@ namespace Bemplo.Server.Repositories
                     experiences.Add(originalExperience);
                 }
             }
-            return experiences.ToArray();
+            
+            return experiences.OrderByDescending(e => e.Timestamp).ToArray();
         }
 
         public async Task<string?> SetExperienceToAccount(Account account, TransportModels.SetExperience[] setExperiences)
