@@ -1,24 +1,72 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './ChatManager.css';
 
+interface ChatListDto {
+    contactId: number;
+    name: string;
+    lastMessage?: string;
+}
+
 function ChatManager() {
-    const openChat = (chatId: string) => {
-        console.log("Otevírám chat: " + chatId);
-        // Zde by později byla logika pro přesměrování, např. router.push(`/chat/${chatId}`)
+    const [chats, setChats] = useState<ChatListDto[]>([]);
+    const [loading, setLoading] = useState<boolean>(true);
+    const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
+
+    // Načtení dat
+    useEffect(() => {
+        const fetchChats = async () => {
+            try {
+                const token = localStorage.getItem('jwtToken');
+
+                if (!token) {
+                    setError("Nejste přihlášen.");
+                    setLoading(false);
+                    return;
+                }
+
+                const response = await fetch('/api/Chat', {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    setChats(data);
+                } else if (response.status === 401) {
+                    setError("Neautorizovaný přístup. Přihlašte se prosím.");
+                } else {
+                    const errText = await response.text();
+                    setError(`Chyba: ${errText || response.statusText}`);
+                }
+            } catch (err) {
+                setError("Nepodařilo se připojit k serveru.");
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchChats();
+    }, []);
+
+    const openChat = (contactId: number) => {
+        navigate(`/chatdetail/${contactId}`); 
     };
 
     return (
         <>
             <div className="chatManager-page">
-
                 <div className="background-animation"></div>
-
                 <div className="wrapper">
                     <div className="glass-container">
 
                         <header className="chat-header">
-                            <Link to="dashboard.html" className="btn-icon back-btn" title="Zpět">
+                            <Link to="/dashboard" className="btn-icon back-btn" title="Zpět">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                                 </svg>
@@ -34,39 +82,30 @@ function ChatManager() {
                         </header>
 
                         <div className="chat-list">
+                            {/* Loading stav */}
+                            {loading && <div className="chat-item"><span className="chat-preview">Načítám chaty...</span></div>}
 
-                            {/* Chat Item: Systém */}
-                            <div className="chat-item" onClick={() => openChat('system')}>
-                                <div className="chat-info">
-                                    <span className="chat-name">Systém</span>
-                                    <span className="chat-preview">Vítejte v nové aplikaci! Klikněte pro...</span>
+                            {/* Error stav */}
+                            {error && <div className="chat-item" style={{ color: 'red' }}><span className="chat-preview">{error}</span></div>}
+
+                            {/* Prázdný seznam */}
+                            {!loading && !error && chats.length === 0 && (
+                                <div className="chat-item">
+                                    <span className="chat-preview">Nemáte žádné aktivní konverzace.</span>
                                 </div>
-                            </div>
+                            )}
 
-                            {/* Chat Item: Jan Novák */}
-                            <div className="chat-item" onClick={() => openChat('jan-novak')}>
-                                <div className="chat-info">
-                                    <span className="chat-name">Jan Novák</span>
-                                    <span className="chat-preview">Díky za info, zítra se ozvu.</span>
+                            {/* Výpis chatů ze serveru */}
+                            {chats.map((chat) => (
+                                <div key={chat.contactId} className="chat-item" onClick={() => openChat(chat.contactId)}>
+                                    <div className="chat-info">
+                                        <span className="chat-name">{chat.name}</span>
+                                        <span className="chat-preview">
+                                            {chat.lastMessage || "Zatím žádná zpráva"}
+                                        </span>
+                                    </div>
                                 </div>
-                            </div>
-
-                            {/* Chat Item: Firma XYZ */}
-                            <div className="chat-item" onClick={() => openChat('firma-xyz')}>
-                                <div className="chat-info">
-                                    <span className="chat-name">Firma XYZ</span>
-                                    <span className="chat-preview">Faktura byla uhrazena.</span>
-                                </div>
-                            </div>
-
-                            {/* Chat Item: Petra Malá */}
-                            <div className="chat-item" onClick={() => openChat('petra')}>
-                                <div className="chat-info">
-                                    <span className="chat-name">Petra Malá</span>
-                                    <span className="chat-preview">Ahoj, posílám ty podklady k projektu, které jsi chtěl vidět už včera...</span>
-                                </div>
-                            </div>
-
+                            ))}
                         </div>
 
                     </div>

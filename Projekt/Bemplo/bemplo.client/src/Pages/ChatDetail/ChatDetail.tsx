@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './ChatDetail.css';
 
 interface Message {
@@ -11,6 +11,7 @@ interface Message {
 
 function ChatDetail() {
     const chatContainerRef = useRef<HTMLDivElement>(null);
+    const navigate = useNavigate();
 
     const [inputValue, setInputValue] = useState('');
 
@@ -57,7 +58,7 @@ function ChatDetail() {
                     <div className="glass-container chat-layout">
 
                         <header className="chat-header">
-                            <Link to="chat" className="btn-icon back-btn" title="Zpět">
+                            <Link to="/chat" className="btn-icon back-btn" title="Zpět">
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                                 </svg>
