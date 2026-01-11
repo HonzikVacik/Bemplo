@@ -91,7 +91,7 @@ namespace Bemplo.Server.Controllers
                 return Conflict(result.error);
             }
 
-            return Ok();
+            return Ok(result.messages);
         }
 
         [HttpPost("SetLock")]

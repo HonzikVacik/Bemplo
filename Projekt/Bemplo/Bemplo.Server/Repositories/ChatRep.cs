@@ -62,7 +62,7 @@ namespace Bemplo.Server.Repositories
                 DateTime? timestamp = await _context.Chats.Where(ch => ch.Id == lastMessageId).Select(ch => ch.Timestamp).FirstOrDefaultAsync();
                 if (timestamp == null)
                 {
-                    return (null, "MessageId neexistuje");
+                    return (new Message[0], null);
                 }
                 Message[] messages = await _context.Chats.Where(ch => ch.Chat_Connection == chatConnection).OrderByDescending(ch => ch.Timestamp).Where(ch => ch.Timestamp > timestamp).Take(count).Select(x => new Message() { Id = x.Id, Content = x.Content, Owned = x.SenderId == account.Id, Timestamp = x.Timestamp }).ToArrayAsync();
                 return (messages, null);
