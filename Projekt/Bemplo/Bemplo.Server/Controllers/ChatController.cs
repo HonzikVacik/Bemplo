@@ -115,5 +115,27 @@ namespace Bemplo.Server.Controllers
 
             return Ok();
         }
+
+        [HttpPost("CreateChatConnection")]
+        [Authorize]
+        public async Task<IActionResult> CreateChatConnection([FromBody] int ContactId)
+        {
+            //Načtení uživatele
+            Account? account = await User.GetAccountAsync(_context);
+
+            if (account == null)
+            {
+                return NotFound("Uživatel nenalezen.");
+            }
+
+            string? error = await _chatSer.CreateChatConnection(account.Id, ContactId);
+
+            if (error != null)
+            {
+                return Conflict(error);
+            }
+
+            return Ok();
+        }
     }
 }

@@ -92,5 +92,10 @@ namespace Bemplo.Server.Services
 
             return await _chatRep.SetLock(account, item.chatConnection, locked);
         }
+
+        public async Task<string?> CreateChatConnection(int AccountId, int ContactId)
+        {
+            return await _chatConnectionRep.CreateChatConnection(AccountId, ContactId);
+        }
     }
 }

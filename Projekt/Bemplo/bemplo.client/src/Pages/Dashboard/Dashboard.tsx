@@ -524,6 +524,37 @@ const Dashboard: React.FC = () => {
         }
     };
 
+    const handleContactAction = async () => {
+        if (!dashboardData || !dashboardData.id) return;
+
+        const token = localStorage.getItem('jwtToken');
+        if (!token) {
+            alert("Pro kontaktování uživatele musíte být přihlášen.");
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/Chat/CreateChatConnection', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(dashboardData.id)
+            });
+
+            if (response.ok) {
+                navigate(`/chatdetail/${dashboardData.id}`);
+            } else {
+                const errorText = await response.text();
+                console.error('Chyba při navazování kontaktu:', errorText);
+                alert(`Nepodařilo se navázat kontakt: ${errorText}`);
+            }
+        } catch (error) {
+            console.error('Chyba sítě:', error);
+        }
+    };
+
     const triggerFileInput = () => {
         fileInputRef.current?.click();
     };
@@ -1018,7 +1049,12 @@ const Dashboard: React.FC = () => {
 
                                         <div className="input-group contact-action">
                                             {!isOwner && (
-                                                < button type="button" className="btn btn-primary full-width" onClick={() => alert("A")} disabled={false}>
+                                            < button
+                                                type="button"
+                                                className="btn btn-primary full-width"
+                                                onClick={handleContactAction}
+                                                disabled={false}
+                                            >
                                                 Kontaktovat
                                             </button>
                                         )}
