@@ -21,6 +21,7 @@ createRoot(document.getElementById('root')!).render(
                 <Route path="/" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/dashboard/:id" element={<DashboardPage />} />
                 <Route path="/privacypolicy" element={<PrivacyPolicyPage />} />
                 <Route path="/chat" element={<ChatManagerPage />} />
                 <Route path="/chatdetail" element={<ChatDetailPage />} />

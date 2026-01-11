@@ -57,7 +57,7 @@ namespace Bemplo.Server.Controllers
             return Ok(result);
         }
 
-        [HttpGet("UserDashboard")]
+        [HttpGet("{AccountId}")]
         [AllowAnonymous]
         public async Task<IActionResult> GetUserDashboard(int AccountId)
         {

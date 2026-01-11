@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './Dashboard.css';
 
 interface Experience {
@@ -221,6 +221,9 @@ const AddressSection: React.FC<AddressSectionProps> = ({ data, onSave }) => {
 
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
+    const { id } = useParams(); // Získáme ID z URL (pokud existuje)
+
+    const [isOwner, setIsOwner] = useState(false); // Nový stav
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -250,16 +253,30 @@ const Dashboard: React.FC = () => {
     useEffect(() => {
         const fetchDashboardData = async () => {
             const token = localStorage.getItem('jwtToken');
-            if (!token) return;
 
             try {
-                const response = await fetch('/api/Profile', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                });
+                let response;
+                if (id) {
+                    response = await fetch(`/api/Profile/${id}`, {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                }
+                else {
+                    if (!token) return;
+                    response = await fetch('/api/Profile', {
+                        headers: { 'Authorization': `Bearer ${token}` }
+                    });
+                }
 
                 if (response.ok) {
                     const data = await response.json();
                     setDashboardData(data);
+
+                    if (!id) {
+                        setIsOwner(true);
+                    } else {
+                        setIsOwner(false);
+                    }
 
                     const realUrls: string[] = data.photos;
 
@@ -705,37 +722,41 @@ const Dashboard: React.FC = () => {
                         <div className="profile-header">
                             <h2>{dashboardData.name}</h2>
 
-                            <button type="button" className="btn-icon" title="Osobní kód">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"
-                                    />
-                                </svg>
-                            </button>
+                            {isOwner && (
+                                <button type="button" className="btn-icon" title="Osobní kód">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M12 11c0 3.517-1.009 6.799-2.753 9.571m-3.44-2.04l.054-.09A13.916 13.916 0 008 11a4 4 0 118 0c0 1.017-.07 2.019-.203 3m-2.118 6.844A21.88 21.88 0 0015.171 17m3.839 1.132c.645-2.266.99-4.659.99-7.132A8 8 0 008 4.07M3 15.364c.64-1.319 1-2.8 1-4.364 0-1.457.39-2.823 1.07-4"
+                                        />
+                                    </svg>
+                                </button>
+                            )}
 
-                            <button type="button" className="btn-icon" title="Chat">
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
-                                    />
-                                </svg>
-                            </button>
+                            {isOwner && (
+                                <button type="button" className="btn-icon" title="Chat">
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"
+                                        />
+                                    </svg>
+                                </button>
+                            )}
 
                             <button type="button" className="btn-icon" title="Vyhledávání" onClick={navigateToSearch}>
                                 <svg
@@ -753,27 +774,31 @@ const Dashboard: React.FC = () => {
                                 </svg>
                             </button>
 
-                            <div className="separator"></div>
+                            {isOwner && (<div className="separator"></div> )}
 
-                            <button type="button" className="btn-icon logout" title="Odhlásit se" onClick={handleLogout}>
-                                <svg
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
-                                    <path
-                                        strokeLinecap="round"
-                                        strokeLinejoin="round"
-                                        strokeWidth="2"
-                                        d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
-                                    />
-                                </svg>
-                            </button>
+                            {isOwner && (
+                                <button type="button" className="btn-icon logout" title="Odhlásit se" onClick={handleLogout}>
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth="2"
+                                            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+                                        />
+                                    </svg>
+                                </button>
+                            )}
 
-                            <button type="button" className="btn btn-secondary" onClick={toggleEditing}>
+                            {isOwner && (
+                                < button type="button" className="btn btn-secondary" onClick={toggleEditing}>
                                 {isEditing ? 'Ukončit úpravy' : 'Změnit profil'}
-                            </button>
+                                </button>
+                            )}
                         </div>
 
                         <form className="profile-form">
@@ -813,16 +838,18 @@ const Dashboard: React.FC = () => {
                                 <div className="profile-section">
                                     <div className="section-header">
                                         <h3>Zkušenosti</h3>
-                                        <button
-                                            type="button"
-                                            className="btn-icon add-contact"
-                                            title="Přidat další zkušenost"
-                                            onClick={addSkillRow}
-                                        >
-                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                                            </svg>
-                                        </button>
+                                            {isOwner && (
+                                                <button
+                                                    type="button"
+                                                    className="btn-icon add-contact"
+                                                    title="Přidat další zkušenost"
+                                                    onClick={addSkillRow}
+                                                >
+                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                                    </svg>
+                                                </button>
+                                            )}
                                     </div>
                                     <table className="experience-table">
                                         <tbody>
@@ -930,32 +957,36 @@ const Dashboard: React.FC = () => {
                             <div className="profile-section">
                                 <div className="section-header">
                                     <h3>Kontakt</h3>
-                                    <button
-                                        type="button"
-                                        className="btn-icon add-contact"
-                                        title="Přidat další kontakt"
-                                        onClick={addContactRow}
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                                        </svg>
-                                    </button>
+                                    {isOwner && (
+                                        < button
+                                            type="button"
+                                            className="btn-icon add-contact"
+                                            title="Přidat další kontakt"
+                                            onClick={addContactRow}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    )}
                                 </div>
 
                                 <div className="form-grid">
                                     <div className="dynamic-list" id="emailList">
                                         {contacts.map((contact, index) => (
                                             <div className="contact-row" key={index}>
-                                                <button
-                                                    type="button"
-                                                    className="btn-icon remove-btn"
-                                                    title="Odstranit"
-                                                    onClick={() => removeContactRow(index)}
-                                                >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
-                                                    </svg>
-                                                </button>
+                                                {isOwner && (
+                                                    <button
+                                                        type="button"
+                                                        className="btn-icon remove-btn"
+                                                        title="Odstranit"
+                                                        onClick={() => removeContactRow(index)}
+                                                    >
+                                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M20 12H4" />
+                                                        </svg>
+                                                    </button>
+                                                )}
 
                                                 <div className="input-group">
                                                     <input
@@ -978,7 +1009,7 @@ const Dashboard: React.FC = () => {
                                         </button>
                                     </div>
 
-                                    {hasContactsChanged && (
+                                    {hasContactsChanged && isOwner &&(
                                         <div className="action-buttons" style={{ marginTop: '20px' }}>
                                             <button
                                                 type="button"
@@ -1061,7 +1092,7 @@ const Dashboard: React.FC = () => {
                                                 onClick={() => handleSelectImage(imgUrl)}
                                             >
                                                 <img src={imgUrl} alt={`Náhled ${index + 1}`} />
-                                                {isEditing && (< button
+                                                {isEditing && isOwner && (< button
                                                     type="button"
                                                     className="delete-btn"
                                                     title="Odstranit obrázek"
@@ -1084,15 +1115,17 @@ const Dashboard: React.FC = () => {
                                         onChange={handleImageUpload}
                                     />
 
-                                    <button
-                                        type="button"
-                                        className="btn btn-primary full-width"
-                                        onClick={triggerFileInput}
-                                    >
-                                        Nahrát +
-                                    </button>
+                                    {isOwner && (
+                                        <button
+                                            type="button"
+                                            className="btn btn-primary full-width"
+                                            onClick={triggerFileInput}
+                                        >
+                                            Nahrát +
+                                        </button>
+                                    )}
 
-                                    {hasPhotosChanged && (
+                                    {hasPhotosChanged && isOwner && (
                                         <div className="action-buttons" style={{ marginTop: '20px' }}>
                                             <button
                                                 type="button"
@@ -1115,9 +1148,11 @@ const Dashboard: React.FC = () => {
 
                             </fieldset>
 
-                            <div className="links">
-                                <a onClick={handleLogout}>Odhlásit se</a>
-                            </div>
+                            {isOwner && (
+                                <div className="links">
+                                    <a onClick={handleLogout}>Odhlásit se</a>
+                                </div>
+                            )}
                         </form>
                     </div>
                 </div>
