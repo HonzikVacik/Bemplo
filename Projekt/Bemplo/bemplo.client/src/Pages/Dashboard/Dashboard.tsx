@@ -741,7 +741,7 @@ const Dashboard: React.FC = () => {
                             )}
 
                             {isOwner && (
-                                <button type="button" className="btn-icon" title="Chat">
+                                <button type="button" className="btn-icon" title="Chat" onClick={() => navigate(`/chat`)}>
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
                                         fill="none"
@@ -954,7 +954,13 @@ const Dashboard: React.FC = () => {
                                 onSave={handleSaveAddress}
                             />
 
+                            </fieldset>
+
+
                             <div className="profile-section">
+
+                                <fieldset disabled={!isEditing} style={{ border: 'none', padding: 0, margin: 0 }}>
+
                                 <div className="section-header">
                                     <h3>Kontakt</h3>
                                     {isOwner && (
@@ -971,7 +977,12 @@ const Dashboard: React.FC = () => {
                                     )}
                                 </div>
 
+                                </fieldset>
+
                                 <div className="form-grid">
+
+                                    <fieldset disabled={!isEditing} style={{ border: 'none', padding: 0, margin: 0 }}>
+
                                     <div className="dynamic-list" id="emailList">
                                         {contacts.map((contact, index) => (
                                             <div className="contact-row" key={index}>
@@ -1003,11 +1014,17 @@ const Dashboard: React.FC = () => {
                                         ))}
                                     </div>
 
-                                    <div className="input-group contact-action">
-                                        <button type="button" className="btn btn-primary full-width">
-                                            Kontaktovat
-                                        </button>
+                                    </fieldset>
+
+                                        <div className="input-group contact-action">
+                                            {!isOwner && (
+                                                < button type="button" className="btn btn-primary full-width" onClick={() => alert("A")} disabled={false}>
+                                                Kontaktovat
+                                            </button>
+                                        )}
                                     </div>
+
+                                    <fieldset disabled={!isEditing} style={{ border: 'none', padding: 0, margin: 0 }}>
 
                                     {hasContactsChanged && isOwner &&(
                                         <div className="action-buttons" style={{ marginTop: '20px' }}>
@@ -1027,8 +1044,13 @@ const Dashboard: React.FC = () => {
                                             </button>
                                         </div>
                                     )}
+
+                                    </fieldset>
+
                                 </div>
                             </div>
+
+                            <fieldset disabled={!isEditing} style={{ border: 'none', padding: 0, margin: 0 }}>
 
                             {isCommonAccount && (
                                 <div className="profile-section">

@@ -157,7 +157,7 @@ function Search() {
                             {searchResults.map((item) => (
                                 <div className="result-card"
                                     key={item.id}
-                                    onClick={() => navigate(`/Dashboard/${item.id}`)}
+                                    onClick={() => navigate(`/dashboard/${item.id}`)}
                                     style={{ cursor: 'pointer' }}
                                 >
                                     <h3>{item.name}</h3>
