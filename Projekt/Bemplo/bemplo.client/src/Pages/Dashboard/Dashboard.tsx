@@ -419,6 +419,14 @@ const Dashboard: React.FC = () => {
         }
     };
 
+    const handleExperienceClick = (experienceId: number) => {
+        if (isEditing) return;
+
+        if (dashboardData && dashboardData.id) {
+            navigate(`/comments/${dashboardData.id}/${experienceId}`);
+        }
+    };
+
     const addSkillRow = () => {
         setSkills([...skills, { id: 0, content: '', percentage: 50, rating: null }]);
     };
@@ -885,7 +893,11 @@ const Dashboard: React.FC = () => {
                                     <table className="experience-table">
                                         <tbody>
                                             {skills.map((skill, index) => (
-                                                <tr key={index}>
+                                                <tr key={index}
+                                                    onClick={() => handleExperienceClick(skill.id)}
+                                                    style={{ cursor: isEditing ? 'default' : 'pointer' }}
+                                                    className={!isEditing ? "hover-effect" : ""}
+                                                >
                                                     <td style={{ width: '40%' }}>
                                                         <div className="input-group">
                                                             <input

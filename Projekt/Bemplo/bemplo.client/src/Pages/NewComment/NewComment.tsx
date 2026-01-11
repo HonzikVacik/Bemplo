@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './NewComment.css';
 
 function AddComment() {
+    const navigate = useNavigate();
+
     // Stav pro hodnotu hodnocení (defaultně 5)
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState('');
@@ -60,9 +62,9 @@ function AddComment() {
                                 </div>
 
                                 <div className="btn-group">
-                                    <Link to="/dashboard" className="btn btn-secondary">
+                                    <button className="btn btn-secondary" onClick={() => navigate(-1)}>
                                         Zpět
-                                    </Link>
+                                    </button>
 
                                     <button type="submit" className="btn btn-primary">
                                         Potvrdit

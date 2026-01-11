@@ -1,8 +1,11 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './Comments.css';
 
 function Comments() {
+    const navigate = useNavigate();
+    const params = useParams();
+
     // Stav pro filtry (search a select)
     const [searchTerm, setSearchTerm] = useState('');
     const [sortType, setSortType] = useState('newest');
@@ -34,11 +37,11 @@ function Comments() {
                     <div className="glass-container">
 
                         <header className="page-header">
-                            <Link to="/dashboard" className="btn-icon back-btn" title="Zpět">
+                            <button className="btn-icon back-btn" title="Zpět" onClick={() => navigate(-1)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                                 </svg>
-                            </Link>
+                            </button>
 
                             <h2>Jméno Příjmení</h2>
 
@@ -87,11 +90,11 @@ function Comments() {
                             <div className="column">
                                 <div className="column-header">
                                     <h3>Komentáře</h3>
-                                    <Link to="/newcomment" className="btn-icon add-comment-btn" title="Přidat komentář">
+                                    <button className="btn-icon add-comment-btn" title="Přidat komentář" onClick={() => navigate(`/newcomment/${params.userId}/${params.id}`)}>
                                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
                                         </svg>
-                                    </Link>
+                                    </button>
                                 </div>
 
                                 <div className="scroll-list">
