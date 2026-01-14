@@ -85,13 +85,6 @@ function Comments() {
         });
     };
 
-    // Pomocná funkce pro převod procent (0-100) na hvězdičky (1-5) nebo zobrazení procent
-    const formatRating = (percentage: number) => {
-        // Pokud chcete zobrazit hvězdičky 1-5:
-        const stars = Math.round((percentage / 100) * 5);
-        return stars; // Vrátí číslo 0-5
-    };
-
     // 3. Filtrace a řazení komentářů (Client-side)
     const getProcessedComments = () => {
         if (!data?.comments) return [];
@@ -209,7 +202,7 @@ function Comments() {
                                                 </div>
                                                 <div className="comment-rating">
                                                     {/* Převod procent na hvězdičky */}
-                                                    {formatRating(comment.percentage)}*
+                                                    {comment.percentage}*
                                                 </div>
                                             </div>
                                             <p className="item-text">{comment.content}</p>

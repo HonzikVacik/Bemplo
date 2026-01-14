@@ -6,7 +6,7 @@ interface Experience {
     id: number;
     content: string;
     percentage: number;
-    rating: number | null;
+    reviewPercentage: number | null;
 }
 
 interface Contact {
@@ -428,7 +428,7 @@ const Dashboard: React.FC = () => {
     };
 
     const addSkillRow = () => {
-        setSkills([...skills, { id: 0, content: '', percentage: 50, rating: null }]);
+        setSkills([...skills, { id: 0, content: '', percentage: 50, reviewPercentage: null }]);
     };
 
     const handleSkillContentChange = (index: number, newContent: string) => {
@@ -923,7 +923,7 @@ const Dashboard: React.FC = () => {
                                                             <span className="slider-value">{skill.percentage}%</span>
                                                         </div>
                                                     </td>
-                                                    <td>{skill.rating}*</td>
+                                                    <td>{skill.reviewPercentage}*</td>
                                                 </tr>
                                             ))}
                                         </tbody>
