@@ -52,6 +52,11 @@ namespace Bemplo.Server.Services
                 return "Zkušenost s id " + ExperienceId + " neexistuje";
             }
 
+            if(experience.OriginalExperienceId != null)
+            {
+                experience = await _experienceRep.GetExperienceById((int)experience.OriginalExperienceId);
+            }
+
             string? commentError = ValidityControl.IsCommentValid(Comment);
             if (commentError != null)
             {

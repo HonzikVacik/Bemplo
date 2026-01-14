@@ -1,19 +1,53 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import './NewComment.css';
 
 function AddComment() {
     const navigate = useNavigate();
+    const { userId, id } = useParams();
 
-    // Stav pro hodnotu hodnocení (defaultně 5)
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState('');
+    const [isSubmitting, setIsSubmitting] = useState(false); // Stav pro načítání
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        console.log("Odesílám hodnocení:", { rating, comment });
-        alert(`Děkujeme! Odesláno: ${rating}*`);
+        if (!id) {
+            alert("Chyba: Není specifikována zkušenost (ExperienceId).");
+            return;
+        }
+
+        setIsSubmitting(true);
+        const token = localStorage.getItem('jwtToken');
+
+        try {
+            const response = await fetch('/api/Comment', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    experienceId: parseInt(id),
+                    comment: comment,
+                    starCount: rating
+                })
+            });
+
+            if (response.ok) {
+                navigate(-1);
+            } else {
+                const errorText = await response.text();
+                alert(`Chyba při odesílání: ${errorText}`);
+            }
+
+        } catch (error) {
+            console.error("Chyba sítě:", error);
+            alert("Nepodařilo se spojit se serverem.");
+        } finally {
+            setIsSubmitting(false);
+        }
     };
 
     return (
@@ -38,6 +72,7 @@ function AddComment() {
                                     rows={6}
                                     value={comment}
                                     onChange={(e) => setComment(e.target.value)}
+                                    disabled={isSubmitting}
                                 ></textarea>
                                 <label htmlFor="comment">Text hodnocení</label>
                                 <span className="focus-border"></span>
@@ -55,6 +90,7 @@ function AddComment() {
                                         value={rating}
                                         className="custom-range"
                                         onChange={(e) => setRating(Number(e.target.value))}
+                                        disabled={isSubmitting}
                                     />
                                     <span className="rating-value" id="ratingValue">
                                         {rating}*
@@ -62,12 +98,21 @@ function AddComment() {
                                 </div>
 
                                 <div className="btn-group">
-                                    <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+                                    <button
+                                        type="button"
+                                        className="btn btn-secondary"
+                                        onClick={() => navigate(-1)}
+                                        disabled={isSubmitting}
+                                    >
                                         Zpět
                                     </button>
 
-                                    <button type="submit" className="btn btn-primary">
-                                        Potvrdit
+                                    <button
+                                        type="submit"
+                                        className="btn btn-primary"
+                                        disabled={isSubmitting}
+                                    >
+                                        {isSubmitting ? 'Odesílám...' : 'Potvrdit'}
                                     </button>
                                 </div>
                             </div>

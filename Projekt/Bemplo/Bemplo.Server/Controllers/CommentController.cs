@@ -1,5 +1,6 @@
 ﻿using Bemplo.Server.IServices;
 using Bemplo.Server.Models;
+using Bemplo.Server.RequestModels;
 using Bemplo.Server.ResponseModels;
 using Bemplo.Server.Services;
 using Bemplo.Server.TransportModels;
@@ -24,7 +25,7 @@ namespace Bemplo.Server.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<IActionResult> PostComment(int ExperienceId, string Comment, byte StarCount)
+        public async Task<IActionResult> PostComment([FromBody] CommentRequest commentRequest)
         {
             //Načtení uživatele
             Account? account = await User.GetAccountAsync(_context);
@@ -34,7 +35,7 @@ namespace Bemplo.Server.Controllers
                 return NotFound("Uživatel nenalezen.");
             }
 
-            string? error = await _commentSer.PostComment(account, ExperienceId, Comment, StarCount);
+            string? error = await _commentSer.PostComment(account, commentRequest.ExperienceId, commentRequest.Comment, commentRequest.StarCount);
             
             if (error != null)
             {
