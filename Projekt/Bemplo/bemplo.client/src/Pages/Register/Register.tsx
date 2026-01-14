@@ -139,6 +139,10 @@ const Register: React.FC = () => {
             agreeWithPrivacyPolicy: formData.terms.toString()
         };
 
+        if (accountType === 'company') {
+            apiParams.surname = '-';
+        }
+
         try {
             const params = new URLSearchParams(apiParams);
             const url = `/api/Account?${params.toString()}`;
@@ -176,19 +180,21 @@ const Register: React.FC = () => {
     };
 
     const modalContent = notification ? (
-        <div className="modal-overlay" onClick={() => setNotification(null)}>
-            <div className="modal-box" onClick={(e) => e.stopPropagation()}>
-                <h2>{notification.title}</h2>
-                <p>{notification.message}</p>
+        <div className="login-page">
+            <div className="modal-overlay" onClick={() => setNotification(null)}>
+                <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                    <h2>{notification.title}</h2>
+                    <p>{notification.message}</p>
 
-                {notification.title === 'Chyba' && (
-                    <button
-                        className="modal-close-btn"
-                        onClick={() => setNotification(null)}
-                    >
-                        OK
-                    </button>
-                )}
+                    {notification.title === 'Chyba' && (
+                        <button
+                            className="modal-close-btn"
+                            onClick={() => setNotification(null)}
+                        >
+                            OK
+                        </button>
+                    )}
+                </div>
             </div>
         </div>
     ) : null;
@@ -234,34 +240,55 @@ const Register: React.FC = () => {
 
                             <div className="form-grid">
                                 {/* Jméno */}
-                                <div className="input-group">
-                                    <input
-                                        type="text"
-                                        id="fname"
-                                        name="fname"
-                                        placeholder=" "
-                                        required
-                                        value={formData.fname}
-                                        onChange={handleChange}
-                                    />
-                                    <label htmlFor="fname">Jméno</label>
-                                    <span className="focus-border"></span>
-                                </div>
+                                {accountType === 'personal' && (
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            id="fname"
+                                            name="fname"
+                                            placeholder=" "
+                                            required
+                                            value={formData.fname}
+                                            onChange={handleChange}
+                                        />
+                                        <label htmlFor="fname">Jméno</label>
+                                        <span className="focus-border"></span>
+                                    </div>
+                                )}
+
+                                {/* Název firmy */}
+                                {accountType === 'company' && (
+                                    <div className="input-group input-group-double">
+                                        <input
+                                            type="text"
+                                            id="fname"
+                                            name="fname"
+                                            placeholder=" "
+                                            required
+                                            value={formData.fname}
+                                            onChange={handleChange}
+                                        />
+                                        <label htmlFor="fname">Název firmy</label>
+                                        <span className="focus-border"></span>
+                                    </div>
+                                )}
 
                                 {/* Příjmení */}
-                                <div className="input-group">
-                                    <input
-                                        type="text"
-                                        id="lname"
-                                        name="lname"
-                                        placeholder=" "
-                                        required
-                                        value={formData.lname}
-                                        onChange={handleChange}
-                                    />
-                                    <label htmlFor="lname">Příjmení</label>
-                                    <span className="focus-border"></span>
-                                </div>
+                                { accountType === 'personal' && (
+                                    <div className="input-group">
+                                        <input
+                                            type="text"
+                                            id="lname"
+                                            name="lname"
+                                            placeholder=" "
+                                            required
+                                            value={formData.lname}
+                                            onChange={handleChange}
+                                        />
+                                        <label htmlFor="lname">Příjmení</label>
+                                        <span className="focus-border"></span>
+                                    </div>
+                                )}
 
                                 {/* Email */}
                                 <div className="input-group">
@@ -307,7 +334,12 @@ const Register: React.FC = () => {
                                         value={formData.dob}
                                         onChange={handleChange}
                                     />
-                                    <label htmlFor="dob" className="floated">Datum narození</label>
+                                    { accountType === 'personal' && (
+                                        <label htmlFor="dob" className="floated">Datum narození</label>
+                                    )}
+                                    {accountType === 'company' && (
+                                        <label htmlFor="dob" className="floated">Datum založení</label>
+                                    )}
                                     <span className="focus-border"></span>
                                 </div>
 
