@@ -21,7 +21,7 @@ namespace Bemplo.Server.Repositories
 
         public async Task<SearchModel[]> SearchAccounts(string searchString)
         {
-            Account[] accounts = await _context.Accounts.Where(a => a.Name.Contains(searchString) || a.Surname.Contains(searchString)).ToArrayAsync();
+            Account[] accounts = await _context.Accounts.Where(a => a.Name.Trim().ToLower().Contains(searchString) || a.Surname.Trim().ToLower().Contains(searchString)).ToArrayAsync();
             return accounts.Select(a => new SearchModel { Id = a.Id, Name = a.Name + " " + a.Surname, Description = a.Description }).ToArray();
         }
 
