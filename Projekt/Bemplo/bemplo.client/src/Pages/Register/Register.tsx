@@ -144,13 +144,27 @@ const Register: React.FC = () => {
         }
 
         try {
-            const params = new URLSearchParams(apiParams);
-            const url = `/api/Account?${params.toString()}`;
-
-            const response = await fetch(url, {
+            const response = await fetch('/api/Account', {
                 method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    accountType: accountType === 'personal' ? '0' : '1',
+                    name: formData.fname,
+                    surname: formData.lname,
+                    sexType: formData.gender === 'male' ? '0' : formData.gender === 'female' ? '1' : '2',
+                    date: formData.dob,
+                    email: formData.email,
+                    password: formData.password,
+                    country: formData.country,
+                    region: formData.region,
+                    city: formData.city,
+                    address: formData.address,
+                    description: formData.description,
+                    agreeWithPrivacyPolicy: formData.terms.toString()
+                })
             });
-
             const responseText = await response.text();
 
             if (response.ok) {
