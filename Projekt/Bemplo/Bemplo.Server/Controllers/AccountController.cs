@@ -28,6 +28,13 @@ namespace Bemplo.Server.Controllers
             _accountRep = accountRep;
         }
 
+        [HttpGet("IsLoggedIn")]
+        [Authorize]
+        public async Task<IActionResult> IsLoggedIn()
+        {
+            return Ok();
+        }
+
         [HttpPost]
         public async Task<IActionResult> Register([FromBody] AccountRequest accountRequest)
         {

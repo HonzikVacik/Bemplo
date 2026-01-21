@@ -22,7 +22,7 @@ namespace Bemplo.Server.Repositories
         public async Task<SearchModel[]> SearchAccounts(string searchString)
         {
             Account[] accounts = await _context.Accounts.Where(a => a.Name.Trim().ToLower().Contains(searchString) || a.Surname.Trim().ToLower().Contains(searchString)).ToArrayAsync();
-            return accounts.Select(a => new SearchModel { Id = a.Id, Name = a.Name + " " + a.Surname, Description = a.Description }).ToArray();
+            return accounts.Select(a => new SearchModel { Id = a.Id, Name = a.AccountType == 0 ? $"{a.Name} {a.Surname}" : a.Name, Description = a.Description }).ToArray();
         }
 
         public async Task<string?> SetAddress(Account account, string country, string city, string region, string address)

@@ -46,17 +46,8 @@ namespace Bemplo.Server.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetComments(int UserId, int ExperienceId)
         {
-            //Načtení uživatele
-            Account? account = await User.GetAccountAsync(_context);
-
-            if (account == null)
-            {
-                return NotFound("Uživatel nenalezen.");
-            }
-
             (Comments? comments, string? error) item = await _commentSer.GetCommentsByExperience(UserId, ExperienceId);
 
             if (item.error != null)

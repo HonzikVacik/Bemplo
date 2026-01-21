@@ -39,7 +39,7 @@ namespace Bemplo.Server.Repositories
                     .Select(x => new ChatListWithDateTime
                     {
                         ContactId = x.OtherAccount.Id,
-                        Name = x.OtherAccount.Name + " " + x.OtherAccount.Surname,
+                        Name = x.OtherAccount.AccountType == 0 ? x.OtherAccount.Name + " " + x.OtherAccount.Surname : x.OtherAccount.Name,
                         LastMessage = x.LastChat != null ? x.LastChat.Content : string.Empty,
                         LastMessageDateTime = x.LastChat != null ? x.LastChat.Timestamp : DateTime.MinValue
                     })

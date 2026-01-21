@@ -27,8 +27,6 @@ function Comments() {
     const navigate = useNavigate();
     const params = useParams(); // Očekáváme v URL např. /comments/:userId/:experienceId
 
-    // Zde předpokládám, že v route máte parametry pojmenované userId a id (pro experience)
-    // Pokud se jmenují jinak, upravte to zde:
     const userId = params.userId;
     const experienceId = params.id;
 
@@ -36,19 +34,39 @@ function Comments() {
     const [data, setData] = useState<CommentsResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
+
     // Stav pro filtry
     const [searchTerm, setSearchTerm] = useState('');
     const [sortType, setSortType] = useState('newest');
 
     // 2. Načtení dat ze serveru
     useEffect(() => {
+        const fetchIsLoggedIn = async () => {
+            try {
+                const token = localStorage.getItem('jwtToken');
+
+                const response = await fetch(`/api/Account/IsLoggedIn`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}` // Autorizace
+                    }
+                });
+
+                if (response.status === 401) {
+                    setIsLoggedIn(false);
+                }
+            } catch (error) {
+                console.error("Chyba sítě:", error);
+            }
+        };
+
         const fetchData = async () => {
             if (!userId || !experienceId) return;
 
             const token = localStorage.getItem('jwtToken');
 
             try {
-                // Volání GET endpointu s parametry v URL (Query String)
                 const response = await fetch(`/api/Comment?UserId=${userId}&ExperienceId=${experienceId}`, {
                     method: 'GET',
                     headers: {
@@ -70,6 +88,7 @@ function Comments() {
             }
         };
 
+        fetchIsLoggedIn();
         fetchData();
     }, [userId, experienceId]);
 
@@ -166,10 +185,9 @@ function Comments() {
                                     {data.experiences.map((exp, index) => (
                                         <div className="list-item experience" key={index}>
                                             <span className="meta-date">{formatDate(exp.timestamp)}</span>
-                                            {/* Zobrazujeme Content z C# modelu */}
                                             <p className="item-text">{exp.content}</p>
                                             {/* Volitelně: zobrazit procenta historie */}
-                                            {/* <span style={{fontSize: '0.8em', color: '#aaa'}}> {exp.percentage}%</span> */}
+                                            <span style={{fontSize: '0.8em', color: '#aaa'}}> {exp.percentage}%</span>
                                         </div>
                                     ))}
                                 </div>
@@ -179,15 +197,17 @@ function Comments() {
                             <div className="column">
                                 <div className="column-header">
                                     <h3>Komentáře</h3>
-                                    <button
-                                        className="btn-icon add-comment-btn"
-                                        title="Přidat komentář"
-                                        onClick={() => navigate(`/newcomment/${userId}/${experienceId}`)}
-                                    >
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                                        </svg>
-                                    </button>
+                                    {isLoggedIn && (
+                                        < button
+                                            className="btn-icon add-comment-btn"
+                                            title="Přidat komentář"
+                                            onClick={() => navigate(`/newcomment/${userId}/${experienceId}`)}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    )}
                                 </div>
 
                                 <div className="scroll-list">
