@@ -15,6 +15,8 @@ function Search() {
     const [rating, setRating] = useState(50);
 
     const [searchQuery, setSearchQuery] = useState('');
+    const [nameQuery, setNameQuery] = useState('');
+    const [addressQuery, setAddressQuery] = useState('');
     const [searchResults, setSearchResults] = useState<SearchModel[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
@@ -28,7 +30,7 @@ function Search() {
         const token = localStorage.getItem('jwtToken');
 
         try {
-            const response = await fetch(`api/Account/SearchAccounts?searchString=${encodeURIComponent(searchQuery)}`, {
+            const response = await fetch(`api/Account/SearchAccounts?searchString=${encodeURIComponent(searchQuery)}&name=${encodeURIComponent(nameQuery)}&address=${encodeURIComponent(addressQuery)}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -112,13 +114,16 @@ function Search() {
 
                                 <div className="filter-group">
                                     <label>Lokace</label>
-                                    <input type="text" placeholder="Např. Praha" className="filter-input" />
+                                    <input type="text" placeholder="Např. Praha" value={addressQuery} onChange={(e) => setAddressQuery(e.target.value)} className="filter-input" />
                                 </div>
 
                                 <div className="filter-group">
                                     <label>Uživatel</label>
-                                    <input type="text" placeholder="Jméno uživatele" className="filter-input" />
+                                    <input type="text" placeholder="Jméno uživatele" value={nameQuery} onChange={(e) => setNameQuery(e.target.value)} className="filter-input" />
                                 </div>
+
+                                {/*
+                                    Připraveno pro budoucí vývoj
 
                                 <div className="filter-group">
                                     <label>Hodnocení: <span id="ratingVal">{rating}%</span></label>
@@ -140,6 +145,8 @@ function Search() {
                                     <input type="checkbox" id="includeUnrated" />
                                     <label htmlFor="includeUnrated">Zahrnout nehodnocené</label>
                                 </div>
+
+                                */}
 
                             </div>
                         </div>

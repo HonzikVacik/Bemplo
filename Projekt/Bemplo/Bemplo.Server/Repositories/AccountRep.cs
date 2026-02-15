@@ -19,7 +19,7 @@ namespace Bemplo.Server.Repositories
             return await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id && a.IsDeleted == false);
         }
 
-        public async Task<SearchModel[]> SearchAccounts(string searchString, Account? account)
+        public async Task<SearchModel[]> SearchAccounts(string searchString, Account? account, string? name, string? address)
         {
             searchString = searchString.ToLower();
             string[] searchParams = searchString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -71,6 +71,29 @@ namespace Bemplo.Server.Repositories
 
             if(account != null)
                 accounts.Remove(account);
+
+            List<Account> accountToRemove = new List<Account>();
+
+            if (name != null)
+            {
+                name = name.Trim().ToLower();
+                accountToRemove.AddRange(accounts.Where(a => !(a.Name + a.Surname).Trim().ToLower().Contains(name)));
+            }
+            if (address != null)
+            {
+                address = address.Trim().ToLower();
+                accountToRemove.AddRange(accounts.Where(a => !a.Country.Trim().ToLower().Contains(address) &&
+                !a.Region.Trim().ToLower().Contains(address) &&
+                !a.City.Trim().ToLower().Contains(address) &&
+                !a.Address.Trim().ToLower().Contains(address)));
+            }
+
+            accountToRemove.Distinct();
+
+            foreach(Account a in accountToRemove)
+            {
+                accounts.Remove(a);
+            }
 
 
             return accounts.Select(a => new SearchModel { Id = a.Id, Name = a.AccountType == 0 ? $"{a.Name} {a.Surname}" : a.Name, Description = a.Description }).ToArray();
