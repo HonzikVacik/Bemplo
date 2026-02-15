@@ -21,7 +21,55 @@ namespace Bemplo.Server.Repositories
 
         public async Task<SearchModel[]> SearchAccounts(string searchString)
         {
-            Account[] accounts = await _context.Accounts.Where(a => a.Name.Trim().ToLower().Contains(searchString) || a.Surname.Trim().ToLower().Contains(searchString)).ToArrayAsync();
+            searchString = searchString.ToLower();
+            string[] searchParams = searchString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+            List<Account> accounts = new List<Account>();
+
+            //Name
+            foreach(string param in searchParams)
+            {
+                Account[] accs = await _context.Accounts.Where(a => a.Name.Trim().ToLower().Contains(param)).ToArrayAsync();
+                accounts.AddRange(accs);
+            }
+
+            //Surname
+            foreach (string param in searchParams)
+            {
+                Account[] accs = await _context.Accounts.Where(a => a.Surname.Trim().ToLower().Contains(param) && a.IsDeleted == false).ToArrayAsync();
+                accounts.AddRange(accs);
+            }
+
+            //Description
+            foreach (string param in searchParams)
+            {
+                Account[] accs = await _context.Accounts.Where(a => a.Description.Trim().ToLower().Contains(param) && a.IsDeleted == false).ToArrayAsync();
+                accounts.AddRange(accs);
+            }
+
+            //Country
+            foreach (string param in searchParams)
+            {
+                Account[] accs = await _context.Accounts.Where(a => a.Country.Trim().ToLower().Contains(param) && a.IsDeleted == false).ToArrayAsync();
+                accounts.AddRange(accs);
+            }
+
+            //Region
+            foreach (string param in searchParams)
+            {
+                Account[] accs = await _context.Accounts.Where(a => a.Region.Trim().ToLower().Contains(param) && a.IsDeleted == false).ToArrayAsync();
+                accounts.AddRange(accs);
+            }
+
+            //City
+            foreach (string param in searchParams)
+            {
+                Account[] accs = await _context.Accounts.Where(a => a.City.Trim().ToLower().Contains(param) && a.IsDeleted == false).ToArrayAsync();
+                accounts.AddRange(accs);
+            }
+
+            accounts = accounts.Distinct().ToList();
+
+
             return accounts.Select(a => new SearchModel { Id = a.Id, Name = a.AccountType == 0 ? $"{a.Name} {a.Surname}" : a.Name, Description = a.Description }).ToArray();
         }
 
