@@ -16,7 +16,7 @@ namespace Bemplo.Server.Repositories
         public async Task<TransportModels.Experience[]> GetExperienceByAccount(Account account)
         {
             List<TransportModels.Experience> resultExperiences = new List<TransportModels.Experience>();
-            Models.Experience[]? experiences = await _context.Experiences.Where(e => e.Account == account && e.IsOld == false).OrderBy(e => e.OriginalExperienceId).ToArrayAsync();
+            Models.Experience[]? experiences = await _context.Experiences.Where(e => e.Account == account && e.IsOld == false).OrderBy(e => e.OriginalExperienceId ?? e.Id).ToArrayAsync();
             if (experiences == null)
             {
                 return resultExperiences.ToArray();
