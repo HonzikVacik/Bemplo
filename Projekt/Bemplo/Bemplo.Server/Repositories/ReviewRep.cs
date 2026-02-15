@@ -29,7 +29,7 @@ namespace Bemplo.Server.Repositories
                 .ToArrayAsync();
 
             if (reviews.Count() != 0)
-                finalAverage = reviews.Average(r => r.Percentage);
+                finalAverage = Math.Round(reviews.Average(r => r.Percentage), 2);
 
             return finalAverage;
         }
