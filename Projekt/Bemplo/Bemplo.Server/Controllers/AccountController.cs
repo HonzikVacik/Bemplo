@@ -190,7 +190,9 @@ namespace Bemplo.Server.Controllers
         //[Authorize]
         public async Task<IActionResult> IsCommonAccount([FromQuery] string searchString)
         {
-            return Ok(await _accountRep.SearchAccounts(searchString.Trim().ToLower()));
+            Account? account = await User.GetAccountAsync(_context);
+
+            return Ok(await _accountRep.SearchAccounts(searchString.Trim().ToLower(), account));
         }
 
         /*[HttpGet("Nastav")]

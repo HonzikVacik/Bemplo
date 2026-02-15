@@ -19,7 +19,7 @@ namespace Bemplo.Server.Repositories
             return await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id && a.IsDeleted == false);
         }
 
-        public async Task<SearchModel[]> SearchAccounts(string searchString)
+        public async Task<SearchModel[]> SearchAccounts(string searchString, Account? account)
         {
             searchString = searchString.ToLower();
             string[] searchParams = searchString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -68,6 +68,9 @@ namespace Bemplo.Server.Repositories
             }
 
             accounts = accounts.Distinct().ToList();
+
+            if(account != null)
+                accounts.Remove(account);
 
 
             return accounts.Select(a => new SearchModel { Id = a.Id, Name = a.AccountType == 0 ? $"{a.Name} {a.Surname}" : a.Name, Description = a.Description }).ToArray();
