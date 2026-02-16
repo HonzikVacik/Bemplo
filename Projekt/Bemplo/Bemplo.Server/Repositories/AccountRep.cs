@@ -1,6 +1,7 @@
 ﻿using Bemplo.Server.IRepositories;
 using Bemplo.Server.Models;
 using Bemplo.Server.ResponseModels;
+using Bemplo.Server.Services;
 using Microsoft.EntityFrameworkCore;
 
 namespace Bemplo.Server.Repositories
@@ -14,12 +15,19 @@ namespace Bemplo.Server.Repositories
             _context = context;
         }
 
+        public async Task<SearchModel[]> DiscoverAccounts(int skip, int take)
+        {
+            List<Account> accounts = await _context.Accounts.OrderByDescending(a => a.Created_At).Where(a => a.IsDeleted == false).Skip(skip).Take(take).ToListAsync();
+
+            return accounts.Select(a => new SearchModel { Id = a.Id, Name = a.AccountType == 0 ? $"{a.Name} {a.Surname}" : a.Name, Description = a.Description }).ToArray();
+        }
+
         public async Task<Account?> GetAccountById(int id)
         {
             return await _context.Accounts.FirstOrDefaultAsync(a => a.Id == id && a.IsDeleted == false);
         }
 
-        public async Task<SearchModel[]> SearchAccounts(string searchString, Account? account, string? name, string? address)
+        public async Task<SearchModel[]> SearchAccounts(string searchString, Account? account, string? name, string? address, int skip, int take)
         {
             searchString = searchString.ToLower();
             string[] searchParams = searchString.Split(' ', StringSplitOptions.RemoveEmptyEntries);
@@ -96,7 +104,10 @@ namespace Bemplo.Server.Repositories
             }
 
 
-            return accounts.Select(a => new SearchModel { Id = a.Id, Name = a.AccountType == 0 ? $"{a.Name} {a.Surname}" : a.Name, Description = a.Description }).ToArray();
+            return accounts
+                .Skip(skip)
+                .Take(take)
+                .Select(a => new SearchModel { Id = a.Id, Name = a.AccountType == 0 ? $"{a.Name} {a.Surname}" : a.Name, Description = a.Description }).ToArray();
         }
 
         public async Task<string?> SetAddress(Account account, string country, string city, string region, string address)
