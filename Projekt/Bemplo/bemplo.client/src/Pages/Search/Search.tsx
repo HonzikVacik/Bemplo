@@ -8,7 +8,6 @@ interface SearchModel {
     description: string;
 }
 
-// Definujeme možné režimy zobrazení
 type SearchMode = 'search' | 'discover';
 
 function Search() {
@@ -58,7 +57,7 @@ function Search() {
                     setSearchResults(data);
                 } else {
                     if (data.length === 0) {
-                        alert("Žádná další data nejsou.");
+                        //Žádná další data nejsou k dispozici
                     } else {
                         setSearchResults(prev => [...prev, ...data]);
                     }

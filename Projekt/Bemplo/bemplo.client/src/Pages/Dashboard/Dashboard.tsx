@@ -221,9 +221,9 @@ const AddressSection: React.FC<AddressSectionProps> = ({ data, onSave }) => {
 
 const Dashboard: React.FC = () => {
     const navigate = useNavigate();
-    const { id } = useParams(); // Získáme ID z URL (pokud existuje)
+    const { id } = useParams();
 
-    const [isOwner, setIsOwner] = useState(false); // Nový stav
+    const [isOwner, setIsOwner] = useState(false);
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -235,8 +235,6 @@ const Dashboard: React.FC = () => {
 
     const [contacts, setContacts] = useState<Contact[]>([]);
     const [savedContacts, setSavedContacts] = useState<Contact[]>([]);
-
-    //const [skills, setSkills] = useState<Experience[]>([]);
 
     const [savedImages, setSavedImages] = useState<string[]>([]);
     const [images, setImages] = useState<string[]>([]);
@@ -723,9 +721,6 @@ const Dashboard: React.FC = () => {
         if (selectedImage === imageToDelete) {
             setSelectedImage(newImages.length > 0 ? newImages[0] : null);
         }
-
-        // Poznámka: Pokud jde o "URL.createObjectURL", měli bychom správně zavolat 
-        // URL.revokeObjectURL(imageToDelete), aby se uvolnila paměť, ale pro základní funkčnost to není kritické.
     };
 
     const handleLogout = () => {
@@ -759,6 +754,14 @@ const Dashboard: React.FC = () => {
                 <div className="profile-wrapper">
                     <div className="profile-container">
                         <div className="profile-header">
+                            {!isOwner && (
+                                <button className="btn-icon back-btn" title="Zpět" onClick={() => navigate(-1)}>
+                                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                    </svg>
+                                </button>
+                            )}
+
                             <h2>{dashboardData.name}</h2>
 
                             {isOwner && (
