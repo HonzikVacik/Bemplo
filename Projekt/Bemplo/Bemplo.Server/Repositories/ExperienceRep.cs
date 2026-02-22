@@ -16,7 +16,7 @@ namespace Bemplo.Server.Repositories
         public async Task<TransportModels.Experience[]> GetExperienceByAccount(Account account)
         {
             List<TransportModels.Experience> resultExperiences = new List<TransportModels.Experience>();
-            Models.Experience[]? experiences = await _context.Experiences.Where(e => e.Account == account && e.IsOld == false).ToArrayAsync();
+            Models.Experience[]? experiences = await _context.Experiences.Where(e => e.Account == account && e.IsOld == false).OrderBy(e => e.OriginalExperienceId ?? e.Id).ToArrayAsync();
             if (experiences == null)
             {
                 return resultExperiences.ToArray();
@@ -45,7 +45,7 @@ namespace Bemplo.Server.Repositories
         {
             List<Experience> experiences = new List<Experience>();
 
-            Experience? lastExperience = await _context.Experiences.Where(e => e.Id == experienceId).FirstOrDefaultAsync();
+            Experience? lastExperience = await _context.Experiences.Where(e => e.Id == experienceId && e.IsOld == false).FirstOrDefaultAsync();
             if (lastExperience == null)
             {
                 return experiences.ToArray();
@@ -72,7 +72,8 @@ namespace Bemplo.Server.Repositories
                     experiences.Add(originalExperience);
                 }
             }
-            return experiences.ToArray();
+            
+            return experiences.OrderByDescending(e => e.Timestamp).ToArray();
         }
 
         public async Task<string?> SetExperienceToAccount(Account account, TransportModels.SetExperience[] setExperiences)
@@ -120,6 +121,12 @@ namespace Bemplo.Server.Repositories
                         oldExperience.IsOld = true;
                         experiencesUpdate.Add(oldExperience);
 
+                        int? originalExperienceId = oldExperience.OriginalExperienceId;
+                        if (originalExperienceId == null)
+                        {
+                            originalExperienceId = oldExperience.Id;
+                        }
+
                         // Vytvoří updatovanou kopii
                         Experience experience = new Experience()
                         {
@@ -127,7 +134,7 @@ namespace Bemplo.Server.Repositories
                             Content = setExperience.Content,
                             Percentage = setExperience.Percentage,
                             IsOld = false,
-                            OriginalExperienceId = oldExperience.OriginalExperienceId,
+                            OriginalExperienceId = originalExperienceId,
                             Timestamp = DateTime.Now.ToUniversalTime()
                         };
                         experiencesAdd.Add(experience);

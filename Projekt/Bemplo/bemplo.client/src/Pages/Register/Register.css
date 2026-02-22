@@ -198,6 +198,10 @@
     grid-column: 1 / -1;
 }
 
+.register-page .input-group-double {
+    grid-column: span 2; /* nebo grid-column: 1 / -1; pro celou šířku */
+}
+
 .register-page .input-group {
     position: relative;
     width: 100%;
@@ -445,6 +449,10 @@
 
         .register-page .form-grid {
             gap: 1.5rem 0;
+        }
+
+        .register-page .input-group-double {
+            grid-column: span 1;
         }
 
         .register-page .input-group input,

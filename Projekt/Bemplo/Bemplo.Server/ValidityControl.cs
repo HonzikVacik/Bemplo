@@ -13,7 +13,7 @@ namespace Bemplo.Server
             if (!IsEmailUnique(_context, email))
                   return "Účet s tímto emailem již existuje.";
             if (IsValidAccountType(accountType) &&
-                       IsValidName(name) &&
+                       IsValidName(name, accountType) &&
                        IsValidSurname(surname) &&
                        IsValidSexType(sexType) &&
                        IsValidDate(date) &&
@@ -31,9 +31,9 @@ namespace Bemplo.Server
             return Enum.IsDefined(typeof(Enums.AccountType), (int)accountType);
         }
 
-        private static bool IsValidName(string name)
+        private static bool IsValidName(string name, byte accountType)
         {
-            return !string.IsNullOrEmpty(name) && !string.IsNullOrWhiteSpace(name) && name.Length <= 50;
+            return !string.IsNullOrEmpty(name) && !string.IsNullOrWhiteSpace(name) && (name.Length <= 50 || name.Length <= 200 && accountType == ((byte)Enums.AccountType.Company));
         }
 
         private static bool IsValidSurname(string surname)

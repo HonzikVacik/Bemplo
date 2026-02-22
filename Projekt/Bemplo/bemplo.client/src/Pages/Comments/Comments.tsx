@@ -1,28 +1,133 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import './Comments.css';
 
+// 1. Definice typů podle C# modelů (předpokládáme camelCase serializaci z API)
+interface ExperienceToComment {
+    content: string;
+    percentage: number;
+    timestamp: string; // Z API přijde jako string (ISO date)
+}
+
+interface Comment {
+    id: number;
+    timestamp: string;
+    percentage: number;
+    content: string;
+    evaluatorName: string;
+}
+
+interface CommentsResponse {
+    userName: string;
+    experiences: ExperienceToComment[];
+    comments: Comment[];
+}
+
 function Comments() {
-    // Stav pro filtry (search a select)
+    const navigate = useNavigate();
+    const params = useParams(); // Očekáváme v URL např. /comments/:userId/:experienceId
+
+    const userId = params.userId;
+    const experienceId = params.id;
+
+    // Stav pro načtená data
+    const [data, setData] = useState<CommentsResponse | null>(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [isLoggedIn, setIsLoggedIn] = useState(true);
+
+    // Stav pro filtry
     const [searchTerm, setSearchTerm] = useState('');
     const [sortType, setSortType] = useState('newest');
 
-    // Data pro zkušenosti (v reálu by přišla z API)
-    const experiencesData = [
-        { id: 1, date: '22.11.2025 14:30', text: 'Oprava grafického návrhu proběhla v pořádku, rychlá komunikace.' },
-        { id: 2, date: '20.11.2025 09:15', text: 'Konzultace ohledně nového projektu. Velmi přínosné setkání.' },
-        { id: 3, date: '15.11.2025 16:45', text: 'Dokončení první fáze vývoje aplikace.' },
-        { id: 4, date: '10.11.2025 11:00', text: 'Předání podkladů k tisku.' },
-        { id: 5, date: '05.11.2025 13:20', text: 'Úvodní briefing k zakázce.' },
-    ];
+    // 2. Načtení dat ze serveru
+    useEffect(() => {
+        const fetchIsLoggedIn = async () => {
+            try {
+                const token = localStorage.getItem('jwtToken');
 
-    // Data pro komentáře
-    const commentsData = [
-        { id: 1, date: '22.11.2025 15:00', name: 'Petr Svoboda', rating: 5, text: 'Skvělá spolupráce! Vše dodáno včas a v perfektní kvalitě. Doporučuji.' },
-        { id: 2, date: '21.11.2025 10:30', name: 'Jana Nováková', rating: 4, text: 'Komunikace byla trochu pomalejší, ale výsledek stojí za to.' },
-        { id: 3, date: '18.11.2025 08:45', name: 'Firma XYZ s.r.o.', rating: 5, text: 'Profesionální přístup. Určitě využijeme služeb znovu.' },
-        { id: 4, date: '12.11.2025 19:20', name: 'Lukáš Dvořák', rating: 3, text: 'Práce dobrá, ale cena byla vyšší než původní odhad.' },
-    ];
+                const response = await fetch(`/api/Account/IsLoggedIn`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}` // Autorizace
+                    }
+                });
+
+                if (response.status === 401) {
+                    setIsLoggedIn(false);
+                }
+            } catch (error) {
+                console.error("Chyba sítě:", error);
+            }
+        };
+
+        const fetchData = async () => {
+            if (!userId || !experienceId) return;
+
+            const token = localStorage.getItem('jwtToken');
+
+            try {
+                const response = await fetch(`/api/Comment?UserId=${userId}&ExperienceId=${experienceId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}` // Autorizace
+                    }
+                });
+
+                if (response.ok) {
+                    const result: CommentsResponse = await response.json();
+                    setData(result);
+                } else {
+                    console.error("Chyba při načítání komentářů:", response.statusText);
+                }
+            } catch (error) {
+                console.error("Chyba sítě:", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchIsLoggedIn();
+        fetchData();
+    }, [userId, experienceId]);
+
+    // Pomocná funkce pro formátování data
+    const formatDate = (isoDate: string) => {
+        const d = new Date(isoDate);
+        return d.toLocaleDateString('cs-CZ', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit'
+        });
+    };
+
+    // 3. Filtrace a řazení komentářů (Client-side)
+    const getProcessedComments = () => {
+        if (!data?.comments) return [];
+
+        let filtered = data.comments.filter(c =>
+            c.evaluatorName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+            c.content.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+
+        if (sortType === 'newest') {
+            filtered.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+        } else if (sortType === 'best') {
+            filtered.sort((a, b) => b.percentage - a.percentage);
+        } else if (sortType === 'worst') {
+            filtered.sort((a, b) => a.percentage - b.percentage);
+        }
+
+        return filtered;
+    };
+
+    if (isLoading) return <div style={{ color: 'white', textAlign: 'center', marginTop: '50px' }}>Načítám data...</div>;
+    if (!data) return <div style={{ color: 'white', textAlign: 'center', marginTop: '50px' }}>Data nebyla nalezena.</div>;
+
+    const processedComments = getProcessedComments();
 
     return (
         <>
@@ -34,19 +139,20 @@ function Comments() {
                     <div className="glass-container">
 
                         <header className="page-header">
-                            <Link to="/dashboard" className="btn-icon back-btn" title="Zpět">
+                            <button className="btn-icon back-btn" title="Zpět" onClick={() => navigate(-1)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                                 </svg>
-                            </Link>
+                            </button>
 
-                            <h2>Jméno Příjmení</h2>
+                            {/* Zobrazení jména uživatele z API */}
+                            <h2>{data.userName}</h2>
 
                             <div className="filters-group">
                                 <div className="filter-input-wrapper">
                                     <input
                                         type="text"
-                                        placeholder="Jméno uživatele..."
+                                        placeholder="Hledat..."
                                         value={searchTerm}
                                         onChange={(e) => setSearchTerm(e.target.value)}
                                     />
@@ -67,17 +173,21 @@ function Comments() {
 
                         <div className="content-grid">
 
-                            {/* Levý sloupec: Historie */}
+                            {/* Levý sloupec: Historie (Experiences) */}
                             <div className="column">
                                 <div className="column-header">
                                     <h3>Historie zkušenosti</h3>
                                 </div>
 
                                 <div className="scroll-list">
-                                    {experiencesData.map((exp) => (
-                                        <div className="list-item experience" key={exp.id}>
-                                            <span className="meta-date">{exp.date}</span>
-                                            <p className="item-text">{exp.text}</p>
+                                    {data.experiences.length === 0 && <p style={{ padding: '10px', color: '#ccc' }}>Žádná historie.</p>}
+
+                                    {data.experiences.map((exp, index) => (
+                                        <div className="list-item experience" key={index}>
+                                            <span className="meta-date">{formatDate(exp.timestamp)}</span>
+                                            <p className="item-text">{exp.content}</p>
+                                            {/* Volitelně: zobrazit procenta historie */}
+                                            <span style={{fontSize: '0.8em', color: '#aaa'}}> {exp.percentage}%</span>
                                         </div>
                                     ))}
                                 </div>
@@ -87,26 +197,35 @@ function Comments() {
                             <div className="column">
                                 <div className="column-header">
                                     <h3>Komentáře</h3>
-                                    <Link to="/newcomment" className="btn-icon add-comment-btn" title="Přidat komentář">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
-                                        </svg>
-                                    </Link>
+                                    {isLoggedIn && (
+                                        < button
+                                            className="btn-icon add-comment-btn"
+                                            title="Přidat komentář"
+                                            onClick={() => navigate(`/newcomment/${userId}/${experienceId}`)}
+                                        >
+                                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+                                            </svg>
+                                        </button>
+                                    )}
                                 </div>
 
                                 <div className="scroll-list">
-                                    {commentsData.map((comment) => (
+                                    {processedComments.length === 0 && <p style={{ padding: '10px', color: '#ccc' }}>Žádné komentáře.</p>}
+
+                                    {processedComments.map((comment) => (
                                         <div className="list-item comment" key={comment.id}>
                                             <div className="comment-header">
                                                 <div className="comment-info">
-                                                    <span className="meta-date">{comment.date}</span>
-                                                    <span className="user-name">{comment.name}</span>
+                                                    <span className="meta-date">{formatDate(comment.timestamp)}</span>
+                                                    <span className="user-name">{comment.evaluatorName}</span>
                                                 </div>
                                                 <div className="comment-rating">
-                                                    {comment.rating}*
+                                                    {/* Převod procent na hvězdičky */}
+                                                    {comment.percentage}*
                                                 </div>
                                             </div>
-                                            <p className="item-text">{comment.text}</p>
+                                            <p className="item-text">{comment.content}</p>
                                         </div>
                                     ))}
                                 </div>

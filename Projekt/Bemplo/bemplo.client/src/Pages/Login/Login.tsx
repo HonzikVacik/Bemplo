@@ -39,11 +39,17 @@ const Login: React.FC = () => {
                 // Uložíme token např. do localStorage
                 localStorage.setItem('jwtToken', responseText);
 
-                setNotification({
-                    title: 'Přihlášení úspěšné',
-                    message: 'Byli jste úspěšně přihlášeni.',
-                    type: 'success'
-                });
+                
+                // Při pololetní obhajobě mi bylo sděleno, abych toto odstranil
+                // Dle mého úsudku to ale smysl má, tak si to nechávám pro případ budoucího vývojee
+
+                //setNotification({
+                //    title: 'Přihlášení úspěšné',
+                //    message: 'Byli jste úspěšně přihlášeni.',
+                //    type: 'success'
+                //});
+
+                navigate('/dashboard');
 
             } else {
                 // Chyba: responseText obsahuje chybovou hlášku ze serveru
