@@ -1154,7 +1154,7 @@ const Dashboard: React.FC = () => {
                                                     }
                                                     dragItem.current = index;
                                                 }}
-                                                onDragEnter={(e) => {
+                                                onDragEnter={() => {
                                                     if (!isEditing) return;
                                                     dragOverItem.current = index;
                                                 }}

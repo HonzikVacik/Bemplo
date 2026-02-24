@@ -1,10 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './NewComment.css';
 
 function AddComment() {
     const navigate = useNavigate();
-    const { userId, id } = useParams();
+    const { id } = useParams();
 
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState('');
