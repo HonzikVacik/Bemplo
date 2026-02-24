@@ -86,6 +86,7 @@ namespace Bemplo.Server
             builder.Services.AddScoped<IChatRep, ChatRep>();
             builder.Services.AddScoped<IChatConnectionRep,  ChatConnectionRep>();
             builder.Services.AddScoped<IPhotoRep, PhotoRep>();
+            builder.Services.AddScoped<ICommentRep, CommentRep>();
 
             builder.Services.AddScoped<IAccountSer, AccountSer>();
             builder.Services.AddScoped<IContactSer, ContactSer>();
@@ -93,6 +94,7 @@ namespace Bemplo.Server
             builder.Services.AddScoped<IProfileSer, ProfileSer>();
             builder.Services.AddScoped<IChatSer, ChatSer>();
             builder.Services.AddScoped<IPhotoSer, PhotoSer>();
+            builder.Services.AddScoped<ICommentSer, CommentSer>();
 
             // Configure Cors
             builder.Services.AddCors(options =>

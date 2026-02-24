@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import './Search.css';
 
 interface SearchModel {
@@ -8,29 +8,41 @@ interface SearchModel {
     description: string;
 }
 
+type SearchMode = 'search' | 'discover';
+
 function Search() {
-    // Stav pro zobrazení/skrytí filtrů
     const [showFilters, setShowFilters] = useState(false);
-    // Stav pro hodnotu hodnocení (slider)
-    const [rating, setRating] = useState(50);
 
     const [searchQuery, setSearchQuery] = useState('');
+    const [nameQuery, setNameQuery] = useState('');
+    const [addressQuery, setAddressQuery] = useState('');
+
     const [searchResults, setSearchResults] = useState<SearchModel[]>([]);
     const [isLoading, setIsLoading] = useState(false);
 
-    // Funkce pro přepínání filtrů
+    const [skip, setSkip] = useState(0);
+    const TAKE_COUNT = 10;
+
+    const [mode, setMode] = useState<SearchMode>('search');
+
     const toggleFilters = () => {
         setShowFilters(!showFilters);
     };
 
-    const handleSearch = async () => {
-
+    const fetchData = async (offset: number, isNewSearch: boolean, currentMode: SearchMode) => {
         setIsLoading(true);
-        // Pro jistotu :)
         const token = localStorage.getItem('jwtToken');
 
         try {
-            const response = await fetch(`api/Account/SearchAccounts?searchString=${encodeURIComponent(searchQuery)}`, {
+            let url = '';
+
+            if (currentMode === 'search') {
+                url = `api/Account/SearchAccounts?searchString=${encodeURIComponent(searchQuery)}&name=${encodeURIComponent(nameQuery)}&address=${encodeURIComponent(addressQuery)}&skip=${offset}&take=${TAKE_COUNT}`;
+            } else {
+                url = `api/Account/DiscoverAccounts?skip=${offset}&take=${TAKE_COUNT}`;
+            }
+
+            const response = await fetch(url, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -40,9 +52,18 @@ function Search() {
 
             if (response.ok) {
                 const data: SearchModel[] = await response.json();
-                setSearchResults(data);
+
+                if (isNewSearch) {
+                    setSearchResults(data);
+                } else {
+                    if (data.length === 0) {
+                        //Žádná další data nejsou k dispozici
+                    } else {
+                        setSearchResults(prev => [...prev, ...data]);
+                    }
+                }
             } else {
-                console.error("Chyba při hledání:", response.statusText);
+                console.error("Chyba při načítání:", response.statusText);
             }
         } catch (error) {
             console.error("Chyba sítě:", error);
@@ -51,28 +72,47 @@ function Search() {
         }
     };
 
-    // Handler pro stisk klávesy Enter v inputu
+    const handleSearch = () => {
+        setMode('search');
+        setSkip(0);
+        fetchData(0, true, 'search');
+    };
+
+    const handleExplore = () => {
+        setMode('discover');
+        setSkip(0);
+        setSearchQuery('');
+        setNameQuery('');
+        setAddressQuery('');
+        fetchData(0, true, 'discover');
+    };
+
+    const handleLoadMore = () => {
+        const newSkip = skip + TAKE_COUNT;
+        setSkip(newSkip);
+        fetchData(newSkip, false, mode);
+    };
+
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === 'Enter') {
             handleSearch();
         }
     };
 
+    const navigate = useNavigate();
+
     return (
         <>
             <div className="search-page">
-
                 <div className="background-animation"></div>
-
                 <div className="wrapper">
                     <div className="glass-container">
-
                         <header className="search-header">
-                            <Link to="/dashboard" className="btn-icon back-btn" title="Zpět">
+                            <button className="btn-icon back-btn" title="Zpět" onClick={() => navigate(-1)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                                 </svg>
-                            </Link>
+                            </button>
 
                             <div className="search-bar">
                                 <input
@@ -94,80 +134,64 @@ function Search() {
                         <div className="filters-section">
                             <button className="filter-toggle" onClick={toggleFilters}>
                                 <span>Filtr</span>
-                                {/* Šipka se otáčí podmíněným přidáním třídy 'rotate' */}
-                                <svg
-                                    id="filterArrow"
-                                    className={showFilters ? 'rotate' : ''}
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    fill="none"
-                                    viewBox="0 0 24 24"
-                                    stroke="currentColor"
-                                >
+                                <svg id="filterArrow" className={showFilters ? 'rotate' : ''} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
                                 </svg>
                             </button>
 
-                            {/* Obsah filtrů se zobrazí podmíněným přidáním třídy 'active' */}
                             <div className={`filters-content ${showFilters ? 'active' : ''}`} id="filtersContent">
-
                                 <div className="filter-group">
                                     <label>Lokace</label>
-                                    <input type="text" placeholder="Např. Praha" className="filter-input" />
+                                    <input type="text" placeholder="Např. Praha" value={addressQuery} onChange={(e) => setAddressQuery(e.target.value)} className="filter-input" />
                                 </div>
-
                                 <div className="filter-group">
                                     <label>Uživatel</label>
-                                    <input type="text" placeholder="Jméno uživatele" className="filter-input" />
+                                    <input type="text" placeholder="Jméno uživatele" value={nameQuery} onChange={(e) => setNameQuery(e.target.value)} className="filter-input" />
                                 </div>
-
-                                <div className="filter-group">
-                                    <label>Hodnocení: <span id="ratingVal">{rating}%</span></label>
-                                    <div className="range-wrapper">
-                                        <span className="range-label">0%</span>
-                                        <input
-                                            type="range"
-                                            min="0"
-                                            max="100"
-                                            value={rating}
-                                            className="custom-range"
-                                            onChange={(e) => setRating(Number(e.target.value))}
-                                        />
-                                        <span className="range-label">100%</span>
-                                    </div>
-                                </div>
-
-                                <div className="filter-group checkbox-group">
-                                    <input type="checkbox" id="includeUnrated" />
-                                    <label htmlFor="includeUnrated">Zahrnout nehodnocené</label>
-                                </div>
-
                             </div>
                         </div>
 
                         <div className="search-results">
-
-                            {isLoading && <div style={{ textAlign: 'center', padding: '20px' }}>Načítám...</div>}
+                            {isLoading && searchResults.length === 0 && <div style={{ textAlign: 'center', padding: '20px' }}>Načítám...</div>}
 
                             {!isLoading && searchResults.length === 0 && (
                                 <div style={{ textAlign: 'center', padding: '20px', color: '#666' }}>
-                                    Zatím žádné výsledky.
+                                    {mode === 'search' ? 'Nebyly nalezeny žádné výsledky.' : 'Žádné návrhy k prozkoumání.'}
                                 </div>
                             )}
 
                             {searchResults.map((item) => (
-                                <div className="result-card" key={item.id}>
+                                <div className="result-card"
+                                    key={item.id}
+                                    onClick={() => navigate(`/dashboard/${item.id}`)}
+                                    style={{ cursor: 'pointer' }}
+                                >
                                     <h3>{item.name}</h3>
                                     <p>{item.description || "Bez popisu"}</p>
                                 </div>
                             ))}
 
+                            {isLoading && searchResults.length > 0 && <div style={{ textAlign: 'center', padding: '10px' }}>Načítám další...</div>}
                         </div>
 
                         <div className="search-footer">
-                            <button type="button" className="btn btn-secondary load-more">Načíst další</button>
-                            <button type="button" className="btn btn-primary explore">Prozkoumat</button>
-                        </div>
+                            <button
+                                type="button"
+                                className="btn btn-secondary load-more"
+                                onClick={handleLoadMore}
+                                disabled={isLoading}
+                            >
+                                Načíst další
+                            </button>
 
+                            <button
+                                type="button"
+                                className="btn btn-primary explore"
+                                onClick={handleExplore}
+                            >
+                                Prozkoumat
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -6,6 +6,6 @@ namespace Bemplo.Server.IServices
     public interface ICommentSer
     {
         public Task<string?> PostComment(Account account, int ExperienceId, string Comment, byte StarCount);
-        public Task<(Comments?, string?)> GetCommentsByExperience(int experienceId);
+        public Task<(Comments?, string?)> GetCommentsByExperience(int userId, int experienceId);
     }
 }

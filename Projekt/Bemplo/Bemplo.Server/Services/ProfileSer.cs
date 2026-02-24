@@ -50,7 +50,7 @@ namespace Bemplo.Server.Services
         {
             DashboardCompany dc = new DashboardCompany();
             dc.Id = Account.Id;
-            dc.Name = Account.Name + " " + Account.Surname;
+            dc.Name = Account.Name;
             dc.Description = Account.Description;
             dc.Offer = await _offer_Preference_RequestRep.GetLastOfferByAccount(Account);
             dc.Email = Account.Email;

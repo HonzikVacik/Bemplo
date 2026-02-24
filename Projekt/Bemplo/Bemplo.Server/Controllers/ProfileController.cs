@@ -57,6 +57,29 @@ namespace Bemplo.Server.Controllers
             return Ok(result);
         }
 
+        [HttpGet("{AccountId}")]
+        [AllowAnonymous]
+        public async Task<IActionResult> GetUserDashboard(int AccountId)
+        {
+            //Načtení uživatele
+            Account? account = await _context.Accounts.FindAsync(AccountId);
+
+            if (account == null)
+            {
+                return Unauthorized("Uživatel nenalezen.");
+            }
+
+            //Načtení profilu
+            var result = await _profileSer.GetProfile(account);
+
+            if (result == null)
+            {
+                return NotFound("Uživatel nenalezen");
+            }
+
+            return Ok(result);
+        }
+
         [HttpPut("Description")]
         [Authorize]
         public async Task<IActionResult> SetDescription([FromBody] DescriptionRequest request)

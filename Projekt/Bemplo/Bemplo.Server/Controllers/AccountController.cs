@@ -1,5 +1,6 @@
 ﻿using Bemplo.Server.IRepositories;
 using Bemplo.Server.Models;
+using Bemplo.Server.RequestModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Mvc;
@@ -27,19 +28,26 @@ namespace Bemplo.Server.Controllers
             _accountRep = accountRep;
         }
 
+        [HttpGet("IsLoggedIn")]
+        [Authorize]
+        public async Task<IActionResult> IsLoggedIn()
+        {
+            return Ok();
+        }
+
         [HttpPost]
-        public async Task<IActionResult> Register(byte accountType, string name, string surname, byte sexType, DateTime date, string email, string password, string country, string region, string city, string address, string description, bool agreeWithPrivacyPolicy)
+        public async Task<IActionResult> Register([FromBody] AccountRequest accountRequest)
         {
             Account accountTemp = new Account();
             try
             {
-                string? error = ValidityControl.CheckNewAccount(_context, accountType, name, surname, sexType, date, email, password, country, region, city, address, description, agreeWithPrivacyPolicy);
+                string? error = ValidityControl.CheckNewAccount(_context, accountRequest.accountType, accountRequest.name, accountRequest.surname, accountRequest.sexType, accountRequest.date, accountRequest.email, accountRequest.password, accountRequest.country, accountRequest.region, accountRequest.city, accountRequest.address, accountRequest.description, accountRequest.agreeWithPrivacyPolicy);
                 if (error != null)
                     return BadRequest(error);
 
                 byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
                 string hashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
-                    password: password!,
+                    password: accountRequest.password!,
                     salt: salt,
                     prf: KeyDerivationPrf.HMACSHA256,
                     iterationCount: 100000,
@@ -47,17 +55,17 @@ namespace Bemplo.Server.Controllers
 
                 accountTemp = new Account()
                 {
-                    AccountType = (Enums.AccountType)accountType,
-                    Name = name,
-                    Surname = surname,
-                    SexType = (Enums.SexType)sexType,
-                    Email = email,
+                    AccountType = (Enums.AccountType)accountRequest.accountType,
+                    Name = accountRequest.name,
+                    Surname = accountRequest.surname,
+                    SexType = (Enums.SexType)accountRequest.sexType,
+                    Email = accountRequest.email,
                     Password = hashedPassword,
-                    Country = country,
-                    Region = region,
-                    City = city,
-                    Address = address,
-                    Description = description,
+                    Country = accountRequest.country,
+                    Region = accountRequest.region,
+                    City = accountRequest.city,
+                    Address = accountRequest.address,
+                    Description = accountRequest.description,
                     Created_At = DateTime.Now.ToUniversalTime(),
                     Salt = salt
                 };
@@ -81,7 +89,7 @@ namespace Bemplo.Server.Controllers
                     User userTemp = new User()
                     {
                         Account = registerAccount,
-                        Date_of_Birth = date.Date.ToUniversalTime()
+                        Date_of_Birth = accountRequest.date.Date.ToUniversalTime()
                     };
                     _context.Users.Add(userTemp);
                     await _context.SaveChangesAsync();
@@ -98,7 +106,7 @@ namespace Bemplo.Server.Controllers
                     Company companyTemp = new Company()
                     {
                         Account = registerAccount,
-                        Founded_At = date.Date.ToUniversalTime()
+                        Founded_At = accountRequest.date.Date.ToUniversalTime()
                     };
                     _context.Companies.Add(companyTemp);
                     await _context.SaveChangesAsync();
@@ -179,9 +187,41 @@ namespace Bemplo.Server.Controllers
         }
 
         [HttpGet("SearchAccounts")]
-        public async Task<IActionResult> IsCommonAccount([FromQuery] string searchString)
+        public async Task<IActionResult> SearchAccounts([FromQuery] string searchString, string? name, string? address, int skip, int take)
         {
-            return Ok(await _accountRep.SearchAccounts(searchString));
+            Account? account = await User.GetAccountAsync(_context);
+
+            return Ok(await _accountRep.SearchAccounts(searchString.Trim().ToLower(), account, name, address, skip, take));
         }
+
+        [HttpGet("DiscoverAccounts")]
+        public async Task<IActionResult> DiscoverAccounts(int skip, int take)
+        {
+            Account? account = await User.GetAccountAsync(_context);
+
+            return Ok(await _accountRep.DiscoverAccounts(skip, take));
+        }
+
+        /*[HttpGet("Nastav")]
+        //[Authorize]
+        public async Task<IActionResult> Nastav()
+        {
+            Account a = await _context.Accounts.FindAsync(7);
+            Account b = await _context.Accounts.FindAsync(0);
+
+            ChatConnection ch = new ChatConnection()
+            {
+                Account_1 = a,
+                Account_2 = b,
+                Account_1_Agree = true,
+                Account_2_Agree = true,
+                Account_ID_1 = a.Id,
+                Account_ID_2 = b.Id
+            };
+            _context.ChatConnections.Add(ch);
+            await _context.SaveChangesAsync();
+
+            return Ok("Hotovo");
+        }*/
     }
 }
