@@ -482,7 +482,7 @@ const Register: React.FC = () => {
                             <button type="submit">Registrovat</button>
 
                             <div className="links">
-                                <Link to="/" className="link-login">Máte již účet? Přihlaste se</Link>
+                                <Link to="/login" className="link-login">Máte již účet? Přihlaste se</Link>
                             </div>
                         </form>
                     </div>

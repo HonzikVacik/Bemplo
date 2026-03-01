@@ -6,6 +6,7 @@ import './index.css'
 import LoginPage from './Pages/Login/Login.tsx'
 import RegisterPage from './Pages/Register/Register.tsx'
 import DashboardPage from './Pages/Dashboard/Dashboard.tsx'
+import HomePage from './Pages/Home/Home.tsx'
 import PrivacyPolicyPage from './Pages/PrivacyPolicy/PrivacyPolicy.tsx'
 import ChatManagerPage from './Pages/ChatManager/ChatManager.tsx'
 import ChatDetailPage from './Pages/ChatDetail/ChatDetail.tsx'
@@ -18,7 +19,8 @@ createRoot(document.getElementById('root')!).render(
         {/* <App /> */}
         <BrowserRouter>
             <Routes>
-                <Route path="/" element={<LoginPage />} />
+                <Route path="/" element={<HomePage />} />
+                <Route path="/login" element={<LoginPage />} />
                 <Route path="/register" element={<RegisterPage />} />
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/dashboard/:id" element={<DashboardPage />} />
