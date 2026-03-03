@@ -1,0 +1,304 @@
+.home-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    min-height: 100vh;
+    margin: 3rem 0;
+}
+
+    /* --- 1. ANIMOVANÉ POZADÍ (Kopie z vašich stylù) --- */
+    .home-page .background-animation {
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background: linear-gradient(135deg, #F0F4F8 0%, #E6EEF5 50%, #F0F4F8 100%);
+        z-index: -1;
+        overflow: hidden;
+    }
+
+        .home-page .background-animation::before,
+        .home-page .background-animation::after {
+            content: '';
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(0, 123, 255, 0.08);
+            filter: blur(80px);
+            animation: floatLarge 20s infinite ease-in-out alternate;
+        }
+
+        .home-page .background-animation::before {
+            width: 600px;
+            height: 600px;
+            top: -10%;
+            left: -15%;
+            animation-delay: 0s;
+        }
+
+        .home-page .background-animation::after {
+            width: 700px;
+            height: 700px;
+            bottom: -15%;
+            right: -20%;
+            background: rgba(0, 163, 255, 0.07);
+            animation-delay: 10s;
+        }
+
+    /* --- 2. WRAPPER --- */
+    .home-page .wrapper {
+        position: relative;
+        z-index: 10;
+        width: 95%;
+        max-width: 1000px;
+        animation: popIn 0.6s ease-out forwards;
+    }
+
+    .home-page .glass-container {
+        background: var(--glass-background);
+        border: 1px solid var(--glass-border);
+        border-radius: 20px;
+        padding: 4rem;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+
+    /* --- 3. HERO SEKCE --- */
+    .home-page .hero-section {
+        max-width: 800px;
+        margin-bottom: 3rem;
+    }
+
+    /* ... stávající styly pro .hero-section ... */
+
+    .home-page .gradient-text {
+        /* Pùvodní styly zachováme jako základ */
+        font-weight: 800;
+        line-height: 1.2;
+        background: -webkit-linear-gradient(45deg, var(--primary-red), var(--secondary-red));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        text-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
+    }
+
+    /* NOVÉ: Zvìtšíme Bemplo a upravíme mezery */
+    .home-page .main-brand {
+        font-size: 5rem;
+        margin-bottom: 0.5rem; /* Zmenšíme mezeru pod Bemlpem, aby k nìmu slogan patøil */
+        letter-spacing: 2px;
+    }
+
+    /* NOVÉ: Styl pro podnadpis (Váš most...) */
+    .home-page .hero-slogan {
+        font-size: 2rem;
+        font-weight: 600;
+        color: var(--light-text);
+        margin-bottom: 1.5rem;
+        margin-top: 0;
+    }
+
+    .home-page .subtitle {
+        font-size: 1.2rem;
+        line-height: 1.6;
+        color: var(--input-placeholder); /* Mùžete nechat --light-text, ale placeholder barva bývá jemnìjší pro odstavce */
+        margin-bottom: 2.5rem;
+    }
+
+    .home-page .cta-group {
+        display: flex;
+        justify-content: center;
+        gap: 1.5rem;
+        margin-bottom: 2rem;
+        flex-wrap: wrap;
+    }
+
+    /* Tlaèítka z vašich stylù */
+    .home-page .btn {
+        padding: 1rem 2.5rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+        .home-page .btn svg {
+            width: 20px;
+            height: 20px;
+        }
+
+    .home-page .btn-primary {
+        background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
+        color: white;
+        border: none;
+        box-shadow: 0 8px 25px rgba(0, 123, 255, 0.4);
+    }
+
+        .home-page .btn-primary:hover {
+            transform: translateY(-3px) scale(1.02);
+            box-shadow: 0 12px 35px rgba(0, 123, 255, 0.5);
+        }
+
+    .home-page .btn-secondary {
+        background: transparent;
+        color: var(--primary-red);
+        border: 2px solid var(--primary-red);
+    }
+
+        .home-page .btn-secondary:hover {
+            background: var(--primary-red);
+            color: white;
+            transform: translateY(-3px);
+        }
+
+    .home-page .login-link-wrapper {
+        font-size: 1rem;
+        color: var(--input-placeholder);
+    }
+
+    .home-page .login-link {
+        color: var(--primary-red);
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s;
+    }
+
+        .home-page .login-link:hover {
+            text-decoration: underline;
+        }
+
+    /* --- 4. ODDÌLOVAÈ --- */
+    .home-page .divider {
+        width: 100%;
+        height: 1px;
+        background: linear-gradient(to right, transparent, rgba(255,255,255,0.5), transparent);
+        margin: 2rem 0 4rem 0;
+    }
+
+    /* --- 5. VÝHODY (Features) --- */
+    .home-page .features-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        width: 100%;
+    }
+
+    .home-page .feature-card {
+        background: rgba(255, 255, 255, 0.3);
+        border: 1px solid rgba(255, 255, 255, 0.5);
+        border-radius: 15px;
+        padding: 2rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-align: center;
+    }
+
+        .home-page .feature-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.5);
+            box-shadow: 0 10px 30px rgba(0, 123, 255, 0.15);
+            border-color: var(--primary-red);
+        }
+
+    .home-page .feature-icon {
+        width: 60px;
+        height: 60px;
+        margin: 0 auto 1.5rem auto;
+        background: linear-gradient(135deg, rgba(0, 123, 255, 0.1), rgba(0, 163, 255, 0.2));
+        color: var(--primary-red);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+        .home-page .feature-icon svg {
+            width: 30px;
+            height: 30px;
+        }
+
+    .home-page .feature-card h3 {
+        font-size: 1.3rem;
+        color: var(--light-text);
+        margin-bottom: 1rem;
+        font-weight: 700;
+    }
+
+    .home-page .feature-card p {
+        color: var(--input-placeholder);
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* --- 6. FOOTER --- */
+    .home-page .home-footer {
+        margin-top: 4rem;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--input-placeholder);
+    }
+
+        .home-page .home-footer a {
+            color: var(--input-placeholder);
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+            .home-page .home-footer a:hover {
+                color: var(--primary-red);
+            }
+
+/* --- 7. RESPONZIVITA --- */
+@media (max-width: 768px) {
+    .home-page .main-brand {
+        font-size: 4rem;
+    }
+
+    .home-page .hero-slogan {
+        font-size: 1.6rem;
+    }
+
+    .home-page .glass-container {
+        padding: 3rem 2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .home-page .main-brand {
+        font-size: 3rem;
+    }
+
+    .home-page .hero-slogan {
+        font-size: 1.3rem;
+        line-height: 1.4;
+    }
+
+    .home-page .subtitle {
+        font-size: 1rem;
+    }
+
+    .home-page .cta-group {
+        flex-direction: column;
+    }
+
+    .home-page .btn {
+        width: 100%;
+    }
+
+    .home-page .glass-container {
+        padding: 2.5rem 1.5rem;
+    }
+}
