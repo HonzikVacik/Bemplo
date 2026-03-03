@@ -40,8 +40,11 @@ services:
       # JwtSettings__SecretKey: "YourSecretKey1234567890secretkeyfordemo"
       # JwtSettings__Issuer: "http://localhost:8080"
       # JwtSettings__Audience: "http://localhost:8080"
+      ASPNETCORE_URLS: "http://+:80"
+      #ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
+      #ASPNETCORE_Kestrel__Certificates__Default__Password: "tajneheslocertifikatu"
     ports:
-      - "8080:8080"
+      - "80:80"
     depends_on:
       - db
 
