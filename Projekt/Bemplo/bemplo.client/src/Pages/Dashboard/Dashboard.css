@@ -194,6 +194,7 @@
     border: 1px solid rgba(255, 255, 255, 0.6);
     border-radius: 15px;
     padding: 2rem;
+    margin-right: -6rem;
 }
 
     .dashboard-page .profile-section:last-of-type {
