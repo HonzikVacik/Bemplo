@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import ReactDOM from 'react-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import './Dashboard.css';
 
 interface Experience {
@@ -223,6 +224,8 @@ const Dashboard: React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
 
+    const [notification, setNotification] = useState<{ title: string; message: string } | null>(null);
+
     const [isOwner, setIsOwner] = useState(false);
 
     const [isEditing, setIsEditing] = useState(false);
@@ -268,6 +271,14 @@ const Dashboard: React.FC = () => {
 
                 if (response.ok) {
                     const data = await response.json();
+
+                    if (!id && data.agreeWithPolicy === false) {
+                        setNotification({
+                            title: 'Změna podmínek používání',
+                            message: 'Změnily se podmínky používání. Pokračováním používání aplikace s nimi vyjadřujete souhlas.'
+                        });
+                    }
+
                     setDashboardData(data);
 
                     if (!id) {
@@ -745,11 +756,59 @@ const Dashboard: React.FC = () => {
         navigate('/search');
     }
 
+    const modalContent = notification ? (
+        <div className="login-page"> {/* Třída login-page pro zachování stylů z Login.css */}
+            <div className="modal-overlay" onClick={() => setNotification(null)}>
+                <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                    <h2>{notification.title}</h2>
+                    <p>{notification.message}</p>
+
+                    {/* Odkaz na Privacy Policy */}
+                    <Link
+                        to="/privacypolicy"
+                        style={{ display: 'block', marginBottom: '1.5rem', color: 'var(--primary-red)', textDecoration: 'underline' }}
+                    >
+                        Zásady ochrany osobních údajů
+                    </Link>
+
+                    <button
+                        className="modal-close-btn"
+                        onClick={async  () => {
+                            const token = localStorage.getItem('jwtToken');
+                            setNotification(null);
+                            try {
+                                const response = await fetch('/api/PrivacyPolicy', {
+                                    method: 'POST',
+                                    headers: {
+                                        'Authorization': `Bearer ${token}`
+                                    }
+                                });
+
+                                if (!response.ok)
+                                    console.error("Chyba při komunikaci se serverem" + response.text());
+                            } catch (error) {
+                                console.error("Chyba sítě:", error);
+                            }
+                            }
+                        }
+                    >
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    ) : null;
+
     return (
         <>
             <div className="dashboard-page">
 
                 <div className="background-animation"></div>
+
+                {ReactDOM.createPortal(
+                    modalContent,
+                    document.getElementById('modal-root')!
+                )}
 
                 <div className="profile-wrapper">
                     <div className="profile-container">

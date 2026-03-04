@@ -15,10 +15,16 @@ namespace Bemplo.Server.Repositories
         }
         public async Task<string?> AgreeWithPrivacyPolicy(Account account)
         {
+            Account? acc = await _context.Accounts.Where(a => a.Id == account.Id && a.IsDeleted == false).FirstOrDefaultAsync();
+            if (acc == null)
+            {
+                return "Uživatel nenalezen";
+            }
+
             try
             {
-                account.AgreeWithPolicy = true;
-                _context.Accounts.Update(account);
+                acc.AgreeWithPolicy = true;
+                _context.Accounts.Update(acc);
                 await _context.SaveChangesAsync();
                 return null;
             }
