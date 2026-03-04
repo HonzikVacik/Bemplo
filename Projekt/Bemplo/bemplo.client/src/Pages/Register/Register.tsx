@@ -136,7 +136,7 @@ const Register: React.FC = () => {
             city: formData.city,
             address: formData.address,
             description: formData.description,
-            agreeWithPrivacyPolicy: formData.terms.toString()
+            agreeWithPrivacyPolicy: formData.terms.valueOf()
         };
 
         if (accountType === 'company') {
@@ -162,7 +162,7 @@ const Register: React.FC = () => {
                     city: formData.city,
                     address: formData.address,
                     description: formData.description,
-                    agreeWithPrivacyPolicy: formData.terms.toString()
+                    agreeWithPrivacyPolicy: formData.terms.valueOf()
                 })
             });
             const responseText = await response.text();
@@ -178,6 +178,7 @@ const Register: React.FC = () => {
                 }, 2000);
 
             } else {
+                console.log(apiParams.agreeWithPrivacyPolicy)
                 setNotification({
                     title: 'Chyba',
                     message: responseText
