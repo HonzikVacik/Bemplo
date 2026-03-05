@@ -10,7 +10,7 @@ services:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
     ports:
-      - "5432:5432"
+      - "5432:5432" # Pokud nechceš k DB přistupovat napřímo zvenčí (např. přes DBeaver), můžeš toto mapování smazat
     volumes:
       - db_data:/var/lib/postgresql/data
 
@@ -33,22 +33,29 @@ services:
     container_name: bemplo-api
     restart: unless-stopped
     environment:
-      ASPNETCORE_ENVIRONMENT: "Development"
-      # Override the connection string to use the dockerized Postgres
+      ASPNETCORE_ENVIRONMENT: "Production" # Změněno z Development na Production
       ConnectionStrings__DefaultConnection: "Server=db;Port=5432;Database=${POSTGRES_DB};User Id=${POSTGRES_USER};Password=${POSTGRES_PASSWORD}"
-      # You can override JWT settings here if needed; otherwise appsettings.json values are used
-      # JwtSettings__SecretKey: "YourSecretKey1234567890secretkeyfordemo"
-      # JwtSettings__Issuer: "http://localhost:8080"
-      # JwtSettings__Audience: "http://localhost:8080"
-      ASPNETCORE_URLS: "http://+:80"
-      #ASPNETCORE_Kestrel__Certificates__Default__Path: "/https/aspnetapp.pfx"
-      #ASPNETCORE_Kestrel__Certificates__Default__Password: "tajneheslocertifikatu"
-    ports:
-      - "80:80"
+      # API běží čistě interně uvnitř Docker sítě na portu 8080 (jak to máš v Dockerfile)
+      ASPNETCORE_URLS: "http://+:8080" 
+    # Smazali jsme sekci ports. API už nekomunikuje přímo s internetem, ale přes Caddy.
     depends_on:
       - db
 
+  caddy:
+    image: caddy:2
+    container_name: bemplo-caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"   # HTTP provoz
+      - "443:443" # HTTPS provoz (certifikáty se vygenerují automaticky)
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro # Odkaz na konfigurační soubor Caddy
+      - caddy_data:/data # Důležité: Sem se trvale ukládají Let's Encrypt certifikáty
+      - caddy_config:/config
+    depends_on:
+      - api
+
 volumes:
   db_data:
-
-
+  caddy_data:
+  caddy_config:
