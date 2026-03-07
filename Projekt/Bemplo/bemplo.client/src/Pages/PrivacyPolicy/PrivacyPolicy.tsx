@@ -1,8 +1,10 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import './PrivacyPolicy.css';
 
 function PrivacyPolicy() {
+    const navigate = useNavigate();
+
     return (
         <>
             <div className="privacyPolicy-page">
@@ -13,7 +15,7 @@ function PrivacyPolicy() {
                     <div className="glass-container">
 
                         <header className="privacy-header">
-                            <Link to="/dashboard" className="btn-icon back-btn" title="Zpět">
+                            <Link to="" className="btn-icon back-btn" title="Zpět" onClick={() => navigate(-1)}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                                 </svg>

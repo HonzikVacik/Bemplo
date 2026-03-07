@@ -174,7 +174,7 @@ const Register: React.FC = () => {
                 });
 
                 setTimeout(() => {
-                    navigate('/'); // Přesměrování na login
+                    navigate('/login'); // Přesměrování na login
                 }, 2000);
 
             } else {
