@@ -281,15 +281,15 @@
             border-color: var(--primary-red);
         }
 
-    .dashboard-page .input-group .focus-border {
-        position: absolute;
-        bottom: 0;
-        left: 50%;
-        width: 0;
-        height: 2px;
-        background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
-        transition: width 0.3s ease-out, left 0.3s ease-out;
-    }
+.dashboard-page .input-group .focus-border {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 0;
+    height: 2px;
+    background: linear-gradient(to right, var(--primary-red), var(--secondary-red));
+    transition: width 0.3s ease-out, left 0.3s ease-out;
+}
 
     .dashboard-page .input-group input:focus ~ .focus-border,
     .dashboard-page .input-group select:focus ~ .focus-border,
@@ -790,6 +790,22 @@
 
         .dashboard-page .form-grid {
             gap: 1.5rem 0;
+        }
+
+        .dashboard-page .profile-section {
+            margin-right: -6rem;
+        }
+
+        .dashboard-page .form-grid .input-group input {
+            max-width: 85%;
+        }
+
+            .dashboard-page .form-grid .input-group input:focus ~ .focus-border {
+                max-width: 85%;
+                transition: width 0.3s ease-out, left 0.3s ease-out;
+            }
+        .dashboard-page .contact-action {
+            max-width: 85%;
         }
 }
 

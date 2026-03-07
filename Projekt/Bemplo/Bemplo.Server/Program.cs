@@ -86,6 +86,7 @@ namespace Bemplo.Server
             builder.Services.AddScoped<IChatConnectionRep,  ChatConnectionRep>();
             builder.Services.AddScoped<IPhotoRep, PhotoRep>();
             builder.Services.AddScoped<ICommentRep, CommentRep>();
+            builder.Services.AddScoped<IPrivacyPolicyRep,  PrivacyPolicyRep>();
 
             builder.Services.AddScoped<IAccountSer, AccountSer>();
             builder.Services.AddScoped<IContactSer, ContactSer>();

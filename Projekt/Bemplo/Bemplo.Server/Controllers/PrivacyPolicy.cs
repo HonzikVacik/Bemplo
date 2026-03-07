@@ -5,10 +5,18 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Bemplo.Server.Controllers
 {
+    [Route("api/[controller]")]
+    [ApiController]
     public class PrivacyPolicy : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IPrivacyPolicyRep _privacyPolicyRep;
+
+        public PrivacyPolicy(ApplicationDbContext context, IPrivacyPolicyRep privacyPolicyRep)
+        {
+            _context = context;
+            _privacyPolicyRep = privacyPolicyRep;
+        }
 
         [HttpGet]
         [Authorize]

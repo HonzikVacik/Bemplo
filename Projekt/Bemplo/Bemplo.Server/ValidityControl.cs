@@ -1,6 +1,7 @@
 ﻿using Bemplo.Server.Models;
 using System.Diagnostics.Metrics;
 using System.Text.RegularExpressions;
+using static Bemplo.Server.Models.Enums;
 
 namespace Bemplo.Server
 {
@@ -12,18 +13,36 @@ namespace Bemplo.Server
                 return "Neplatné údaje o účtu";
             if (!IsEmailUnique(_context, email))
                   return "Účet s tímto emailem již existuje.";
+            if (!IsValidAccountType(accountType))
+                return "Neplatný typ účtu";
+            else if (!IsValidName(name, accountType))
+                return "Neplatné jméno";
+            else if (!IsValidSurname(surname, accountType))
+                return "Neplatné příjmení";
+            else if (!IsValidSexType(sexType))
+                return "Neplatný SexType";
+            else if (!IsValidDate(date))
+                return "Neplatný datum";
+            else if (!IsValidPassword(password))
+                return "Neplatné heslo";
+            else if (!IsValidLocation(accountType, country, region, city, address))
+                return "Neplatná adresa";
+            else if (!IsValidDescription(description))
+                return "Neplatný popis";
+            else if (!IsValidPrivacyPolicyAgreement(agreeWithPrivacyPolicy))
+                return "Neplatné podmínky používání";
             if (IsValidAccountType(accountType) &&
-                       IsValidName(name, accountType) &&
-                       IsValidSurname(surname) &&
-                       IsValidSexType(sexType) &&
-                       IsValidDate(date) &&
-                       IsValidPassword(password) &&
-                       IsValidLocation(accountType, country, region, city, address) &&
-                       IsValidDescription(description) &&
-                       IsValidPrivacyPolicyAgreement(agreeWithPrivacyPolicy))
+                   IsValidName(name, accountType) &&
+                   IsValidSurname(surname, accountType) &&
+                   IsValidSexType(sexType) &&
+                   IsValidDate(date) &&
+                   IsValidPassword(password) &&
+                   IsValidLocation(accountType, country, region, city, address) &&
+                   IsValidDescription(description) &&
+                   IsValidPrivacyPolicyAgreement(agreeWithPrivacyPolicy))
                 return null;
             else
-                return "Neplatné údaje o účtu.";
+                return "Neplatné údaje o účtu.-" + agreeWithPrivacyPolicy + "-";
         }
 
         private static bool IsValidAccountType(byte accountType)
@@ -36,9 +55,9 @@ namespace Bemplo.Server
             return !string.IsNullOrEmpty(name) && !string.IsNullOrWhiteSpace(name) && (name.Length <= 50 || name.Length <= 200 && accountType == ((byte)Enums.AccountType.Company));
         }
 
-        private static bool IsValidSurname(string surname)
+        private static bool IsValidSurname(string surname, byte accountType)
         {
-            return !string.IsNullOrEmpty(surname) && !string.IsNullOrWhiteSpace(surname) && surname.Length <= 50;
+            return !string.IsNullOrEmpty(surname) && !string.IsNullOrWhiteSpace(surname) && surname.Length <= 50 || accountType == ((byte)Enums.AccountType.Company);
         }
 
         private static bool IsValidSexType(byte sexType)
