@@ -1,15 +1,85 @@
-import React from 'react';
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import './PrivacyPolicy.css';
 
+interface NotificationState {
+    title: string;
+    message: string;
+    type?: 'success' | 'error';
+}
+
 function PrivacyPolicy() {
     const navigate = useNavigate();
+
+    const [notification, setNotification] = useState<NotificationState | null>(null);
+
+    const handleDownload = async (e) => {
+        e.preventDefault();
+
+        try {
+            const response = await fetch('/api/PrivacyPolicy/GetPdf', {
+                method: 'GET',
+                headers: {
+                },
+            });
+
+            if (!response.ok) throw new Error('Stahování selhalo');
+
+            const blob = await response.blob();
+
+            const url = window.URL.createObjectURL(blob);
+
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "Privacy_Policy.pdf";
+            document.body.appendChild(a);
+            a.click();
+
+            a.remove();
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Chyba při stahování PDF:", error);
+
+            setNotification({
+                title: 'Chyba',
+                message: "Nepodařilo se stáhnout PDF soubor.",
+                type: 'error'
+            });
+        }
+    };
+
+    const handleCloseModal = () => {
+        setNotification(null);
+    };
+
+    const modalContent = notification ? (
+        <div className="login-page">
+            <div className="modal-overlay" onClick={() => setNotification(null)}>
+                <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                    <h2>{notification.title}</h2>
+                    <p>{notification.message}</p>
+                    <button
+                        className="modal-close-btn"
+                        onClick={handleCloseModal}
+                    >
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    ) : null;
 
     return (
         <>
             <div className="privacyPolicy-page">
 
                 <div className="background-animation"></div>
+
+                {ReactDOM.createPortal(
+                    modalContent,
+                    document.getElementById('modal-root')!
+                )}
 
                 <div className="wrapper">
                     <div className="glass-container">
@@ -23,7 +93,7 @@ function PrivacyPolicy() {
 
                             <h2>Privacy Policy</h2>
 
-                            <Link to="#" className="btn-icon download-btn" title="Stáhnout .pdf" download>
+                            <Link to="#" className="btn-icon download-btn" title="Stáhnout .pdf" download onClick={handleDownload}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
                                 </svg>
