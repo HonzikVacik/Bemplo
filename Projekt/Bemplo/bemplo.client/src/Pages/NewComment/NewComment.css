@@ -45,7 +45,6 @@
         animation-delay: 10s;
     }
 
-/* Keyframes zùstávají globální (nelze je zanoøit), ale používají se jen uvnitø .newComment-page */
 @keyframes floatLarge {
     0% {
         transform: translate(0, 0) scale(1);

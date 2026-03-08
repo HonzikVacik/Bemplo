@@ -2,11 +2,10 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import './Comments.css';
 
-// 1. Definice typů podle C# modelů (předpokládáme camelCase serializaci z API)
 interface ExperienceToComment {
     content: string;
     percentage: number;
-    timestamp: string; // Z API přijde jako string (ISO date)
+    timestamp: string;
 }
 
 interface Comment {
@@ -30,17 +29,14 @@ function Comments() {
     const userId = params.userId;
     const experienceId = params.id;
 
-    // Stav pro načtená data
     const [data, setData] = useState<CommentsResponse | null>(null);
     const [isLoading, setIsLoading] = useState(true);
 
     const [isLoggedIn, setIsLoggedIn] = useState(true);
 
-    // Stav pro filtry
     const [searchTerm, setSearchTerm] = useState('');
     const [sortType, setSortType] = useState('newest');
 
-    // 2. Načtení dat ze serveru
     useEffect(() => {
         const fetchIsLoggedIn = async () => {
             try {
@@ -49,7 +45,7 @@ function Comments() {
                 const response = await fetch(`/api/Account/IsLoggedIn`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${token}` // Autorizace
+                        'Authorization': `Bearer ${token}`
                     }
                 });
 
@@ -71,7 +67,7 @@ function Comments() {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
-                        'Authorization': `Bearer ${token}` // Autorizace
+                        'Authorization': `Bearer ${token}`
                     }
                 });
 
@@ -92,7 +88,6 @@ function Comments() {
         fetchData();
     }, [userId, experienceId]);
 
-    // Pomocná funkce pro formátování data
     const formatDate = (isoDate: string) => {
         const d = new Date(isoDate);
         return d.toLocaleDateString('cs-CZ', {
@@ -104,7 +99,6 @@ function Comments() {
         });
     };
 
-    // 3. Filtrace a řazení komentářů (Client-side)
     const getProcessedComments = () => {
         if (!data?.comments) return [];
 
@@ -145,7 +139,6 @@ function Comments() {
                                 </svg>
                             </button>
 
-                            {/* Zobrazení jména uživatele z API */}
                             <h2>{data.userName}</h2>
 
                             <div className="filters-group">
@@ -186,7 +179,6 @@ function Comments() {
                                         <div className="list-item experience" key={index}>
                                             <span className="meta-date">{formatDate(exp.timestamp)}</span>
                                             <p className="item-text">{exp.content}</p>
-                                            {/* Volitelně: zobrazit procenta historie */}
                                             <span style={{fontSize: '0.8em', color: '#aaa'}}> {exp.percentage}%</span>
                                         </div>
                                     ))}
@@ -221,7 +213,6 @@ function Comments() {
                                                     <span className="user-name">{comment.evaluatorName}</span>
                                                 </div>
                                                 <div className="comment-rating">
-                                                    {/* Převod procent na hvězdičky */}
                                                     {comment.percentage}*
                                                 </div>
                                             </div>

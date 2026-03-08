@@ -21,27 +21,21 @@ const Login: React.FC = () => {
         const password = formData.get('password') as string;
 
         try {
-            // 1. Sestavíme URL s query parametry, jak to očekává backend
             const params = new URLSearchParams({ email, password });
             const url = `/api/Auth/token?${params.toString()}`;
 
-            // 2. Odešleme požadavek
             const response = await fetch(url, {
                 method: 'POST',
             });
 
-            // 3. Získáme odpověď jako ČISTÝ TEXT
             const responseText = await response.text();
 
-            // 4. Zkontrolujeme status odpovědi
             if (response.ok) {
-                // Úspěch: responseText obsahuje JWT token
-                // Uložíme token např. do localStorage
                 localStorage.setItem('jwtToken', responseText);
 
                 
                 // Při pololetní obhajobě mi bylo sděleno, abych toto odstranil
-                // Dle mého úsudku to ale smysl má, tak si to nechávám pro případ budoucího vývojee
+                // Dle mého úsudku to ale smysl má, tak si to nechávám pro případ budoucího vývoje
 
                 //setNotification({
                 //    title: 'Přihlášení úspěšné',
@@ -52,7 +46,6 @@ const Login: React.FC = () => {
                 navigate('/dashboard');
 
             } else {
-                // Chyba: responseText obsahuje chybovou hlášku ze serveru
                 setNotification({
                     title: 'Chyba',
                     message: responseText,
