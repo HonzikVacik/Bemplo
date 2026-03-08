@@ -178,7 +178,6 @@ const Register: React.FC = () => {
                 }, 2000);
 
             } else {
-                console.log(apiParams.agreeWithPrivacyPolicy)
                 setNotification({
                     title: 'Chyba',
                     message: responseText

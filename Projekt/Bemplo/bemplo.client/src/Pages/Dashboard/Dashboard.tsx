@@ -323,7 +323,6 @@ const Dashboard: React.FC = () => {
                         const loadedSkills = data.experiences || [];
                         setSkills(loadedSkills);
                         setSavedSkills(loadedSkills);
-                        console.log(data.experiences);
                     }
                 }
             } catch (error) {
@@ -487,8 +486,6 @@ const Dashboard: React.FC = () => {
 
                 setSkills(updatedData);
                 setSavedSkills(updatedData);
-
-                console.log("Zkušenosti uloženy");
             } else {
                 const errorText = await response.text();
                 console.error('Chyba při ukládání zkušeností:', errorText);
@@ -538,8 +535,6 @@ const Dashboard: React.FC = () => {
 
                 setContacts(newContactState);
                 setSavedContacts(newContactState);
-
-                console.log("Kontakty úspěšně aktualizovány");
             } else {
                 const errorText = await response.text();
                 console.error('Chyba:', errorText);
@@ -665,8 +660,6 @@ const Dashboard: React.FC = () => {
                 if (selectedImage && realUrls.length > 0) {
                     setSelectedImage(realUrls[0]);
                 }
-                
-                console.log("Fotky úspěšně uloženy.");
             } else {
                 console.error("Chyba při ukládání fotek");
             }
