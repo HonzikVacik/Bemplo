@@ -6,7 +6,7 @@ import './Login.css';
 interface NotificationState {
     title: string;
     message: string;
-    type?: 'success' | 'error';
+    type?: 'success' | 'error' | 'notification';
 }
 
 const Login: React.FC = () => {
@@ -96,6 +96,14 @@ const Login: React.FC = () => {
         </div>
     ) : null;
 
+    const resetPassword = () => {
+        setNotification({
+            title: 'Oznámení',
+            message: 'Tato funkčnost bude dostupná po maturitních obhajobách.',
+            type: 'notification'
+        });
+    }
+
     return (
         <>
             <div className="login-page">
@@ -123,7 +131,7 @@ const Login: React.FC = () => {
                             </div>
                             <button type="submit">Přihlásit se</button>
                             <div className="links">
-                                <Link to="/" className="link-forgot">Zapomenuté heslo?</Link>
+                                <Link to="" className="link-forgot" onClick={resetPassword}>Zapomenuté heslo?</Link>
                                 <Link to="/register" className="link-register">Vytvořit účet</Link>
                             </div>
                         </form>
