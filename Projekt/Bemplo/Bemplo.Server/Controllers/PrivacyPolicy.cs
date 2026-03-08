@@ -26,7 +26,6 @@ namespace Bemplo.Server.Controllers
         }
 
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetPrivacyPolicy()
         {
             ResponseModels.PrivacyPolicy? privacyPolicy = await _privacyPolicyRep.GetPrivacyPolicy();
@@ -97,12 +96,12 @@ namespace Bemplo.Server.Controllers
                         col.Item().Text(text =>
                         {
                             text.Span("Platné od: ").Bold();
-                            text.Span($"{privacyPolicy.EffectiveDate:d}"); // :d zformátuje datum krátce
+                            text.Span($"{((DateTime) privacyPolicy.EffectiveDate).ToLocalTime():d}"); // :d zformátuje datum krátce
                         });
                         col.Item().Text(text =>
                         {
                             text.Span("Platné do: ").Bold();
-                            text.Span($"{privacyPolicy.ExpirationDate:d}"); // :d zformátuje datum krátce
+                            text.Span($"{((DateTime) privacyPolicy.ExpirationDate).ToLocalTime():d}"); // :d zformátuje datum krátce
                         });
                         col.Item().Text($"");
                         col.Item().Text(text =>
