@@ -2,6 +2,13 @@
 using Bemplo.Server.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using QuestPDF.Fluent;
+using QuestPDF.Helpers;
+using QuestPDF.Infrastructure;
+using System.Drawing;
+using System.Reflection.Metadata;
+using System.Text.RegularExpressions;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace Bemplo.Server.Controllers
 {
@@ -50,6 +57,64 @@ namespace Bemplo.Server.Controllers
             }
 
             return Ok();
+        }
+
+        [HttpGet("GetPdf")]
+        public async Task<IActionResult> DownloadPdf()
+        {
+            ResponseModels.PrivacyPolicy? privacyPolicy = await _privacyPolicyRep.GetPrivacyPolicy();
+            if (privacyPolicy == null)
+            {
+                return NotFound("Něco se nepovedlo");
+            }
+
+            string[] policyContent = privacyPolicy.PolicyText.Split("\n"); 
+
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            var pdfData = Microsoft.AspNetCore.Html.HtmlString.Empty;
+
+            byte[] pdfBytes = QuestPDF.Fluent.Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4);
+                    page.Margin(1, Unit.Centimetre);
+                    page.PageColor(Colors.White);
+
+                    page.Header().Text("Zásady ochrany osobních údajů").AlignCenter().FontSize(25).ExtraBold().FontColor(Colors.Blue.Medium);
+
+                    page.Content().PaddingVertical(10).AlignLeft().Column(col =>
+                    {
+                        foreach(string row in policyContent)
+                        {
+                            if (Regex.IsMatch(row, @"^\d+\."))
+                                col.Item().Text(row).Bold().FontColor(Colors.Blue.Medium);
+                            else
+                                col.Item().Text(row);
+                        }
+                        col.Item().Text($"");
+                        col.Item().Text(text =>
+                        {
+                            text.Span("Platné od: ").Bold();
+                            text.Span($"{privacyPolicy.EffectiveDate:d}"); // :d zformátuje datum krátce
+                        });
+                        col.Item().Text(text =>
+                        {
+                            text.Span("Platné do: ").Bold();
+                            text.Span($"{privacyPolicy.ExpirationDate:d}"); // :d zformátuje datum krátce
+                        });
+                        col.Item().Text($"");
+                        col.Item().Text(text =>
+                        {
+                            text.Span("Generováno: ").Bold();
+                            text.Span($"{DateTime.Now}");
+                        });
+                    });
+                });
+            }).GeneratePdf();
+
+            return File(pdfBytes, "application/pdf", "privacy_policy.pdf");
         }
     }
 }
