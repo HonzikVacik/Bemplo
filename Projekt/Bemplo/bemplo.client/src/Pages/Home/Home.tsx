@@ -5,18 +5,14 @@ function Home() {
     return (
         <>
             <div className="home-page">
-                {/* Animované pozadí - stejné jako v celé aplikaci */}
                 <div className="background-animation"></div>
 
                 <div className="wrapper">
                     <div className="glass-container">
 
-                        {/* HLAVNÍ SEKCE (Hero) */}
                         <section className="hero-section">
-                            {/* NOVÝ HLAVNÍ NADPIS */}
                             <h1 className="gradient-text main-brand">Bemplo</h1>
 
-                            {/* PŮVODNÍ NADPIS JAKO MENŠÍ PODNADPIS */}
                             <h2 className="hero-slogan">Váš most k novým příležitostem</h2>
 
                             <p className="subtitle">
@@ -46,7 +42,6 @@ function Home() {
                         {/* ODDĚLOVAČ */}
                         <div className="divider"></div>
 
-                        {/* SEKCE VÝHOD (Features) */}
                         <section className="features-section">
                             <div className="feature-card">
                                 <div className="feature-icon">

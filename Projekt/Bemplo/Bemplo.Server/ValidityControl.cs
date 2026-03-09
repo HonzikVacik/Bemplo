@@ -1,4 +1,5 @@
 ﻿using Bemplo.Server.Models;
+using Microsoft.EntityFrameworkCore;
 using System.Diagnostics.Metrics;
 using System.Text.RegularExpressions;
 using static Bemplo.Server.Models.Enums;
@@ -7,11 +8,11 @@ namespace Bemplo.Server
 {
     public static class ValidityControl
     {
-        public static string? CheckNewAccount(ApplicationDbContext _context, byte accountType, string name, string surname, byte sexType, DateTime date, string email, string password, string country, string region, string city, string address, string description, bool agreeWithPrivacyPolicy)
+        public static async Task<string?> CheckNewAccount(ApplicationDbContext _context, byte accountType, string name, string surname, byte sexType, DateTime date, string email, string password, string country, string region, string city, string address, string description, bool agreeWithPrivacyPolicy)
         {
             if (!IsValidEmail(email))
                 return "Neplatné údaje o účtu";
-            if (!IsEmailUnique(_context, email))
+            if (!(await IsEmailUnique(_context, email)))
                   return "Účet s tímto emailem již existuje.";
             if (!IsValidAccountType(accountType))
                 return "Neplatný typ účtu";
@@ -74,6 +75,11 @@ namespace Bemplo.Server
         {
             try
             {
+                if (string.IsNullOrWhiteSpace(email)) return false;
+
+                var parts = email.Trim().ToLower().Split('@');
+                if (parts.Length != 2) return false;
+
                 var addr = new System.Net.Mail.MailAddress(email);
                 if (addr.Address == email)
                 {
@@ -89,6 +95,22 @@ namespace Bemplo.Server
             {
                 return false;
             }
+        }
+
+        public static string GetEmailAddress(string email)
+        {
+            var parts = email.Trim().ToLower().Split('@');
+
+            string user = parts[0];
+            string domain = parts[1];
+
+            if (domain == "gmail.com" || domain == "googlemail.com")
+            {
+                user = user.Split('+')[0];
+                user = user.Replace(".", "");
+            }
+
+            return $"{user}@{domain}";
         }
 
         private static bool IsValidPassword(string password)
@@ -129,10 +151,15 @@ namespace Bemplo.Server
             return agreeWithPrivacyPolicy;
         }
 
-        public static bool IsEmailUnique(ApplicationDbContext _context, string email)
+        public async static Task<bool> IsEmailUnique(ApplicationDbContext _context, string email)
         {
-            var existingAccount = _context.Accounts.FirstOrDefault(a => a.Email == email);
-            return existingAccount == null;
+            email = GetEmailAddress(email);
+
+            if (await _context.Accounts.Where(a => a.Email == email).AnyAsync())
+            {
+                return false;
+            }
+            else return true;
         }
 
         public static string? IsChatMessageValid(string message)

@@ -3,6 +3,12 @@ import ReactDOM from 'react-dom';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import './Dashboard.css';
 
+interface NotificationState {
+    title: string;
+    message: string;
+    type?: 'success' | 'error' | 'notification';
+}
+
 interface Experience {
     id: number;
     content: string;
@@ -224,7 +230,9 @@ const Dashboard: React.FC = () => {
     const navigate = useNavigate();
     const { id } = useParams();
 
-    const [notification, setNotification] = useState<{ title: string; message: string } | null>(null);
+    const [notificationPrivacyPolicy, setNotificationPrivacyPolicy] = useState<{ title: string; message: string } | null>(null);
+
+    const [notification, setNotification] = useState<NotificationState | null>(null);
 
     const [isOwner, setIsOwner] = useState(false);
 
@@ -273,7 +281,7 @@ const Dashboard: React.FC = () => {
                     const data = await response.json();
 
                     if (!id && data.agreeWithPolicy === false) {
-                        setNotification({
+                        setNotificationPrivacyPolicy({
                             title: 'Změna podmínek používání',
                             message: 'Změnily se podmínky používání. Pokračováním používání aplikace s nimi vyjadřujete souhlas.'
                         });
@@ -315,7 +323,6 @@ const Dashboard: React.FC = () => {
                         const loadedSkills = data.experiences || [];
                         setSkills(loadedSkills);
                         setSavedSkills(loadedSkills);
-                        console.log(data.experiences);
                     }
                 }
             } catch (error) {
@@ -479,8 +486,6 @@ const Dashboard: React.FC = () => {
 
                 setSkills(updatedData);
                 setSavedSkills(updatedData);
-
-                console.log("Zkušenosti uloženy");
             } else {
                 const errorText = await response.text();
                 console.error('Chyba při ukládání zkušeností:', errorText);
@@ -530,8 +535,6 @@ const Dashboard: React.FC = () => {
 
                 setContacts(newContactState);
                 setSavedContacts(newContactState);
-
-                console.log("Kontakty úspěšně aktualizovány");
             } else {
                 const errorText = await response.text();
                 console.error('Chyba:', errorText);
@@ -546,7 +549,10 @@ const Dashboard: React.FC = () => {
 
         const token = localStorage.getItem('jwtToken');
         if (!token) {
-            alert("Pro kontaktování uživatele musíte být přihlášen.");
+            setNotification({
+                title: "Oznámení",
+                message: "Pro kontaktování uživatele musíte být přihlášen."
+            })
             return;
         }
 
@@ -565,7 +571,11 @@ const Dashboard: React.FC = () => {
             } else {
                 const errorText = await response.text();
                 console.error('Chyba při navazování kontaktu:', errorText);
-                alert(`Nepodařilo se navázat kontakt: ${errorText}`);
+                setNotification({
+                    title: "Chyba",
+                    message: `Nepodařilo se navázat kontakt: ${errorText}`
+                })
+
             }
         } catch (error) {
             console.error('Chyba sítě:', error);
@@ -650,8 +660,6 @@ const Dashboard: React.FC = () => {
                 if (selectedImage && realUrls.length > 0) {
                     setSelectedImage(realUrls[0]);
                 }
-                
-                console.log("Fotky úspěšně uloženy.");
             } else {
                 console.error("Chyba při ukládání fotek");
             }
@@ -756,12 +764,33 @@ const Dashboard: React.FC = () => {
         navigate('/search');
     }
 
+    const handleCloseModal = () => {
+        setNotification(null);
+    };
+
     const modalContent = notification ? (
-        <div className="login-page"> {/* Třída login-page pro zachování stylů z Login.css */}
+        <div className="login-page">
             <div className="modal-overlay" onClick={() => setNotification(null)}>
                 <div className="modal-box" onClick={(e) => e.stopPropagation()}>
                     <h2>{notification.title}</h2>
                     <p>{notification.message}</p>
+                    <button
+                        className="modal-close-btn"
+                        onClick={handleCloseModal}
+                    >
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    ) : null;
+
+    const modalContentPrivacyPolicy = notificationPrivacyPolicy ? (
+        <div className="login-page"> {/* Třída login-page pro zachování stylů z Login.css */}
+            <div className="modal-overlay" onClick={() => setNotificationPrivacyPolicy(null)}>
+                <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                    <h2>{notificationPrivacyPolicy.title}</h2>
+                    <p>{notificationPrivacyPolicy.message}</p>
 
                     {/* Odkaz na Privacy Policy */}
                     <Link
@@ -775,7 +804,7 @@ const Dashboard: React.FC = () => {
                         className="modal-close-btn"
                         onClick={async  () => {
                             const token = localStorage.getItem('jwtToken');
-                            setNotification(null);
+                            setNotificationPrivacyPolicy(null);
                             try {
                                 const response = await fetch('/api/PrivacyPolicy', {
                                     method: 'POST',
@@ -804,6 +833,11 @@ const Dashboard: React.FC = () => {
             <div className="dashboard-page">
 
                 <div className="background-animation"></div>
+
+                {ReactDOM.createPortal(
+                    modalContentPrivacyPolicy,
+                    document.getElementById('modal-root')!
+                )}
 
                 {ReactDOM.createPortal(
                     modalContent,

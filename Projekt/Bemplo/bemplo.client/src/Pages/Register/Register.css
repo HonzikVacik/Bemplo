@@ -46,7 +46,6 @@
         animation-delay: 10s;
     }
 
-/* Keyframes zůstávají globální */
 @keyframes floatLarge {
     0% {
         transform: translate(0, 0) scale(1);
@@ -199,7 +198,7 @@
 }
 
 .register-page .input-group-double {
-    grid-column: span 2; /* nebo grid-column: 1 / -1; pro celou šířku */
+    grid-column: span 2;
 }
 
 .register-page .input-group {

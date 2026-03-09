@@ -76,7 +76,6 @@
         text-shadow: 0 0 20px rgba(0, 123, 255, 0.4);
         flex-grow: 1;
         text-align: center;
-        /* Posuneme ho opticky na støed, pokud je místo */
         margin-left: 1rem;
     }
 

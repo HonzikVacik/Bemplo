@@ -174,11 +174,10 @@ const Register: React.FC = () => {
                 });
 
                 setTimeout(() => {
-                    navigate('/'); // Přesměrování na login
+                    navigate('/login'); // Přesměrování na login
                 }, 2000);
 
             } else {
-                console.log(apiParams.agreeWithPrivacyPolicy)
                 setNotification({
                     title: 'Chyba',
                     message: responseText

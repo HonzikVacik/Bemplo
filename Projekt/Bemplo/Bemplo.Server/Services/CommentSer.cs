@@ -51,6 +51,11 @@ namespace Bemplo.Server.Services
             {
                 return "Zkušenost s id " + ExperienceId + " neexistuje";
             }
+            
+            if (experience.Account == account)
+            {
+                return "Nemůžete vytvořit komentář sám sobě.";
+            }
 
             if(experience.OriginalExperienceId != null)
             {

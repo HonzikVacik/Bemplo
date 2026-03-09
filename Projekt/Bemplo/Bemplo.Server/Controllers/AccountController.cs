@@ -41,7 +41,7 @@ namespace Bemplo.Server.Controllers
             Account accountTemp = new Account();
             try
             {
-                string? error = ValidityControl.CheckNewAccount(_context, accountRequest.accountType, accountRequest.name, accountRequest.surname, accountRequest.sexType, accountRequest.date, accountRequest.email, accountRequest.password, accountRequest.country, accountRequest.region, accountRequest.city, accountRequest.address, accountRequest.description, accountRequest.agreeWithPrivacyPolicy);
+                string? error = await ValidityControl.CheckNewAccount(_context, accountRequest.accountType, accountRequest.name, accountRequest.surname, accountRequest.sexType, accountRequest.date, accountRequest.email, accountRequest.password, accountRequest.country, accountRequest.region, accountRequest.city, accountRequest.address, accountRequest.description, accountRequest.agreeWithPrivacyPolicy);
                 if (error != null)
                     return BadRequest(error);
 
@@ -59,7 +59,7 @@ namespace Bemplo.Server.Controllers
                     Name = accountRequest.name,
                     Surname = accountRequest.surname,
                     SexType = (Enums.SexType)accountRequest.sexType,
-                    Email = accountRequest.email,
+                    Email = ValidityControl.GetEmailAddress(accountRequest.email),
                     Password = hashedPassword,
                     Country = accountRequest.country,
                     Region = accountRequest.region,

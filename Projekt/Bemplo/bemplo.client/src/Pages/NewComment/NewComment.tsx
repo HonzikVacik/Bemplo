@@ -1,6 +1,13 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import { useNavigate, useParams } from 'react-router-dom';
 import './NewComment.css';
+
+interface NotificationState {
+    title: string;
+    message: string;
+    type?: 'success' | 'error';
+}
 
 function AddComment() {
     const navigate = useNavigate();
@@ -10,11 +17,17 @@ function AddComment() {
     const [comment, setComment] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false); // Stav pro načítání
 
+    const [notification, setNotification] = useState<NotificationState | null>(null);
+
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
         if (!id) {
-            alert("Chyba: Není specifikována zkušenost (ExperienceId).");
+            setNotification({
+                title: 'Chyba',
+                message: "Chyba: Není specifikována zkušenost (ExperienceId).",
+                type: 'error'
+            });
             return;
         }
 
@@ -39,22 +52,56 @@ function AddComment() {
                 navigate(-1);
             } else {
                 const errorText = await response.text();
-                alert(`Chyba při odesílání: ${errorText}`);
+                setNotification({
+                    title: 'Chyba',
+                    message: errorText,
+                    type: 'error'
+                });
             }
 
         } catch (error) {
             console.error("Chyba sítě:", error);
-            alert("Nepodařilo se spojit se serverem.");
+            setNotification({
+                title: 'Chyba',
+                message: "Nepodařilo se spojit se serverem.",
+                type: 'error'
+            });
         } finally {
             setIsSubmitting(false);
         }
     };
+
+    const handleCloseModal = () => {
+        setNotification(null);
+    };
+
+    const modalContent = notification ? (
+        <div className="login-page">
+            <div className="modal-overlay" onClick={() => setNotification(null)}>
+                <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                    <h2>{notification.title}</h2>
+                    <p>{notification.message}</p>
+                    <button
+                        className="modal-close-btn"
+                        onClick={handleCloseModal}
+                    >
+                        OK
+                    </button>
+                </div>
+            </div>
+        </div>
+    ) : null;
 
     return (
         <>
             <div className="newComment-page">
 
                 <div className="background-animation"></div>
+
+                {ReactDOM.createPortal(
+                    modalContent,
+                    document.getElementById('modal-root')!
+                )}
 
                 <div className="wrapper">
                     <div className="glass-container">
