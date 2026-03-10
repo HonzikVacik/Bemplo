@@ -223,5 +223,106 @@ namespace Bemplo.Server.Controllers
 
             return Ok("Hotovo");
         }*/
+
+
+
+        // Pouze pro plnění ukázkovými databáze daty
+
+        [HttpPost("InsertDatabase")]
+        public async Task<IActionResult> RegisterMultiple([FromBody] IEnumerable<AccountRequest> accountRequests)
+        {
+            if (accountRequests == null || !accountRequests.Any())
+                return BadRequest("Seznam účtů nesmí být prázdný.");
+
+            // Použijeme transakci, aby se buď uložilo všechno, nebo nic
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
+            {
+                foreach (var request in accountRequests)
+                {
+                    // 1. Validace
+                    string? error = await ValidityControl.CheckNewAccount(
+                        _context, request.accountType, request.name, request.surname, request.sexType,
+                        request.date, request.email, request.password, request.country, request.region,
+                        request.city, request.address, request.description, request.agreeWithPrivacyPolicy);
+
+                    if (error != null)
+                        return BadRequest($"Chyba u emailu {request.email}: {error}");
+
+                    // 2. Hashování hesla
+                    byte[] salt = RandomNumberGenerator.GetBytes(128 / 8);
+                    string hashedPassword = Convert.ToBase64String(KeyDerivation.Pbkdf2(
+                        password: request.password!,
+                        salt: salt,
+                        prf: KeyDerivationPrf.HMACSHA256,
+                        iterationCount: 100000,
+                        numBytesRequested: 256 / 8));
+
+                    // 3. Vytvoření Account entity
+                    var newAccount = new Account()
+                    {
+                        AccountType = (Enums.AccountType)request.accountType,
+                        Name = request.name,
+                        Surname = request.surname,
+                        SexType = (Enums.SexType)request.sexType,
+                        Email = ValidityControl.GetEmailAddress(request.email),
+                        Password = hashedPassword,
+                        Country = request.country,
+                        Region = request.region,
+                        City = request.city,
+                        Address = request.address,
+                        Description = request.description,
+                        Created_At = DateTime.UtcNow,
+                        Salt = salt
+                    };
+
+                    _context.Accounts.Add(newAccount);
+                    // Musíme uložit teď, abychom získali ID pro navázané entity (User/Company)
+                    await _context.SaveChangesAsync();
+
+                    // 4. Vytvoření specifické entity (User / Company)
+                    if (newAccount.AccountType == Enums.AccountType.User)
+                    {
+                        _context.Users.Add(new User { Account = newAccount, Date_of_Birth = request.date.Date.ToUniversalTime() });
+                    }
+                    else if (newAccount.AccountType == Enums.AccountType.Company)
+                    {
+                        _context.Companies.Add(new Company { Account = newAccount, Founded_At = request.date.Date.ToUniversalTime() });
+                    }
+                    else
+                    {
+                        throw new Exception("Neznámý typ účtu.");
+                    }
+
+                    // 5. Offer / Preference / Request
+                    _context.Offer_Preference_Requests.Add(new Offer_Preference_Request
+                    {
+                        Account = newAccount,
+                        Content = "",
+                        ExperienceType = Enums.ExperienceType.Offer,
+                        IsDeleted = false
+                    });
+
+                    if (newAccount.AccountType == Enums.AccountType.User)
+                    {
+                        _context.Offer_Preference_Requests.Add(new Offer_Preference_Request { Account = newAccount, Content = "", ExperienceType = Enums.ExperienceType.Preference, IsDeleted = false });
+                        _context.Offer_Preference_Requests.Add(new Offer_Preference_Request { Account = newAccount, Content = "", ExperienceType = Enums.ExperienceType.Request, IsDeleted = false });
+                    }
+
+                    await _context.SaveChangesAsync();
+                }
+
+                // Pokud vše proběhlo v pořádku, potvrdíme transakci
+                await transaction.CommitAsync();
+                return Ok("Všechny účty byly úspěšně vytvořeny.");
+            }
+            catch (Exception ex)
+            {
+                // V případě jakékoliv chyby se změny vrátí zpět (Rollback)
+                await transaction.RollbackAsync();
+                return Conflict("Při hromadné registraci nastala chyba. Žádná data nebyla uložena.");
+            }
+        }
     }
 }
