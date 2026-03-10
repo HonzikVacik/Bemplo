@@ -36,7 +36,7 @@ namespace Bemplo.Server.Repositories
 
         public async Task<ResponseModels.PrivacyPolicy?> GetPrivacyPolicy()
         {
-            PrivacyPolicy? privacyPolicy = await _context.PrivacyPolicies.LastOrDefaultAsync();
+            PrivacyPolicy? privacyPolicy = await _context.PrivacyPolicies.OrderBy(p => p.Id).LastOrDefaultAsync();
             if (privacyPolicy == null)
             {
                 return null;

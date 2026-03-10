@@ -75,10 +75,7 @@
         margin-bottom: 3rem;
     }
 
-    /* ... stávající styly pro .hero-section ... */
-
     .home-page .gradient-text {
-        /* Pùvodní styly zachováme jako základ */
         font-weight: 800;
         line-height: 1.2;
         background: -webkit-linear-gradient(45deg, var(--primary-red), var(--secondary-red));
@@ -87,14 +84,12 @@
         text-shadow: 0 0 20px rgba(0, 123, 255, 0.3);
     }
 
-    /* NOVÉ: Zvìtšíme Bemplo a upravíme mezery */
     .home-page .main-brand {
         font-size: 5rem;
-        margin-bottom: 0.5rem; /* Zmenšíme mezeru pod Bemlpem, aby k nìmu slogan patøil */
+        margin-bottom: 0.5rem;
         letter-spacing: 2px;
     }
 
-    /* NOVÉ: Styl pro podnadpis (Váš most...) */
     .home-page .hero-slogan {
         font-size: 2rem;
         font-weight: 600;
@@ -106,7 +101,7 @@
     .home-page .subtitle {
         font-size: 1.2rem;
         line-height: 1.6;
-        color: var(--input-placeholder); /* Mùžete nechat --light-text, ale placeholder barva bývá jemnìjší pro odstavce */
+        color: var(--input-placeholder);
         margin-bottom: 2.5rem;
     }
 
@@ -118,7 +113,6 @@
         flex-wrap: wrap;
     }
 
-    /* Tlaèítka z vašich stylù */
     .home-page .btn {
         padding: 1rem 2.5rem;
         border-radius: 50px;

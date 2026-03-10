@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Cryptography.KeyDerivation;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -23,7 +24,7 @@ namespace Bemplo.Server.Controllers
         }
 
         [HttpPost("token")]
-        public IActionResult GenerateToken(string email, string password)
+        public async Task<IActionResult> GenerateToken(string email, string password)
         {
             //Kontrola, jestli není řetězec prázdný
             if (string.IsNullOrEmpty(email))
@@ -35,7 +36,8 @@ namespace Bemplo.Server.Controllers
             //Kontrola databáze
 
             //Kontrola existence user
-            Account[] accounts = _context.Accounts.Where(e => e.Email == email).ToArray();
+            //Account[] accounts = await _context.Accounts.Where(e => e.Email == ValidityControl.GetEmailAddress(email)).ToArrayAsync();
+            Account[] accounts = await _context.Accounts.Where(e => e.Email == email).ToArrayAsync();
             if (accounts.Length == 0)
                 return Unauthorized("Neplatný email nebo uživatelské heslo.");
 

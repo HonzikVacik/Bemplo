@@ -38,7 +38,7 @@ namespace Bemplo.Server.Repositories
 
         public async Task<Experience?> GetExperienceById(int experienceId)
         {
-            return await _context.Experiences.Where(e => e.Id == experienceId).FirstOrDefaultAsync();
+            return await _context.Experiences.Include(e => e.Account).Where(e => e.Id == experienceId).FirstOrDefaultAsync();
         }
 
         public async Task<Experience[]> GetExperiencesById(int experienceId)
