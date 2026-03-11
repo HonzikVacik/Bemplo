@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import './PrivacyPolicy.css';
 
@@ -71,20 +72,45 @@ function PrivacyPolicy() {
 
     if (loading && !notification) return <div className="loader">Načítání...</div>;
 
+    const modalContent = notification ? (
+        <div className="login-page">
+            <div className="modal-overlay" onClick={() => setNotification(null)}>
+                <div className="modal-box" onClick={(e) => e.stopPropagation()}>
+                    <h2>{notification.title}</h2>
+                    <p>{notification.message}</p>
+
+                    {notification.type === 'error' && (
+                        <button
+                            className="modal-close-btn"
+                            onClick={() => setNotification(null)}
+                        >
+                            Zavřít
+                        </button>
+                    )}
+
+                    {notification.type === 'success' && (
+                        <button
+                            className="modal-close-btn"
+                            onClick={() => setNotification(null)}
+                        >
+                            OK
+                        </button>
+                    )}
+                </div>
+            </div>
+        </div>
+    ) : null;
+
     return (
         <>
-            {notification && (
-                <div className="modal-overlay">
-                    <div className={`modal-content ${notification.type}`}>
-                        <h3>{notification.title}</h3>
-                        <p>{notification.message}</p>
-                        <button onClick={() => setNotification(null)}>Zavřít</button>
-                    </div>
-                </div>
-            )}
-
             <div className="privacyPolicy-page">
                 <div className="background-animation"></div>
+
+                {ReactDOM.createPortal(
+                    modalContent,
+                    document.getElementById('modal-root')!
+                )}
+
                 <div className="wrapper">
                     <div className="glass-container">
                         <header className="privacy-header">
@@ -128,7 +154,7 @@ function PrivacyPolicy() {
 
                         <div className="privacy-footer">
                             <div className="signature-box">
-                                <span className="signature-text">Jméno Příjmení (Admin)</span>
+                                <span className="signature-text">Admin</span>
                                 <div className="signature-line"></div>
                             </div>
                         </div>
