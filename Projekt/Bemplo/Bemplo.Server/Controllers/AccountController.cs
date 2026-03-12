@@ -41,6 +41,9 @@ namespace Bemplo.Server.Controllers
             Account accountTemp = new Account();
             try
             {
+                if (accountRequest.obhajobaPassword != "heslo")
+                    return Conflict("Neplatné heslo pro obhajobu, heslo najdete v Protokolu odevzdání.");
+
                 string? error = await ValidityControl.CheckNewAccount(_context, accountRequest.accountType, accountRequest.name, accountRequest.surname, accountRequest.sexType, accountRequest.date, accountRequest.email, accountRequest.password, accountRequest.country, accountRequest.region, accountRequest.city, accountRequest.address, accountRequest.description, accountRequest.agreeWithPrivacyPolicy);
                 if (error != null)
                     return BadRequest(error);

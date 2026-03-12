@@ -18,6 +18,7 @@ interface FormData {
     passwordConfirm: string;
     description: string;
     terms: boolean;
+    obhajobaPassword: string;
 }
 
 interface NotificationState {
@@ -43,6 +44,7 @@ const Register: React.FC = () => {
         passwordConfirm: '',
         description: '',
         terms: false,
+        obhajobaPassword: '',
     });
     const [notification, setNotification] = useState<NotificationState | null>(null);
 
@@ -136,7 +138,8 @@ const Register: React.FC = () => {
             city: formData.city,
             address: formData.address,
             description: formData.description,
-            agreeWithPrivacyPolicy: formData.terms.valueOf()
+            agreeWithPrivacyPolicy: formData.terms.valueOf(),
+            obhajobaPassword: formData.obhajobaPassword
         };
 
         if (accountType === 'company') {
@@ -162,7 +165,8 @@ const Register: React.FC = () => {
                     city: formData.city,
                     address: formData.address,
                     description: formData.description,
-                    agreeWithPrivacyPolicy: formData.terms.valueOf()
+                    agreeWithPrivacyPolicy: formData.terms.valueOf(),
+                    obhajobaPassword: formData.obhajobaPassword
                 })
             });
             const responseText = await response.text();
@@ -444,6 +448,21 @@ const Register: React.FC = () => {
                                         onChange={handleChange}
                                     />
                                     <label htmlFor="password-confirm">Heslo znovu</label>
+                                    <span className="focus-border"></span>
+                                </div>
+
+                                {/* Heslo znovu */}
+                                <div className="input-group">
+                                    <input
+                                        type="password"
+                                        id="obhajobaPassword"
+                                        name="obhajobaPassword"
+                                        placeholder=" "
+                                        required
+                                        value={formData.obhajobaPassword}
+                                        onChange={handleChange}
+                                    />
+                                    <label htmlFor="password-confirm">Heslo pro obhajobu</label>
                                     <span className="focus-border"></span>
                                 </div>
 
