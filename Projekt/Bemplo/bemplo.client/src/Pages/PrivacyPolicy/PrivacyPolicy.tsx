@@ -120,7 +120,7 @@ function PrivacyPolicy() {
                                 </svg>
                             </button>
 
-                            <h2>Privacy Policy</h2>
+                            <h2>Zásady ochrany osobních údajů</h2>
 
                             <button className="btn-icon download-btn" title="Stáhnout .pdf" onClick={handleDownload}>
                                 <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
