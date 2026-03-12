@@ -201,27 +201,5 @@ namespace Bemplo.Server.Controllers
 
             return Ok(await _accountRep.DiscoverAccounts(skip, take));
         }
-
-        /*[HttpGet("Nastav")]
-        //[Authorize]
-        public async Task<IActionResult> Nastav()
-        {
-            Account a = await _context.Accounts.FindAsync(7);
-            Account b = await _context.Accounts.FindAsync(0);
-
-            ChatConnection ch = new ChatConnection()
-            {
-                Account_1 = a,
-                Account_2 = b,
-                Account_1_Agree = true,
-                Account_2_Agree = true,
-                Account_ID_1 = a.Id,
-                Account_ID_2 = b.Id
-            };
-            _context.ChatConnections.Add(ch);
-            await _context.SaveChangesAsync();
-
-            return Ok("Hotovo");
-        }*/
     }
 }

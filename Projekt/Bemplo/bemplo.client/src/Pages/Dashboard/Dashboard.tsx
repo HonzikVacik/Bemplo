@@ -282,8 +282,8 @@ const Dashboard: React.FC = () => {
 
                     if (!id && data.agreeWithPolicy === false) {
                         setNotificationPrivacyPolicy({
-                            title: 'Změna podmínek používání',
-                            message: 'Změnily se podmínky používání. Pokračováním používání aplikace s nimi vyjadřujete souhlas.'
+                            title: 'Změna Zásad ochrany osobních údajů',
+                            message: 'Změnily se Zásady ochrany osobních údajů. Pokračováním používání aplikace s nimi vyjadřujete souhlas.'
                         });
                     }
 

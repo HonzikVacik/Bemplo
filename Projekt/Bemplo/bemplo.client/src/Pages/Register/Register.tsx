@@ -475,7 +475,13 @@ const Register: React.FC = () => {
                                     onChange={handleChange}
                                 />
                                 <label htmlFor="terms">
-                                    Souhlasím se zpracováním osobních údajů (P.P.)
+                                    Souhlasím se
+                                    <Link
+                                        to="/privacypolicy"
+                                        style={{ display: 'inline', marginLeft: '0.4rem', marginBottom: '1.5rem', color: 'var(--primary-red)', textDecoration: 'underline' }}
+                                    >
+                                        zásadami ochrany osobních údajů
+                                    </Link>
                                 </label>
                             </div>
 
