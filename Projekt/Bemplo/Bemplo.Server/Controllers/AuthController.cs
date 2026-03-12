@@ -36,8 +36,7 @@ namespace Bemplo.Server.Controllers
             //Kontrola databáze
 
             //Kontrola existence user
-            //Account[] accounts = await _context.Accounts.Where(e => e.Email == ValidityControl.GetEmailAddress(email)).ToArrayAsync();
-            Account[] accounts = await _context.Accounts.Where(e => e.Email == email).ToArrayAsync();
+            Account[] accounts = await _context.Accounts.Where(e => e.Email == ValidityControl.GetEmailAddress(email)).ToArrayAsync();
             if (accounts.Length == 0)
                 return Unauthorized("Neplatný email nebo uživatelské heslo.");
 

@@ -3,6 +3,7 @@ using Bemplo.Server.Models;
 using Bemplo.Server.ResponseModels;
 using Bemplo.Server.Services;
 using Microsoft.EntityFrameworkCore;
+using System.Diagnostics;
 
 namespace Bemplo.Server.Repositories
 {
@@ -45,6 +46,17 @@ namespace Bemplo.Server.Repositories
             {
                 Account[] accs = await _context.Accounts.Where(a => a.Surname.Trim().ToLower().Contains(param) && a.IsDeleted == false).ToArrayAsync();
                 accounts.AddRange(accs);
+            }
+
+            //Email
+            foreach (string param in searchParams)
+            {
+                if (param.Contains('@'))
+                {
+                    string email = ValidityControl.GetEmailAddress(param);
+                    Account[] accs = await _context.Accounts.Where(a => a.Email.Contains(email) && a.IsDeleted == false).ToArrayAsync();
+                    accounts.AddRange(accs);
+                }
             }
 
             //Description
