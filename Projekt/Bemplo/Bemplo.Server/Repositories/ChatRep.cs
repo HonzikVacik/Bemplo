@@ -11,7 +11,7 @@ namespace Bemplo.Server.Repositories
 
         public ChatRep(ApplicationDbContext context)
         {
-            _context = context; 
+            _context = context;
         }
         public async Task<(ChatList[]?, string?)> GetChatList(Account account)
         {
@@ -59,13 +59,49 @@ namespace Bemplo.Server.Repositories
         {
             try
             {
-                DateTime? timestamp = await _context.Chats.Where(ch => ch.Id == lastMessageId).Select(ch => ch.Timestamp).FirstOrDefaultAsync();
+                if (lastMessageId == 0)
+                {
+                    Message[] latestMessages = await _context.Chats
+                        .Where(ch => ch.Chat_Connection == chatConnection)
+                        .OrderByDescending(ch => ch.Timestamp)
+                        .Take(count)
+                        .Select(x => new Message()
+                        {
+                            Id = x.Id,
+                            Content = x.Content,
+                            Owned = x.SenderId == account.Id,
+                            Timestamp = x.Timestamp
+                        })
+                        .ToArrayAsync();
+
+                    return (latestMessages, null);
+                }
+
+                DateTime? timestamp = await _context.Chats
+                    .Where(ch => ch.Id == lastMessageId)
+                    .Select(ch => ch.Timestamp)
+                    .FirstOrDefaultAsync();
+
                 if (timestamp == null)
                 {
                     return (new Message[0], null);
                 }
-                Message[] messages = await _context.Chats.Where(ch => ch.Chat_Connection == chatConnection).OrderByDescending(ch => ch.Timestamp).Where(ch => ch.Timestamp > timestamp).Take(count).Select(x => new Message() { Id = x.Id, Content = x.Content, Owned = x.SenderId == account.Id, Timestamp = x.Timestamp }).ToArrayAsync();
-                return (messages, null);
+
+                Message[] historyMessages = await _context.Chats
+                    .Where(ch => ch.Chat_Connection == chatConnection)
+                    .Where(ch => ch.Timestamp < timestamp)
+                    .OrderByDescending(ch => ch.Timestamp)
+                    .Take(count)
+                    .Select(x => new Message()
+                    {
+                        Id = x.Id,
+                        Content = x.Content,
+                        Owned = x.SenderId == account.Id,
+                        Timestamp = x.Timestamp
+                    })
+                    .ToArrayAsync();
+
+                return (historyMessages, null);
             }
             catch (Exception ex)
             {
@@ -103,12 +139,12 @@ namespace Bemplo.Server.Repositories
                 {
                     return "Kontakt neexistuje";
                 }
-                
-                if(chatConnection.Account_ID_1 == account.Id)
+
+                if (chatConnection.Account_ID_1 == account.Id)
                 {
                     chatConnection1.Account_1_Agree = locked;
                 }
-                else if(chatConnection1.Account_ID_2 == account.Id)
+                else if (chatConnection1.Account_ID_2 == account.Id)
                 {
                     chatConnection1.Account_2_Agree = locked;
                 }
@@ -116,13 +152,13 @@ namespace Bemplo.Server.Repositories
                 {
                     return "Něco se nepovedlo";
                 }
-                
+
                 _context.Update(chatConnection1);
                 await _context.SaveChangesAsync();
-                
+
                 return null;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 return "Něco se nepovedlo";
             }
